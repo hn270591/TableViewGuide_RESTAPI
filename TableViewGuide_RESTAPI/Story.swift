@@ -14,8 +14,8 @@ class Story {
 
         if let multimedia = jsonResult["multimedia"] as? NSArray {
             // 4th element is will contain the image of the right size
-            if multimedia.count >= 4 {
-                if let mediaItem = multimedia[3] as? NSDictionary {
+            if multimedia.count >= 3 {
+                if let mediaItem = multimedia[2] as? NSDictionary {
                     if let type = mediaItem["type"] as? String {
                         if type == "image" {
                             if let url = mediaItem["url"] as? String{

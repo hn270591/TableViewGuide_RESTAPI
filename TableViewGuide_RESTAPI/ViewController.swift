@@ -2,11 +2,11 @@ import UIKit
 
 class ViewController: UIViewController, UITableViewDataSource {
     @IBOutlet weak var tableView: UITableView!
-
     var stories: [Story] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        title = "Top Stories"
         tableView.dataSource = self
 
         Story.fetchStories(successCallback: { (stories: [Story]) -> Void in
