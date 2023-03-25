@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		315225602BBC497EFF44E2B8 /* Pods_TableViewGuide_RESTAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 881139D25887475F20EA3678 /* Pods_TableViewGuide_RESTAPI.framework */; };
 		93509449295A6E3A0055725F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93509448295A6E3A0055725F /* AppDelegate.swift */; };
 		9350944B295A6E3A0055725F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9350944A295A6E3A0055725F /* SceneDelegate.swift */; };
 		9350944D295A6E3A0055725F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9350944C295A6E3A0055725F /* ViewController.swift */; };
@@ -18,6 +19,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		881139D25887475F20EA3678 /* Pods_TableViewGuide_RESTAPI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TableViewGuide_RESTAPI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		93509445295A6E3A0055725F /* TableViewGuide_RESTAPI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TableViewGuide_RESTAPI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		93509448295A6E3A0055725F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9350944A295A6E3A0055725F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -28,6 +30,8 @@
 		93509456295A6E3B0055725F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9350945C295A6E6D0055725F /* Story.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Story.swift; sourceTree = "<group>"; };
 		9350945E295A6E9C0055725F /* StoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryCell.swift; sourceTree = "<group>"; };
+		ADB3C07E0F4B0794A80E7CF1 /* Pods-TableViewGuide_RESTAPI.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TableViewGuide_RESTAPI.release.xcconfig"; path = "Target Support Files/Pods-TableViewGuide_RESTAPI/Pods-TableViewGuide_RESTAPI.release.xcconfig"; sourceTree = "<group>"; };
+		D921343747D0FDA9B000BEF0 /* Pods-TableViewGuide_RESTAPI.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TableViewGuide_RESTAPI.debug.xcconfig"; path = "Target Support Files/Pods-TableViewGuide_RESTAPI/Pods-TableViewGuide_RESTAPI.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,17 +39,28 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				315225602BBC497EFF44E2B8 /* Pods_TableViewGuide_RESTAPI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3F85AA8E6345BBC7AB8CDAAB /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				881139D25887475F20EA3678 /* Pods_TableViewGuide_RESTAPI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		9350943C295A6E3A0055725F = {
 			isa = PBXGroup;
 			children = (
 				93509447295A6E3A0055725F /* TableViewGuide_RESTAPI */,
 				93509446295A6E3A0055725F /* Products */,
+				E33D6FB937F8595795A2626D /* Pods */,
+				3F85AA8E6345BBC7AB8CDAAB /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -73,6 +88,16 @@
 			path = TableViewGuide_RESTAPI;
 			sourceTree = "<group>";
 		};
+		E33D6FB937F8595795A2626D /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				D921343747D0FDA9B000BEF0 /* Pods-TableViewGuide_RESTAPI.debug.xcconfig */,
+				ADB3C07E0F4B0794A80E7CF1 /* Pods-TableViewGuide_RESTAPI.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -80,9 +105,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 93509459295A6E3B0055725F /* Build configuration list for PBXNativeTarget "TableViewGuide_RESTAPI" */;
 			buildPhases = (
+				66F68FFDCE9E8F63B755D3CE /* [CP] Check Pods Manifest.lock */,
 				93509441295A6E3A0055725F /* Sources */,
 				93509442295A6E3A0055725F /* Frameworks */,
 				93509443295A6E3A0055725F /* Resources */,
+				CF86DA539A99D05FB85B632C /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -138,6 +165,48 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		66F68FFDCE9E8F63B755D3CE /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-TableViewGuide_RESTAPI-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		CF86DA539A99D05FB85B632C /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TableViewGuide_RESTAPI/Pods-TableViewGuide_RESTAPI-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TableViewGuide_RESTAPI/Pods-TableViewGuide_RESTAPI-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TableViewGuide_RESTAPI/Pods-TableViewGuide_RESTAPI-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		93509441295A6E3A0055725F /* Sources */ = {
@@ -290,6 +359,7 @@
 		};
 		9350945A295A6E3B0055725F /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D921343747D0FDA9B000BEF0 /* Pods-TableViewGuide_RESTAPI.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -318,6 +388,7 @@
 		};
 		9350945B295A6E3B0055725F /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = ADB3C07E0F4B0794A80E7CF1 /* Pods-TableViewGuide_RESTAPI.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
