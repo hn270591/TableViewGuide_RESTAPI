@@ -6,16 +6,21 @@ private let resourceUrl = URL(string: "https://api.nytimes.com/svc/topstories/v2
 class Story {
     var headline: String?
     var thumbnailUrl: String?
+    var detailsOfArticles: String?
 
     init(jsonResult: NSDictionary) {
         if let title = jsonResult["title"] as? String {
             headline = title
         }
+        
+        if let url = jsonResult["url"] as? String {
+            detailsOfArticles = url
+        }
 
         if let multimedia = jsonResult["multimedia"] as? NSArray {
             // 4th element is will contain the image of the right size
-            if multimedia.count >= 4 {
-                if let mediaItem = multimedia[3] as? NSDictionary {
+            if multimedia.count >= 3 {
+                if let mediaItem = multimedia[2] as? NSDictionary {
                     if let type = mediaItem["type"] as? String {
                         if type == "image" {
                             if let url = mediaItem["url"] as? String{
