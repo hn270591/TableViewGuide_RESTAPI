@@ -75,7 +75,22 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="889.3129770992366" y="3.5211267605633805"/>
+            <point key="canvasLocation" x="663" y="4"/>
+        </scene>
+        <!--Details View Controller-->
+        <scene sceneID="1UM-D6-AxX">
+            <objects>
+                <viewController storyboardIdentifier="DetailsViewController" id="rve-bC-YUS" customClass="DetailsViewController" customModule="TableViewGuide_RESTAPI" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="EZu-aQ-rx0">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="E4G-p9-chC"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="qon-r1-ijX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1376" y="4"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="ib9-TW-hPg">

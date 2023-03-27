@@ -16,6 +16,7 @@
 		93509455295A6E3B0055725F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93509453295A6E3B0055725F /* LaunchScreen.storyboard */; };
 		9350945D295A6E6D0055725F /* Story.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9350945C295A6E6D0055725F /* Story.swift */; };
 		9350945F295A6E9C0055725F /* StoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9350945E295A6E9C0055725F /* StoryCell.swift */; };
+		F03D215E29CF294400FFBECE /* DetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03D215D29CF294400FFBECE /* DetailsViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		9350945E295A6E9C0055725F /* StoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryCell.swift; sourceTree = "<group>"; };
 		ADB3C07E0F4B0794A80E7CF1 /* Pods-TableViewGuide_RESTAPI.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TableViewGuide_RESTAPI.release.xcconfig"; path = "Target Support Files/Pods-TableViewGuide_RESTAPI/Pods-TableViewGuide_RESTAPI.release.xcconfig"; sourceTree = "<group>"; };
 		D921343747D0FDA9B000BEF0 /* Pods-TableViewGuide_RESTAPI.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TableViewGuide_RESTAPI.debug.xcconfig"; path = "Target Support Files/Pods-TableViewGuide_RESTAPI/Pods-TableViewGuide_RESTAPI.debug.xcconfig"; sourceTree = "<group>"; };
+		F03D215D29CF294400FFBECE /* DetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,6 +80,7 @@
 				93509448295A6E3A0055725F /* AppDelegate.swift */,
 				9350944A295A6E3A0055725F /* SceneDelegate.swift */,
 				9350944C295A6E3A0055725F /* ViewController.swift */,
+				F03D215D29CF294400FFBECE /* DetailsViewController.swift */,
 				9350945C295A6E6D0055725F /* Story.swift */,
 				9350945E295A6E9C0055725F /* StoryCell.swift */,
 				9350944E295A6E3A0055725F /* Main.storyboard */,
@@ -94,7 +97,6 @@
 				D921343747D0FDA9B000BEF0 /* Pods-TableViewGuide_RESTAPI.debug.xcconfig */,
 				ADB3C07E0F4B0794A80E7CF1 /* Pods-TableViewGuide_RESTAPI.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -218,6 +220,7 @@
 				9350944B295A6E3A0055725F /* SceneDelegate.swift in Sources */,
 				9350945D295A6E6D0055725F /* Story.swift in Sources */,
 				9350945F295A6E9C0055725F /* StoryCell.swift in Sources */,
+				F03D215E29CF294400FFBECE /* DetailsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
