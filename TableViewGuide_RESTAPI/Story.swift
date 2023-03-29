@@ -6,7 +6,7 @@ private let resourceUrl = URL(string: "https://api.nytimes.com/svc/topstories/v2
 class Story {
     var headline: String?
     var thumbnailUrl: String?
-    var detailsOfArticles: String?
+    var detailsOfStoryURL: String?
 
     init(jsonResult: NSDictionary) {
         if let title = jsonResult["title"] as? String {
@@ -14,7 +14,7 @@ class Story {
         }
         
         if let url = jsonResult["url"] as? String {
-            detailsOfArticles = url
+            detailsOfStoryURL = url
         }
 
         if let multimedia = jsonResult["multimedia"] as? NSArray {

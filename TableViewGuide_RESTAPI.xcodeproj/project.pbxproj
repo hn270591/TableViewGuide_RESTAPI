@@ -17,6 +17,9 @@
 		9350945D295A6E6D0055725F /* Story.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9350945C295A6E6D0055725F /* Story.swift */; };
 		9350945F295A6E9C0055725F /* StoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9350945E295A6E9C0055725F /* StoryCell.swift */; };
 		F03D215E29CF294400FFBECE /* DetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03D215D29CF294400FFBECE /* DetailsViewController.swift */; };
+		F0ADB4A929D3EB3900D56F8B /* SearchArticlesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0ADB4A829D3EB3900D56F8B /* SearchArticlesCell.swift */; };
+		F0ADB4AB29D3EB5200D56F8B /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0ADB4AA29D3EB5200D56F8B /* SearchViewController.swift */; };
+		F0ADB4AD29D3EED900D56F8B /* Articles.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0ADB4AC29D3EED800D56F8B /* Articles.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +37,9 @@
 		ADB3C07E0F4B0794A80E7CF1 /* Pods-TableViewGuide_RESTAPI.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TableViewGuide_RESTAPI.release.xcconfig"; path = "Target Support Files/Pods-TableViewGuide_RESTAPI/Pods-TableViewGuide_RESTAPI.release.xcconfig"; sourceTree = "<group>"; };
 		D921343747D0FDA9B000BEF0 /* Pods-TableViewGuide_RESTAPI.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TableViewGuide_RESTAPI.debug.xcconfig"; path = "Target Support Files/Pods-TableViewGuide_RESTAPI/Pods-TableViewGuide_RESTAPI.debug.xcconfig"; sourceTree = "<group>"; };
 		F03D215D29CF294400FFBECE /* DetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsViewController.swift; sourceTree = "<group>"; };
+		F0ADB4A829D3EB3900D56F8B /* SearchArticlesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchArticlesCell.swift; sourceTree = "<group>"; };
+		F0ADB4AA29D3EB5200D56F8B /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
+		F0ADB4AC29D3EED800D56F8B /* Articles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Articles.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,9 +86,10 @@
 				93509448295A6E3A0055725F /* AppDelegate.swift */,
 				9350944A295A6E3A0055725F /* SceneDelegate.swift */,
 				9350944C295A6E3A0055725F /* ViewController.swift */,
-				F03D215D29CF294400FFBECE /* DetailsViewController.swift */,
 				9350945C295A6E6D0055725F /* Story.swift */,
 				9350945E295A6E9C0055725F /* StoryCell.swift */,
+				F03D215D29CF294400FFBECE /* DetailsViewController.swift */,
+				F0ADB4A729D3EB0200D56F8B /* Search Articles */,
 				9350944E295A6E3A0055725F /* Main.storyboard */,
 				93509451295A6E3B0055725F /* Assets.xcassets */,
 				93509453295A6E3B0055725F /* LaunchScreen.storyboard */,
@@ -98,6 +105,16 @@
 				ADB3C07E0F4B0794A80E7CF1 /* Pods-TableViewGuide_RESTAPI.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		F0ADB4A729D3EB0200D56F8B /* Search Articles */ = {
+			isa = PBXGroup;
+			children = (
+				F0ADB4AA29D3EB5200D56F8B /* SearchViewController.swift */,
+				F0ADB4A829D3EB3900D56F8B /* SearchArticlesCell.swift */,
+				F0ADB4AC29D3EED800D56F8B /* Articles.swift */,
+			);
+			path = "Search Articles";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -217,7 +234,10 @@
 			files = (
 				9350944D295A6E3A0055725F /* ViewController.swift in Sources */,
 				93509449295A6E3A0055725F /* AppDelegate.swift in Sources */,
+				F0ADB4AB29D3EB5200D56F8B /* SearchViewController.swift in Sources */,
 				9350944B295A6E3A0055725F /* SceneDelegate.swift in Sources */,
+				F0ADB4AD29D3EED900D56F8B /* Articles.swift in Sources */,
+				F0ADB4A929D3EB3900D56F8B /* SearchArticlesCell.swift in Sources */,
 				9350945D295A6E6D0055725F /* Story.swift in Sources */,
 				9350945F295A6E9C0055725F /* StoryCell.swift in Sources */,
 				F03D215E29CF294400FFBECE /* DetailsViewController.swift in Sources */,

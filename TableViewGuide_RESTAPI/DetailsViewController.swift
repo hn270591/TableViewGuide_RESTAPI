@@ -9,13 +9,11 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
 
     // MARK: - Properties
     
-    var stories: Story!
+    var stories: Story?
+    var articles: Articles?
     private var webView: WKWebView!
     private var activityIndicator: UIActivityIndicatorView!
-    private let toolBar = UIToolbar()
     private let refreshButtonItem = UIBarButtonItem(barButtonSystemItem: .refresh, target: .none, action: #selector(refeshAction))
-    private let spacingItem1 = UIBarButtonItem(title: " ", style: .plain, target: nil, action: nil)
-    private let spacingItem2 = UIBarButtonItem(title: " ", style: .plain, target: nil, action: nil)
     private let backButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.left"), style: .done, target: .none, action: #selector(backAction))
     private let forwardButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.right"), style: .plain, target: .none, action: #selector(forwardAction))
     
@@ -37,29 +35,41 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
     // Life cycle View
     override func viewDidLoad() {
         super.viewDidLoad()
-        guard
-            let detailsURL = stories.detailsOfArticles,
-            let url = URL(string: detailsURL)
-        else { return }
-        webView.load(URLRequest(url: url))
-        webView.allowsBackForwardNavigationGestures = true
+        setupWebView()
     }
     
     // Layout SubView
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        setupNavigationView()
+    }
+    
+    private func setupWebView() {
+        webView.navigationDelegate = self
+        var url: URL!
+        let detailsOfStoryURL = stories?.detailsOfStoryURL ?? ""
+        let detailsOfArticlesURL = articles?.detailsURL ?? ""
+        
+        if detailsOfStoryURL.count != 0 {
+            url = URL(string: detailsOfStoryURL)
+            title = stories?.headline
+        } else if detailsOfArticlesURL.count != 0 {
+            url = URL(string: detailsOfArticlesURL)
+            title = articles?.headLine
+        } else {
+            return
+        }
+        let urlRequest = URLRequest(url: url!)
+        webView.load(urlRequest)
+        webView.allowsBackForwardNavigationGestures = true
+    }
+    
+    private func setupNavigationView() {
         backButtonItem.isEnabled = false
         forwardButtonItem.isEnabled = false
-        
-        toolBar.items = [spacingItem1, backButtonItem,spacingItem2, forwardButtonItem]
-        navigationItem.rightBarButtonItem = refreshButtonItem
-        
-        view.addSubview(toolBar)
-        toolBar.translatesAutoresizingMaskIntoConstraints = false
-        toolBar.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        toolBar.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        toolBar.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -10).isActive = true
-        toolBar.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        let backAllButtonItem = UIBarButtonItem(image: UIImage(systemName: "xmark"), style: .done, target: self, action: #selector(backAllAction))
+        navigationItem.rightBarButtonItems = [ refreshButtonItem, forwardButtonItem ]
+        navigationItem.leftBarButtonItems = [ backAllButtonItem, backButtonItem]
     }
     
     @objc private func refeshAction() {
@@ -74,6 +84,10 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
     @objc private func forwardAction() {
         guard webView.canGoForward else { return }
         webView.goForward()
+    }
+    
+    @objc private func backAllAction() {
+        navigationController?.popViewController(animated: true)
     }
     
     func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {

@@ -29,8 +29,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
         let vcDetails = storyboard?.instantiateViewController(withIdentifier: "DetailsViewController") as! DetailsViewController
         vcDetails.stories = stories[indexPath.row]
+        vcDetails.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(vcDetails, animated: true)
     }
 }
