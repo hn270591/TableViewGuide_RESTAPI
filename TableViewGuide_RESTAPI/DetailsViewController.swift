@@ -1,6 +1,3 @@
-//
-//  DetailsViewController.swift
-//  TableViewGuide_RESTAPI
 
 import UIKit
 import WebKit
@@ -10,7 +7,7 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
     // MARK: - Properties
     
     var stories: Story?
-    var articles: Articles?
+    var articles: ArticleItem?
     private var webView: WKWebView!
     private var activityIndicator: UIActivityIndicatorView!
     private let refreshButtonItem = UIBarButtonItem(barButtonSystemItem: .refresh, target: .none, action: #selector(refeshAction))
@@ -47,15 +44,15 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
     private func setupWebView() {
         webView.navigationDelegate = self
         var url: URL!
-        let detailsOfStoryURL = stories?.detailsOfStoryURL ?? ""
-        let detailsOfArticlesURL = articles?.detailsURL ?? ""
+        let detailsOfStoryURL = stories?.url ?? ""
+        let detailsOfArticlesURL = articles?.web_url ?? ""
         
         if detailsOfStoryURL.count != 0 {
             url = URL(string: detailsOfStoryURL)
-            title = stories?.headline
+            title = stories?.title
         } else if detailsOfArticlesURL.count != 0 {
             url = URL(string: detailsOfArticlesURL)
-            title = articles?.headLine
+            title = articles?.headline.main
         } else {
             return
         }

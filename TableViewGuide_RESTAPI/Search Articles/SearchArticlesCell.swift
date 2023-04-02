@@ -1,9 +1,3 @@
-//
-//  SearchArticlesCell.swift
-//  TableViewGuide_RESTAPI
-//
-//  Created by Hoàng Loan on 29/03/2023.
-//
 
 import UIKit
 import Kingfisher
@@ -13,14 +7,16 @@ class SearchArticlesCell: UITableViewCell {
     @IBOutlet weak var headLineLabel: UILabel!
     @IBOutlet weak var thumbnailImageView: UIImageView!
     
-    var articles: Articles? {
+    var articles: ArticleItem? {
         didSet {
-            headLineLabel.text = articles?.headLine
-            
-            if let stringURL = articles?.thumbnailURL {
-                let imageURL = URL(string: stringURL)
-                thumbnailImageView.downloadImage(url: imageURL!)
-                thumbnailImageView.contentMode = .scaleToFill
+            headLineLabel.text = articles?.headline.main
+            if let multimedia = articles?.multimedia {
+                if multimedia.count >= 20 {
+                    let stringURL = "https://static01.nyt.com/" + multimedia[19].url
+                    let imageURL = URL(string: stringURL)
+                    thumbnailImageView.downloadImage(url: imageURL!)
+                    thumbnailImageView.contentMode = .scaleToFill
+                }
             } else {
                 thumbnailImageView.image = UIImage(systemName: "photo")
             }
@@ -32,7 +28,6 @@ class SearchArticlesCell: UITableViewCell {
 
 extension UIImageView {
     func downloadThumbnail(url: URL) {
-        self.kf.indicatorType = .activity
         self.kf.setImage(with: url,
                               placeholder: UIImage(named: "placeholderImage"),
                               options: [

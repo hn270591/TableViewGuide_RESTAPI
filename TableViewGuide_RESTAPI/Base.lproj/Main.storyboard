@@ -171,19 +171,19 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBar>
                     <connections>
-                        <segue destination="49z-bQ-IDk" kind="relationship" relationship="viewControllers" id="0PE-GX-OqS"/>
                         <segue destination="tAN-3Y-9q6" kind="relationship" relationship="viewControllers" id="TXN-py-JMM"/>
+                        <segue destination="49z-bQ-IDk" kind="relationship" relationship="viewControllers" id="0PE-GX-OqS"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gyI-Em-sa6" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-1126" y="306"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--Stories-->
         <scene sceneID="ib9-TW-hPg">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="49z-bQ-IDk" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="" image="globe" catalog="system" id="5Bo-Su-j1t"/>
+                    <tabBarItem key="tabBarItem" title="Stories" image="globe" catalog="system" id="5Bo-Su-j1t"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="WVQ-iI-RgS">
                         <rect key="frame" x="0.0" y="59" width="393" height="44"/>

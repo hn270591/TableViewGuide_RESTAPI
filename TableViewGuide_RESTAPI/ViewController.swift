@@ -2,6 +2,7 @@ import UIKit
 
 class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     @IBOutlet weak var tableView: UITableView!
+    private let animationDuration: TimeInterval = 1
     var stories: [Story] = []
 
     override func viewDidLoad() {
@@ -9,13 +10,27 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         title = "Top Stories"
         tableView.dataSource = self
         tableView.delegate = self
-
-        Story.fetchStories(successCallback: { (stories: [Story]) -> Void in
+        tableView.refreshControl = UIRefreshControl()
+        tableView.refreshControl?.addTarget(self, action: #selector(onRefesh), for: .valueChanged)
+        Articles.fetchStory(successCallBack: { (stories: [Story]) -> Void in
             DispatchQueue.main.async {
                 self.stories = stories
-                self.tableView.reloadData()
+                UIView.transition(with: self.tableView, duration: self.animationDuration,options: .transitionCrossDissolve, animations: { self.tableView.reloadData()
+                })
             }
-        }, error: nil)
+        })
+    }
+    
+    @objc private func onRefesh() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + animationDuration) {
+            Articles.fetchStory(successCallBack: { (stories: [Story]) -> Void in
+                DispatchQueue.main.async {
+                    self.stories = stories
+                    self.tableView.reloadData()
+                }
+            })
+            self.tableView.refreshControl?.endRefreshing()
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
