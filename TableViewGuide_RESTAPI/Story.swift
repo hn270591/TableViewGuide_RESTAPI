@@ -1,9 +1,10 @@
 
 import Foundation
+import UIKit
 
 private let apiKey = "FhNV8V9NsHGY2ZIJujLTHTuuLjWOXcaN"
 struct ConStants {
-    static let topStoriesURL = URL(string:"https://api.nytimes.com/svc/topstories/v2/home.json?api-key=\(apiKey)")
+    static let topStoriesURL = URL(string: "https://api.nytimes.com/svc/topstories/v2/home.json?api-key=\(apiKey)")
 }
 
 extension URLSession {
@@ -12,7 +13,7 @@ extension URLSession {
         case invalidData
     }
     
-    func request<T: Codable>(url: URL?, expecting: T.Type, completion: @escaping (Result<T, Error>) -> Void) -> Void {
+    func request<T: Codable>(url: URL?, expecting: T.Type, completion: @escaping (Result<T, Error>) -> Void, requestError: ((Error?) -> Void)?) -> Void {
         guard let url = url
         else {
             completion(.failure(CustomError.invalidURL))
@@ -20,7 +21,8 @@ extension URLSession {
         }
         URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
-                completion(.failure(error))
+                requestError?(completion(.failure(error)) as? Error)
+                print("Error: Internet or Request URL")
             } else {
                 if let data = data {
                     let result = try! JSONDecoder().decode(expecting, from: data)
@@ -34,8 +36,7 @@ extension URLSession {
 }
 
 class Articles {
-    
-    class func fetchStory(successCallBack: @escaping ([Story]) -> Void) {
+    class func fetchStory(successCallBack: @escaping ([Story]) -> Void, requestError: ((Error?) -> Void)?) {
         URLSession.shared.request(url: ConStants.topStoriesURL, expecting: Results.self, completion: { result in
             switch result {
             case .success(let value):
@@ -45,10 +46,10 @@ class Articles {
             case .failure(let error):
                 print(error.localizedDescription)
             }
-        })
+        }, requestError: requestError)
     }
     
-    class func fetchArticles(queryName: String, numberPage: Int, successCallBack: @escaping ([ArticleItem]) -> Void) {
+    class func fetchArticles(queryName: String, numberPage: Int, successCallBack: @escaping ([ArticleItem]) -> Void, requestError: ((Error?) -> Void)?) {
         let searchArticleURL = URL(string: "https://api.nytimes.com/svc/search/v2/articlesearch.json?q=\(queryName)&page=\(numberPage)&api-key=\(apiKey)")
         URLSession.shared.request(url: searchArticleURL, expecting: ArticlesData.self, completion: { results in
             switch results {
@@ -59,7 +60,7 @@ class Articles {
             case .failure(let error):
                 print(error.localizedDescription)
             }
-        })
+        }, requestError: requestError)
     }
 }
 

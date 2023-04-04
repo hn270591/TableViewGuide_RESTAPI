@@ -133,7 +133,7 @@ extension SearchViewController: UISearchBarDelegate {
                         self.isLoading = false
                     }
                 } 
-            })
+            }, requestError: nil)
         }
     }
     
@@ -173,7 +173,7 @@ extension SearchViewController: UISearchBarDelegate {
                         self.numberPage = self.numberPage + 1
                         self.isLoading = false
                     }
-                })
+                }, requestError: nil)
             }
         }
     }

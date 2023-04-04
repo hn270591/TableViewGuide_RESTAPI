@@ -17,6 +17,17 @@ class StoryCell: UITableViewCell {
                 let urlString = URL(string: thumbnailString)
                 thumbnailView.downloadImage(url: urlString!)
                 thumbnailView.sizeToFit()
+                thumbnailView.contentMode = .scaleToFill
+            }
+        }
+    }
+    
+    var topStories: TopStories? {
+        didSet {
+            headlineLabel.text = topStories?.titles
+            if let urlString = URL(string: topStories?.imagesURL ?? "") {
+                thumbnailView.downloadImage(url: urlString)
+                thumbnailView.contentMode = .scaleToFill
             }
         }
     }
