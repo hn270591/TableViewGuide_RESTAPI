@@ -13,7 +13,7 @@ extension URLSession {
         case invalidData
     }
     
-    func request<T: Codable>(url: URL?, expecting: T.Type, completion: @escaping (Result<T, Error>) -> Void, requestError: ((Error?) -> Void)?) -> Void {
+    func request<T: Codable>(url: URL?, expecting: T.Type, completion: @escaping (Result<T, Error>) -> Void) -> Void {
         guard let url = url
         else {
             completion(.failure(CustomError.invalidURL))
@@ -21,8 +21,7 @@ extension URLSession {
         }
         URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
-                requestError?(completion(.failure(error)) as? Error)
-                print("Error: Internet or Request URL")
+                completion(.failure(error))
             } else {
                 if let data = data {
                     let result = try! JSONDecoder().decode(expecting, from: data)
@@ -45,8 +44,10 @@ class Articles {
                 successCallBack(stories)
             case .failure(let error):
                 print(error.localizedDescription)
+                print("Error: Internet or Request URL")
+                requestError?(error)
             }
-        }, requestError: requestError)
+        })
     }
     
     class func fetchArticles(queryName: String, numberPage: Int, successCallBack: @escaping ([ArticleItem]) -> Void, requestError: ((Error?) -> Void)?) {
@@ -59,8 +60,9 @@ class Articles {
                 successCallBack(articleItem)
             case .failure(let error):
                 print(error.localizedDescription)
+                requestError?(error)
             }
-        }, requestError: requestError)
+        })
     }
 }
 
