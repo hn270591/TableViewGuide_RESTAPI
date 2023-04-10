@@ -11,7 +11,7 @@ class ViewController: UIViewController {
     var stories: [Story] = []
     
     enum Titles {
-        static let internetError = "No internet"
+        static let internetError = "No Internet"
     }
     
     enum Message {
@@ -50,16 +50,19 @@ class ViewController: UIViewController {
         DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
             Articles.fetchStory(successCallBack: { (stories: [Story]) -> Void in
                 DispatchQueue.main.async {
-                    self.stories = stories
-                    self.saveTopStories(stories: stories)
-                    UIView.transition(with: self.tableView, duration: self.animationDuration,options: .transitionCurlDown, animations: { self.tableView.reloadData()
-                    })
+                    UIView.animate(withDuration: .nan) {
+                        self.deleteAllData()
+                        self.tableView.reloadData()
+                    } completion: { _ in
+                        self.stories = stories
+                        self.saveTopStories(stories: stories)
+                        UIView.transition(with: self.tableView, duration: self.animationDuration, options: .transitionCrossDissolve, animations: { self.tableView.reloadData()
+                        })
+                    }
                 }
-            }, requestError: {_ in
-                DispatchQueue.main.async {
-                    self.alert(title: Titles.internetError, message: Message.checkNetwork)
-                    self.activityIndicatorView.stopAnimating()
-                }
+            }, requestError: { (error: (URLSession.CustomError)?) -> Void in
+                self.handlerError(error: error)
+                self.activityIndicatorView.stopAnimating()
             })
         }
     }
@@ -98,10 +101,8 @@ class ViewController: UIViewController {
                     self.tableView.reloadData()
                 }
             }
-        }, requestError: {_ in
-            DispatchQueue.main.async {
-                self.alert(title: Titles.internetError, message: Message.checkNetwork)
-            }
+        }, requestError: { (error: (URLSession.CustomError)?) -> Void in
+            self.handlerError(error: error)
         })
     }
     
@@ -153,9 +154,11 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let vcDetails = storyboard?.instantiateViewController(withIdentifier: "DetailsViewController") as! DetailsViewController
-        vcDetails.stories = stories[indexPath.row]
-        vcDetails.hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(vcDetails, animated: true)
+        if !stories.isEmpty {
+            vcDetails.stories = stories[indexPath.row]
+            vcDetails.hidesBottomBarWhenPushed = true
+            navigationController?.pushViewController(vcDetails, animated: true)
+        }
     }
 }
 
@@ -208,6 +211,30 @@ extension ViewController: NSFetchedResultsControllerDelegate {
             try fetchResultsController.performFetch()
         } catch {
             print(error.localizedDescription)
+        }
+    }
+    
+    private func handlerError(error: (URLSession.CustomError)?) {
+        switch error {
+        case .inconnectInternet:
+            DispatchQueue.main.async {
+                self.alert(title: Titles.internetError, message: Message.checkNetwork)
+            }
+            break
+        case .badStutusCode:
+            print("Error: Bad statusCode")
+            break
+        case .invalidResponse:
+            print("Error: Invalid Response")
+            break
+        case .invalidURL:
+            print("Error: Invalid URL")
+            break
+        case .invalidData:
+            print("Error: Invalid Data")
+            break
+        case .none:
+            print("No handler")
         }
     }
 }

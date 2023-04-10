@@ -18,6 +18,21 @@ class SearchViewController: UIViewController {
     private var isLoading: Bool = false
     private var searchText: String = ""
     
+    enum Titles {
+        static let internetError = "No Internet"
+    }
+    
+    enum Message {
+        static let checkNetwork = "Checking the network cables, modem, and router."
+    }
+    
+    private func alert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let ok = UIAlertAction(title: "OK", style: .default)
+        alert.addAction(ok)
+        present(alert, animated: true)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self
@@ -133,7 +148,10 @@ extension SearchViewController: UISearchBarDelegate {
                         self.isLoading = false
                     }
                 } 
-            }, requestError: nil)
+            }, requestError: { (error: (URLSession.CustomError)?) -> Void in
+                self.handlerError(error: error)
+                self.activityIndicatorView.stopAnimating()
+            })
         }
     }
     
@@ -155,6 +173,7 @@ extension SearchViewController: UISearchBarDelegate {
 
         if indexPath.row == articles.count - 1, !isLoading {
             loadMoreData()
+            print("NameQuery: \(self.searchText), page: \(self.numberPage + 1)")
         }
     }
     
@@ -163,7 +182,7 @@ extension SearchViewController: UISearchBarDelegate {
             self.isLoading = true
             let nextPage = self.numberPage + 1
             
-            DispatchQueue.global().asyncAfter(deadline: .now()) {
+            DispatchQueue.global().async {
                 Articles.fetchArticles(queryName: self.searchText,
                                        numberPage: nextPage,
                                        successCallBack: { (articles: [ArticleItem]) -> Void in
@@ -173,7 +192,9 @@ extension SearchViewController: UISearchBarDelegate {
                         self.numberPage = self.numberPage + 1
                         self.isLoading = false
                     }
-                }, requestError: nil)
+                }, requestError: { (error: (URLSession.CustomError)?) -> Void in
+                    self.handlerError(error: error)
+                })
             }
         }
     }
@@ -183,4 +204,43 @@ extension SearchViewController: UISearchBarDelegate {
             self.loadingCell?.activityIndicatorView.stopAnimating()
         }
     }
+    
+    private func handlerError(error: (URLSession.CustomError)?) {
+        switch error {
+        case .inconnectInternet:
+            DispatchQueue.main.async {
+                self.alert(title: Titles.internetError, message: Message.checkNetwork)
+            }
+            break
+        case .badStutusCode:
+                DispatchQueue.global().asyncAfter(deadline: .now() + 30) {
+                    Articles.fetchArticles(queryName: self.searchText,
+                                           numberPage: self.numberPage + 1,
+                                           successCallBack: { (articles: [ArticleItem]) -> Void in
+                        DispatchQueue.main.async {
+                            self.articles = self.articles + articles
+                            self.tableView.reloadData()
+                            self.numberPage = self.numberPage + 1
+                            self.isLoading = false
+                        }
+                    }, requestError: { (error: (URLSession.CustomError)?) -> Void in
+                        self.handlerError(error: error)
+                    })
+                }
+            break
+        case .invalidResponse:
+            print("Error: Invalid Response")
+            break
+        case .invalidURL:
+            print("Error: Invalid URL")
+            break
+        case .invalidData:
+            print("Error: Invalid Data")
+            break
+        case .none:
+            print("No handler")
+        }
+    }
 }
+
+

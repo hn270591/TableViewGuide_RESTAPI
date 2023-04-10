@@ -7,10 +7,15 @@ struct ConStants {
     static let topStoriesURL = URL(string: "https://api.nytimes.com/svc/topstories/v2/home.json?api-key=\(apiKey)")
 }
 
+
+
 extension URLSession {
     enum CustomError: Error {
         case invalidURL
         case invalidData
+        case invalidResponse
+        case badStutusCode
+        case inconnectInternet
     }
     
     func request<T: Codable>(url: URL?, expecting: T.Type, completion: @escaping (Result<T, Error>) -> Void) -> Void {
@@ -21,21 +26,32 @@ extension URLSession {
         }
         URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
-                completion(.failure(error))
+                completion(.failure(CustomError.inconnectInternet))
+                fatalError(error.localizedDescription)
+            }
+            
+            guard let httpResponse = response as? HTTPURLResponse else {
+                print("Not the right response")
+                completion(.failure(CustomError.invalidResponse))
+                 return
+            }
+            guard (200...299).contains(httpResponse.statusCode) else {
+                print("Error: StatusCode \(httpResponse.statusCode)")
+                completion(.failure(CustomError.badStutusCode))
+                return
+            }
+            if let data = data {
+                let result = try! JSONDecoder().decode(expecting, from: data)
+                completion(.success(result))
             } else {
-                if let data = data {
-                    let result = try! JSONDecoder().decode(expecting, from: data)
-                    completion(.success(result))
-                } else {
-                    completion(.failure(CustomError.invalidData))
-                }
+                completion(.failure(CustomError.invalidData))
             }
         }.resume()
     }
 }
 
 class Articles {
-    class func fetchStory(successCallBack: @escaping ([Story]) -> Void, requestError: ((Error?) -> Void)?) {
+    class func fetchStory(successCallBack: @escaping ([Story]) -> Void, requestError: ((URLSession.CustomError) -> Void)?) {
         URLSession.shared.request(url: ConStants.topStoriesURL, expecting: Results.self, completion: { result in
             switch result {
             case .success(let value):
@@ -45,12 +61,13 @@ class Articles {
             case .failure(let error):
                 print(error.localizedDescription)
                 print("Error: Internet or Request URL")
-                requestError?(error)
+                requestError?(error as! URLSession.CustomError)
+            
             }
         })
     }
     
-    class func fetchArticles(queryName: String, numberPage: Int, successCallBack: @escaping ([ArticleItem]) -> Void, requestError: ((Error?) -> Void)?) {
+    class func fetchArticles(queryName: String, numberPage: Int, successCallBack: @escaping ([ArticleItem]) -> Void, requestError: ((URLSession.CustomError) -> Void)?) {
         let searchArticleURL = URL(string: "https://api.nytimes.com/svc/search/v2/articlesearch.json?q=\(queryName)&page=\(numberPage)&api-key=\(apiKey)")
         URLSession.shared.request(url: searchArticleURL, expecting: ArticlesData.self, completion: { results in
             switch results {
@@ -60,7 +77,7 @@ class Articles {
                 successCallBack(articleItem)
             case .failure(let error):
                 print(error.localizedDescription)
-                requestError?(error)
+                requestError?(error as! URLSession.CustomError)
             }
         })
     }
@@ -70,7 +87,7 @@ class Articles {
 
 // Model SearchArticles
 struct ArticlesData: Codable {
-    var status: String
+//    var status: String
     var response: Response
 }
 
