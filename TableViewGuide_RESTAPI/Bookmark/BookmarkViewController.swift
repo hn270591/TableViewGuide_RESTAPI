@@ -38,7 +38,7 @@ class BookmarkViewController: UIViewController {
         tableView.delegate = self
         tableView.register(BookmartCell.self, forCellReuseIdentifier: reuseIdentifier)
         tableView.separatorStyle = .singleLine
-        tableView.rowHeight = 40
+        tableView.rowHeight = 100
     }
     
     private func getDataStories() {
@@ -57,7 +57,7 @@ extension BookmarkViewController: UITableViewDataSource, UITableViewDelegate {
             print("Count: \(count)")
             return count
         } else {
-            return 10
+            return 0
         }
     }
     
@@ -65,11 +65,10 @@ extension BookmarkViewController: UITableViewDataSource, UITableViewDelegate {
         let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! BookmartCell
         let count = fetchResultsController.fetchedObjects?.count ?? 0
         if count == 0 {
-            cell.titleLabel.text = ""
             return cell
         }
         let storiesAtIndex = fetchResultsController.object(at: indexPath)
-        cell.titleLabel.text = storiesAtIndex.titles
+        cell.bookmartStories = storiesAtIndex
         return cell
     }
     

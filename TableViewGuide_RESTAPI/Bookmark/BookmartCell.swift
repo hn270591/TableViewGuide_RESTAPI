@@ -10,7 +10,19 @@ import UIKit
 class BookmartCell: UITableViewCell {
     
     var titleLabel = UILabel()
-    var bookmartImage = UIImageView()
+    var thumbnailView = UIImageView()
+    
+    var bookmartStories: BookmartStories? {
+        didSet {
+            titleLabel.text = bookmartStories?.titles
+            if let urlString = bookmartStories?.imageURL {
+                let url = URL(string: urlString)
+                thumbnailView.downloadImage(url: url!)
+            } else {
+                thumbnailView.image = UIImage(named: "photo")
+            }
+        }
+    }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -22,19 +34,21 @@ class BookmartCell: UITableViewCell {
     }
     
     private func setupViews() {
-        bookmartImage.image = UIImage(systemName: "book")
-        contentView.addSubview(bookmartImage)
-        bookmartImage.translatesAutoresizingMaskIntoConstraints = false
-        bookmartImage.heightAnchor.constraint(equalToConstant: 25).isActive = true
-        bookmartImage.widthAnchor.constraint(equalToConstant: 25).isActive = true
-        bookmartImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10).isActive = true
-        bookmartImage.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
+        thumbnailView.image = nil
+        thumbnailView.contentMode = .scaleToFill
+        contentView.addSubview(thumbnailView)
+        thumbnailView.translatesAutoresizingMaskIntoConstraints = false
+        thumbnailView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        thumbnailView.widthAnchor.constraint(equalToConstant: 120).isActive = true
+        thumbnailView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
+        thumbnailView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10).isActive = true
         
+        titleLabel.numberOfLines = 0
         contentView.addSubview(titleLabel)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.heightAnchor.constraint(equalTo: contentView.heightAnchor).isActive = true
+        titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10).isActive = true
+        titleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 10).isActive = true
         titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
-        titleLabel.leadingAnchor.constraint(equalTo: bookmartImage.trailingAnchor, constant: 10).isActive = true
-        titleLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
+        titleLabel.leadingAnchor.constraint(equalTo: thumbnailView.trailingAnchor, constant: 10).isActive = true
     }
 }

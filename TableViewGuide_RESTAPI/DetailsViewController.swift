@@ -63,41 +63,38 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
         setupWebView()
     }
     
-    // Setup WebView
-    private func setupWebView() {
-        webView.navigationDelegate = self
-        var url: URL!
+    private func resultsUrlString() -> String {
+        var urlString: String!
         let countOfStoriesURL = stories?.url.count ?? 0
         let countOfArticlesURL = articles?.web_url.count ?? 0
         
         if countOfStoriesURL != 0 {
-            url = URL(string: stories!.url)
+            urlString = stories!.url
             title = stories!.title
         } else if countOfArticlesURL != 0 {
-            url = URL(string: articles!.web_url)
+            urlString = articles!.web_url
             title = articles!.headline.main
         } else {
-            url = URL(string: bookmartStories.url_web!)
+            urlString = bookmartStories.url_web
             title = bookmartStories.titles
         }
-        let urlRequest = URLRequest(url: url!)
+        return urlString
+    }
+    
+    // Setup WebView
+    private func setupWebView() {
+        webView.navigationDelegate = self
+        let urlString = resultsUrlString()
+        let urlRequest = URLRequest(url: URL(string: urlString)!)
         webView.load(urlRequest)
         webView.allowsBackForwardNavigationGestures = true
         
-        let countOfFetchArticles = FetchArticlesData.fetchResultsController.fetchedObjects?.count ?? 0
-        if countOfFetchArticles != 0 {
-            if let stories = FetchArticlesData.fetchResultsController.fetchedObjects {
-                let urlsString = stories.compactMap({$0.url_web})
-                for urlString in urlsString {
-                    let url_web = URL(string: urlString)
-                    if url == url_web {
-                        isbookmark = true
-                        break
-                    } else {
-                        isbookmark = false
-                    }
-                }
-            }
+        FetchArticlesData.filterFetchStories(urlFilter: urlString)
+        let count = FetchArticlesData.fetchResultsController.fetchedObjects?.count ?? 0
+        if count > 0 {
+            isbookmark = true
+        } else {
+            isbookmark = false
         }
     }
     
@@ -136,26 +133,35 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
     
     // Setup Bookmart
     @objc private func onBookmart() {
+        isbookmark.toggle()
+        let countOfStoriesURL = self.stories?.url.count ?? 0
+        let countOfArticlesURL = self.articles?.web_url.count ?? 0
         if isbookmark {
-            return
-        }
-        let alert = UIAlertController(title: nil, message: "Do you want to bookmart", preferredStyle: .alert)
-        let ok = UIAlertAction(title: "OK", style: .default) {_ in
-            self.isbookmark = true
-            let countOfStoriesURL = self.stories?.url.count ?? 0
-            let countOfArticlesURL = self.articles?.web_url.count ?? 0
+            // insert stories
             if countOfStoriesURL != 0 {
-                FetchArticlesData.insertTitlesStories(title: self.stories!.title, url_web: self.stories!.url)
+                FetchArticlesData.insertTitlesStories(title: self.stories!.title,
+                                                      url_web: self.stories!.url,
+                                                      imageURL: self.stories!.multimedia[2].url)
             } else if countOfArticlesURL != 0 {
-                FetchArticlesData.insertTitlesStories(title: self.articles!.headline.main, url_web: self.articles!.web_url)
+                FetchArticlesData.insertTitlesStories(title: self.articles!.headline.main,
+                                                      url_web: self.articles!.web_url,
+                                                      imageURL: self.articles!.multimedia[19].url)
             } else {
                 return
             }
+        } else {
+            // delete stories
+            let urlString = resultsUrlString()
+            FetchArticlesData.filterFetchStories(urlFilter: urlString)
+            let deleteStories = FetchArticlesData.fetchResultsController.object(at: IndexPath(item: 0, section: 0))
+            guard let context = AppDelegate.managedObjectContext else { return }
+            context.delete(deleteStories)
+            do {
+                try context.save()
+            } catch {
+                fatalError(error.localizedDescription)
+            }
         }
-        let no = UIAlertAction(title: "No", style: .cancel)
-        alert.addAction(ok)
-        alert.addAction(no)
-        present(alert, animated: true)
     }
     
     @objc private func backAction() {

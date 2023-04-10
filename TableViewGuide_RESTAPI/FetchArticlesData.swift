@@ -25,13 +25,28 @@ class FetchArticlesData {
         }
     }
     
-    static func insertTitlesStories(title: String, url_web: String) {
+    static func insertTitlesStories(title: String, url_web: String, imageURL: String) {
         guard let context = AppDelegate.managedObjectContext else { return }
         let insertTitlesStories = NSEntityDescription.insertNewObject(forEntityName: "BookmartStories", into: context) as! BookmartStories
         insertTitlesStories.titles = title
         insertTitlesStories.url_web = url_web
+        insertTitlesStories.imageURL = imageURL
         do {
             try context.save()
+            try fetchResultsController.performFetch()
+        } catch {
+            fatalError(error.localizedDescription)
+        }
+    }
+    
+    static func filterFetchStories(urlFilter: String) {
+        guard let context = AppDelegate.managedObjectContext else { return }
+        let fetchRequest = BookmartStories.fetchRequest()
+        let predicate = NSPredicate(format: "url_web == %@", urlFilter)
+        fetchRequest.predicate = predicate
+        fetchRequest.sortDescriptors = []
+        fetchResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
+        do {
             try fetchResultsController.performFetch()
         } catch {
             fatalError(error.localizedDescription)

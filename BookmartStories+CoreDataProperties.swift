@@ -18,6 +18,7 @@ extension BookmartStories {
 
     @NSManaged public var titles: String?
     @NSManaged public var url_web: String?
+    @NSManaged public var imageURL: String?
 
 }
 
