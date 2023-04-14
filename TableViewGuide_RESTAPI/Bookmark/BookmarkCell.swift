@@ -1,5 +1,5 @@
 //
-//  BookmartCell.swift
+//  BookmarkCell.swift
 //  TableViewGuide_RESTAPI
 //
 //  Created by Nguyễn Thịnh on 08/04/2023.
@@ -7,19 +7,19 @@
 
 import UIKit
 
-class BookmartCell: UITableViewCell {
+class BookmarkCell: UITableViewCell {
     
-    var titleLabel = UILabel()
-    var thumbnailView = UIImageView()
+    private var titleLabel = UILabel()
+    private var thumbnailView = UIImageView()
     
-    var bookmartStories: BookmartStories? {
+    var bookmarkStory: BookmarkStory? {
         didSet {
-            titleLabel.text = bookmartStories?.titles
-            if let urlString = bookmartStories?.imageURL {
-                let url = URL(string: urlString)
-                thumbnailView.downloadImage(url: url!)
+            titleLabel.text = bookmarkStory?.title
+            if let urlString =  bookmarkStory?.imageURL {
+                let url = URL(string: urlString)!
+                thumbnailView.downloadImage(url: url)
             } else {
-                thumbnailView.image = UIImage(named: "photo")
+                thumbnailView.image = UIImage(systemName: "photo")
             }
         }
     }

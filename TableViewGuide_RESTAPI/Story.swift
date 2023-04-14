@@ -7,8 +7,6 @@ struct ConStants {
     static let topStoriesURL = URL(string: "https://api.nytimes.com/svc/topstories/v2/home.json?api-key=\(apiKey)")
 }
 
-
-
 extension URLSession {
     enum CustomError: Error {
         case invalidURL
@@ -85,9 +83,10 @@ class Articles {
 
 // MARK: - Model
 
+/**
 // Model SearchArticles
 struct ArticlesData: Codable {
-//    var status: String
+    var status: String
     var response: Response
 }
 
@@ -126,6 +125,6 @@ struct MultimediaStory: Codable {
     let url: String
 }
         
-        
+*/
         
         

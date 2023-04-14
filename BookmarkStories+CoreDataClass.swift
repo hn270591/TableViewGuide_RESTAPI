@@ -9,7 +9,7 @@
 import Foundation
 import CoreData
 
-@objc(BookmartStories)
-public class BookmartStories: NSManagedObject {
+@objc(BookmarkStory)
+public class BookmarkStory: NSManagedObject {
 
 }

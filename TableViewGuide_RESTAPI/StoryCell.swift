@@ -1,4 +1,6 @@
 import UIKit
+import Alamofire
+import AlamofireImage
 
 class StoryCell: UITableViewCell {
 
@@ -21,10 +23,10 @@ class StoryCell: UITableViewCell {
         }
     }
     
-    var topStories: TopStories? {
+    var topStory: TopStory? {
         didSet {
-            headlineLabel.text = topStories?.titles
-            if let urlString = URL(string: topStories?.imagesURL ?? "") {
+            headlineLabel.text = topStory?.title
+            if let urlString = URL(string: topStory?.imagesURL ?? "") {
                 thumbnailView.downloadImage(url: urlString)
                 thumbnailView.contentMode = .scaleToFill
             }

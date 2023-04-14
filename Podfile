@@ -7,5 +7,7 @@ target 'TableViewGuide_RESTAPI' do
 
   # Pods for TableViewGuide_RESTAPI
     pod 'Kingfisher'
+    pod 'Alamofire'
+    pod 'AlamofireImage'
 
 end

@@ -96,7 +96,7 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let vcDetails = storyboard?.instantiateViewController(withIdentifier: "DetailsViewController") as! DetailsViewController
-        vcDetails.articles = articles[indexPath.row]
+        vcDetails.article = articles[indexPath.row]
         vcDetails.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(vcDetails, animated: true)
     }
@@ -119,6 +119,7 @@ extension SearchViewController: UISearchBarDelegate {
         self.activityIndicatorView.startAnimating()
         if !articles.isEmpty {
             self.articles.removeAll()
+            isLoading = false
             self.numberPage = 0
             self.tableView.reloadData()
         }
@@ -133,24 +134,23 @@ extension SearchViewController: UISearchBarDelegate {
             }
             self.searchText = String(textArray)
             self.isLoading = true
-            Articles.fetchArticles(queryName: self.searchText,
-                                   numberPage: self.numberPage,
-                                   successCallBack: { (articles: [ArticleItem]) -> Void in
-                DispatchQueue.main.async {
-                    self.articles = articles
+            BaseReponse.ariticleResponse(queryName: self.searchText, numberPage: self.numberPage, completion: { articles, error in
+                if let error = error {
+                    self.handlerError(error: error)
                     self.activityIndicatorView.stopAnimating()
-                    UIView.transition(with: self.tableView,
-                                      duration: self.animationDurationTableView,
-                                      options: .transitionCrossDissolve)
-                    {
-                        self.tableView.reloadData()
-                    } completion: { _ in
-                        self.isLoading = false
-                    }
-                } 
-            }, requestError: { (error: (URLSession.CustomError)?) -> Void in
-                self.handlerError(error: error)
+                    return
+                }
+                self.articles = articles
                 self.activityIndicatorView.stopAnimating()
+                UIView.transition(with: self.tableView,
+                                  duration: self.animationDurationTableView,
+                                  options: .transitionCrossDissolve)
+                {
+                    self.tableView.reloadData()
+                } completion: { _ in
+                    self.isLoading = false
+                }
+    
             })
         }
     }
@@ -182,20 +182,16 @@ extension SearchViewController: UISearchBarDelegate {
             self.isLoading = true
             let nextPage = self.numberPage + 1
             
-            DispatchQueue.global().async {
-                Articles.fetchArticles(queryName: self.searchText,
-                                       numberPage: nextPage,
-                                       successCallBack: { (articles: [ArticleItem]) -> Void in
-                    DispatchQueue.main.async {
-                        self.articles = self.articles + articles
-                        self.tableView.reloadData()
-                        self.numberPage = self.numberPage + 1
-                        self.isLoading = false
-                    }
-                }, requestError: { (error: (URLSession.CustomError)?) -> Void in
+            BaseReponse.ariticleResponse(queryName: self.searchText, numberPage: nextPage, completion: { articles, error in
+                if let error = error {
                     self.handlerError(error: error)
-                })
-            }
+                    return
+                }
+                self.articles = self.articles + articles
+                self.tableView.reloadData()
+                self.numberPage = self.numberPage + 1
+                self.isLoading = false
+            })
         }
     }
     
@@ -205,40 +201,29 @@ extension SearchViewController: UISearchBarDelegate {
         }
     }
     
-    private func handlerError(error: (URLSession.CustomError)?) {
+    private func handlerError(error: BaseResponseError) {
         switch error {
-        case .inconnectInternet:
+        case .inConnect:
             DispatchQueue.main.async {
                 self.alert(title: Titles.internetError, message: Message.checkNetwork)
             }
             break
-        case .badStutusCode:
-                DispatchQueue.global().asyncAfter(deadline: .now() + 30) {
-                    Articles.fetchArticles(queryName: self.searchText,
-                                           numberPage: self.numberPage + 1,
-                                           successCallBack: { (articles: [ArticleItem]) -> Void in
-                        DispatchQueue.main.async {
-                            self.articles = self.articles + articles
-                            self.tableView.reloadData()
-                            self.numberPage = self.numberPage + 1
-                            self.isLoading = false
-                        }
-                    }, requestError: { (error: (URLSession.CustomError)?) -> Void in
-                        self.handlerError(error: error)
-                    })
-                }
-            break
         case .invalidResponse:
-            print("Error: Invalid Response")
-            break
-        case .invalidURL:
-            print("Error: Invalid URL")
+            DispatchQueue.global().asyncAfter(deadline: .now() + 30) {
+                BaseReponse.ariticleResponse(queryName: self.searchText, numberPage: self.numberPage + 1, completion: { articles, error in
+                    if let error = error {
+                        self.handlerError(error: error)
+                        return
+                    }
+                    self.articles = self.articles + articles
+                    self.tableView.reloadData()
+                    self.numberPage = self.numberPage + 1
+                    self.isLoading = false
+                })
+            }
             break
         case .invalidData:
-            print("Error: Invalid Data")
-            break
-        case .none:
-            print("No handler")
+            print("Invalid Data")
         }
     }
 }

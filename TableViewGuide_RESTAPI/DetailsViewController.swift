@@ -7,16 +7,17 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
 
     // MARK: - Properties
     
-    var bookmartStories: BookmartStories!
-    var stories: Story?
-    var articles: ArticleItem?
+    var story: Story?
+    var article: ArticleItem?
+    var bookmarkStory: BookmarkStory!
     private var webView: WKWebView!
-    private var activityIndicator: UIActivityIndicatorView!
     private var toolBar = UIToolbar()
+    private var activityIndicator: UIActivityIndicatorView!
+    private var fetchResultsController: NSFetchedResultsController<BookmarkStory>!
     
-    private let bookmartButton = UIBarButtonItem(image: UIImage(systemName: "star"),
+    private let bookmarkButton = UIBarButtonItem(image: UIImage(systemName: "star"),
                                                  style: .done, target: .none,
-                                                 action: #selector(onBookmart))
+                                                 action: #selector(onBookmark))
     private let backButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.left"),
                                                  style: .done, target: .none,
                                                  action: #selector(backAction))
@@ -32,7 +33,7 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
     
     private var isbookmark = false {
         didSet {
-            bookmartButton.image = isbookmark ? UIImage(systemName: "star.fill") : UIImage(systemName: "star")
+            bookmarkButton.image = isbookmark ? UIImage(systemName: "star.fill") : UIImage(systemName: "star")
         }
     }
     
@@ -53,30 +54,24 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
     // Life cycle View
     override func viewDidLoad() {
         super.viewDidLoad()
-        FetchArticlesData.initFetchResultsController()
-        FetchArticlesData.fetchResultsController.delegate = self
         setupWebView()
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        setupWebView()
+        fetchBookmarkStory()
     }
     
     private func resultsUrlString() -> String {
         var urlString: String!
-        let countOfStoriesURL = stories?.url.count ?? 0
-        let countOfArticlesURL = articles?.web_url.count ?? 0
+        let countOfStoriesURL = story?.url.count ?? 0
+        let countOfArticlesURL = article?.web_url.count ?? 0
         
         if countOfStoriesURL != 0 {
-            urlString = stories!.url
-            title = stories!.title
+            urlString = story!.url
+            title = story!.title
         } else if countOfArticlesURL != 0 {
-            urlString = articles!.web_url
-            title = articles!.headline.main
+            urlString = article!.web_url
+            title = article!.headline.main
         } else {
-            urlString = bookmartStories.url_web
-            title = bookmartStories.titles
+            urlString = bookmarkStory.url_web
+            title = bookmarkStory.title
         }
         return urlString
     }
@@ -88,9 +83,13 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
         let urlRequest = URLRequest(url: URL(string: urlString)!)
         webView.load(urlRequest)
         webView.allowsBackForwardNavigationGestures = true
-        
-        FetchArticlesData.filterFetchStories(urlFilter: urlString)
-        let count = FetchArticlesData.fetchResultsController.fetchedObjects?.count ?? 0
+    }
+    
+    // Fetch Bookmark Story filted
+    private func fetchBookmarkStory() {
+        let urlString = resultsUrlString()
+        fetchFilterBookmartStories(urlFilter: urlString)
+        let count = fetchResultsController.fetchedObjects?.count ?? 0
         if count > 0 {
             isbookmark = true
         } else {
@@ -109,9 +108,9 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
         forwardButtonItem.isEnabled = false
         
         backAllButtonItem.target = self
-        bookmartButton.target = self
+        bookmarkButton.target = self
         navigationItem.leftBarButtonItems = [ backAllButtonItem]
-        navigationItem.rightBarButtonItems = [ bookmartButton ]
+        navigationItem.rightBarButtonItems = [ bookmarkButton ]
         
         view.addSubview(toolBar)
         toolBar.translatesAutoresizingMaskIntoConstraints = false
@@ -131,29 +130,29 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
         webView.reload()
     }
     
-    // Setup Bookmart
-    @objc private func onBookmart() {
+    // Setup Bookmark
+    @objc private func onBookmark() {
         isbookmark.toggle()
-        let countOfStoriesURL = self.stories?.url.count ?? 0
-        let countOfArticlesURL = self.articles?.web_url.count ?? 0
+        let countOfStoriesURL = self.story?.url.count ?? 0
+        let countOfArticlesURL = self.article?.web_url.count ?? 0
         if isbookmark {
             // insert stories
             if countOfStoriesURL != 0 {
-                FetchArticlesData.insertTitlesStories(title: self.stories!.title,
-                                                      url_web: self.stories!.url,
-                                                      imageURL: self.stories!.multimedia[2].url)
+                insertStory(title: self.story!.title,
+                            url_web: self.story!.url,
+                            imageURL: self.story!.multimedia[2].url)
             } else if countOfArticlesURL != 0 {
-                FetchArticlesData.insertTitlesStories(title: self.articles!.headline.main,
-                                                      url_web: self.articles!.web_url,
-                                                      imageURL: self.articles!.multimedia[19].url)
+                insertStory(title: self.article!.headline.main,
+                            url_web: self.article!.web_url,
+                            imageURL: "https://static01.nyt.com/" + self.article!.multimedia[19].url)
             } else {
                 return
             }
         } else {
             // delete stories
             let urlString = resultsUrlString()
-            FetchArticlesData.filterFetchStories(urlFilter: urlString)
-            let deleteStories = FetchArticlesData.fetchResultsController.object(at: IndexPath(item: 0, section: 0))
+            fetchFilterBookmartStories(urlFilter: urlString)
+            let deleteStories = fetchResultsController.object(at: IndexPath(item: 0, section: 0))
             guard let context = AppDelegate.managedObjectContext else { return }
             context.delete(deleteStories)
             do {
@@ -191,5 +190,31 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
 
 // MARK: - NSFetchedResultsControllerDelegate
 extension DetailsViewController: NSFetchedResultsControllerDelegate {
-    //
+    private func fetchFilterBookmartStories(urlFilter: String) {
+        guard let context = AppDelegate.managedObjectContext else { return }
+        let fetchRequest = BookmarkStory.fetchRequest()
+        let predicate = NSPredicate(format: "url_web == %@", urlFilter)
+        fetchRequest.predicate = predicate
+        fetchRequest.sortDescriptors = []
+        fetchResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
+        do {
+            try fetchResultsController.performFetch()
+        } catch {
+            fatalError(error.localizedDescription)
+        }
+    }
+    
+    private func insertStory(title: String, url_web: String, imageURL: String) {
+        guard let context = AppDelegate.managedObjectContext else { return }
+        let insertTitlesStories = NSEntityDescription.insertNewObject(forEntityName: "BookmarkStory", into: context) as! BookmarkStory
+        insertTitlesStories.title = title
+        insertTitlesStories.url_web = url_web
+        insertTitlesStories.imageURL = imageURL
+        do {
+            try context.save()
+            try fetchResultsController.performFetch()
+        } catch {
+            fatalError(error.localizedDescription)
+        }
+    }
 }

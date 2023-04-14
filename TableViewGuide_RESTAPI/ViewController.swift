@@ -5,7 +5,7 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     private var activityIndicatorView = UIActivityIndicatorView()
-    var fetchResultsController: NSFetchedResultsController<TopStories>!
+    var fetchResultsController: NSFetchedResultsController<TopStory>!
     private let animationDuration: TimeInterval = 1
     private let heightForRow: CGFloat = 100
     var stories: [Story] = []
@@ -48,21 +48,26 @@ class ViewController: UIViewController {
     // Fetch Data
     private func fetchTopStories() {
         DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
-            Articles.fetchStory(successCallBack: { (stories: [Story]) -> Void in
-                DispatchQueue.main.async {
-                    UIView.animate(withDuration: .nan) {
-                        self.deleteAllData()
-                        self.tableView.reloadData()
-                    } completion: { _ in
-                        self.stories = stories
-                        self.saveTopStories(stories: stories)
-                        UIView.transition(with: self.tableView, duration: self.animationDuration, options: .transitionCrossDissolve, animations: { self.tableView.reloadData()
-                        })
+            BaseReponse.storyResponse(completion: { stories, error  in
+                if let error = error {
+                    if error == .inConnect {
+                        DispatchQueue.main.async {
+                            self.alert(title: Titles.internetError, message: Message.checkNetwork)
+                        }
+                    } else {
+                        print(error)
                     }
+                    return
                 }
-            }, requestError: { (error: (URLSession.CustomError)?) -> Void in
-                self.handlerError(error: error)
-                self.activityIndicatorView.stopAnimating()
+                UIView.animate(withDuration: .nan) {
+                    self.deleteAllStory()
+                    self.tableView.reloadData()
+                } completion: { _ in
+                    self.stories = stories
+                    self.saveStory(stories: stories)
+                    UIView.transition(with: self.tableView, duration: self.animationDuration, options: .transitionCrossDissolve, animations: { self.tableView.reloadData()
+                    })
+                }
             })
         }
     }
@@ -88,39 +93,45 @@ class ViewController: UIViewController {
     @objc private func handlerReload() {
         if !self.stories.isEmpty {
             self.stories.removeAll()
-            self.deleteAllData()
+            self.deleteAllStory()
             self.tableView.reloadData()
         }
         self.activityIndicatorView.startAnimating()
-        Articles.fetchStory(successCallBack: { (stories: [Story]) -> Void in
-            DispatchQueue.main.async {
-                self.stories = stories
-                self.saveTopStories(stories: stories)
-                UIView.transition(with: self.tableView, duration: self.animationDuration, options: .transitionCrossDissolve) {
-                    self.activityIndicatorView.stopAnimating()
-                    self.tableView.reloadData()
+        BaseReponse.storyResponse(completion: { stories, error  in
+            if let error = error {
+                if error == .inConnect {
+                    DispatchQueue.main.async {
+                        self.alert(title: Titles.internetError, message: Message.checkNetwork)
+                    }
+                } else {
+                    print(error)
                 }
+                return
             }
-        }, requestError: { (error: (URLSession.CustomError)?) -> Void in
-            self.handlerError(error: error)
+            self.stories = stories
+            self.saveStory(stories: stories)
+            UIView.transition(with: self.tableView, duration: self.animationDuration, options: .transitionCrossDissolve) {
+                self.activityIndicatorView.stopAnimating()
+                self.tableView.reloadData()
+            }
         })
     }
     
     // Handler refeshController in tableView
     @objc private func onRefesh() {
-        DispatchQueue.global().asyncAfter(deadline: .now() + animationDuration) {
-            Articles.fetchStory(successCallBack: { (stories: [Story]) -> Void in
-                DispatchQueue.main.async {
-                    self.stories = stories
-                    self.saveTopStories(stories: stories)
-                    self.tableView.reloadData()
-                }
-            }, requestError: {_ in
-                DispatchQueue.main.async {
+        BaseReponse.storyResponse(completion: { stories, error  in
+            if let error = error {
+                if error == .inConnect {
                     self.alert(title: Titles.internetError, message: Message.checkNetwork)
+                } else {
+                    print(error)
                 }
-            })
-        }
+                return
+            }
+            self.stories = stories
+            self.saveStory(stories: stories)
+            self.tableView.reloadData()
+        })
         self.tableView.refreshControl?.endRefreshing()
     }
 }
@@ -132,7 +143,7 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
         let cell = tableView.dequeueReusableCell(withIdentifier: "StoryCell") as! StoryCell
         if fetchResultsController.fetchedObjects!.count > 0 {
             let storyAtIndex = fetchResultsController.object(at: indexPath)
-            cell.topStories = storyAtIndex
+            cell.topStory = storyAtIndex
             self.activityIndicatorView.stopAnimating()
             return cell
         } else {
@@ -155,7 +166,7 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         let vcDetails = storyboard?.instantiateViewController(withIdentifier: "DetailsViewController") as! DetailsViewController
         if !stories.isEmpty {
-            vcDetails.stories = stories[indexPath.row]
+            vcDetails.story = stories[indexPath.row]
             vcDetails.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(vcDetails, animated: true)
         }
@@ -167,7 +178,7 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
 extension ViewController: NSFetchedResultsControllerDelegate {
     private func initfetchResultsController() {
         guard let context = AppDelegate.managedObjectContext else { return }
-        let fetchRequest = TopStories.fetchRequest()
+        let fetchRequest = TopStory.fetchRequest()
         fetchRequest.sortDescriptors = []
         fetchResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
                                                             managedObjectContext: context,
@@ -180,18 +191,18 @@ extension ViewController: NSFetchedResultsControllerDelegate {
         }
     }
     
-    private func saveTopStories(stories: [Story]) {
-        self.deleteAllData()
+    private func saveStory(stories: [Story]) {
+        self.deleteAllStory()
         for value in stories {
-            insertTopStories(title: value.title, imageURL: value.multimedia[2].url)
+            insertStory(title: value.title, imageURL: value.multimedia[2].url)
         }
-        print("Number TopStories saved: \(fetchResultsController.fetchedObjects?.count ?? 0)")
+        print("Number TopStory saved: \(fetchResultsController.fetchedObjects?.count ?? 0)")
     }
     
-    private func insertTopStories(title: String, imageURL: String) {
+    private func insertStory(title: String, imageURL: String) {
         guard let context = AppDelegate.managedObjectContext else { return }
-        let insertNewObject = NSEntityDescription.insertNewObject(forEntityName: "TopStories", into: context) as! TopStories
-        insertNewObject.titles = title
+        let insertNewObject = NSEntityDescription.insertNewObject(forEntityName: "TopStory", into: context) as! TopStory
+        insertNewObject.title = title
         insertNewObject.imagesURL = imageURL
         do {
             try context.save()
@@ -201,9 +212,9 @@ extension ViewController: NSFetchedResultsControllerDelegate {
         }
     }
     
-    private func deleteAllData() {
+    private func deleteAllStory() {
         guard let context = AppDelegate.managedObjectContext else { return }
-        let fetchRequestResult = NSFetchRequest<NSFetchRequestResult>(entityName: "TopStories")
+        let fetchRequestResult = NSFetchRequest<NSFetchRequestResult>(entityName: "TopStory")
         let batchDelete = NSBatchDeleteRequest(fetchRequest: fetchRequestResult)
         do {
             try context.execute(batchDelete)
@@ -211,30 +222,6 @@ extension ViewController: NSFetchedResultsControllerDelegate {
             try fetchResultsController.performFetch()
         } catch {
             print(error.localizedDescription)
-        }
-    }
-    
-    private func handlerError(error: (URLSession.CustomError)?) {
-        switch error {
-        case .inconnectInternet:
-            DispatchQueue.main.async {
-                self.alert(title: Titles.internetError, message: Message.checkNetwork)
-            }
-            break
-        case .badStutusCode:
-            print("Error: Bad statusCode")
-            break
-        case .invalidResponse:
-            print("Error: Invalid Response")
-            break
-        case .invalidURL:
-            print("Error: Invalid URL")
-            break
-        case .invalidData:
-            print("Error: Invalid Data")
-            break
-        case .none:
-            print("No handler")
         }
     }
 }

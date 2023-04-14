@@ -3,4 +3,54 @@
    uuid = "4843BC72-CEC2-4DCA-A28D-6A0E0F181C74"
    type = "0"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2510F659-23D3-4870-91D3-51F4C5ED6518"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "TableViewGuide_RESTAPI/APIModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "55"
+            endingLineNumber = "55"
+            landmarkName = "request(urlRequest:method:objectType:completion:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "2510F659-23D3-4870-91D3-51F4C5ED6518 - debf1bdc4505ae67"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Alamofire.DataResponse&lt;Swift.Optional&lt;Foundation.Data&gt;, Alamofire.AFError&gt;) -&gt; () in TableViewGuide_RESTAPI.BaseRequest.request&lt;&#x3c4;_0_0 where &#x3c4;_0_0: Swift.Decodable, &#x3c4;_0_0: Swift.Encodable&gt;(urlRequest: TableViewGuide_RESTAPI.HTTPRouter, method: Alamofire.HTTPMethod, objectType: &#x3c4;_0_0.Type, completion: (Swift.Result&lt;&#x3c4;_0_0, TableViewGuide_RESTAPI.BaseResponseError&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "TableViewGuide_RESTAPI"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenthinh/Desktop/GithubIOS/Fork%20TableViewExample-%20RestAPI/TableViewExample_RESTAPI/TableViewGuide_RESTAPI/APIModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "55"
+                  endingLineNumber = "55"
+                  offsetFromSymbolStart = "3132">
+               </Location>
+               <Location
+                  uuid = "2510F659-23D3-4870-91D3-51F4C5ED6518 - debf1bdc4505ae67"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Alamofire.DataResponse&lt;Swift.Optional&lt;Foundation.Data&gt;, Alamofire.AFError&gt;) -&gt; () in TableViewGuide_RESTAPI.BaseRequest.request&lt;&#x3c4;_0_0 where &#x3c4;_0_0: Swift.Decodable, &#x3c4;_0_0: Swift.Encodable&gt;(urlRequest: TableViewGuide_RESTAPI.HTTPRouter, method: Alamofire.HTTPMethod, objectType: &#x3c4;_0_0.Type, completion: (Swift.Result&lt;&#x3c4;_0_0, TableViewGuide_RESTAPI.BaseResponseError&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "TableViewGuide_RESTAPI"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nguyenthinh/Desktop/GithubIOS/Fork%20TableViewExample-%20RestAPI/TableViewExample_RESTAPI/TableViewGuide_RESTAPI/APIModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "55"
+                  endingLineNumber = "55"
+                  offsetFromSymbolStart = "3144">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>
