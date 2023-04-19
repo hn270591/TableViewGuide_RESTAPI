@@ -6,6 +6,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     private var activityIndicatorView = UIActivityIndicatorView()
     var fetchResultsController: NSFetchedResultsController<TopStory>!
+    var fetchSelectedStory: NSFetchedResultsController<SelectedStory>!
     private let animationDuration: TimeInterval = 1
     private let heightForRow: CGFloat = 100
     var stories: [Story] = []
@@ -33,6 +34,8 @@ class ViewController: UIViewController {
         setupTableView()
         initfetchResultsController()
         fetchResultsController.delegate = self
+        initFetchSelectedStory()
+        fetchSelectedStory.delegate = self
         activityIndicatorView.startAnimating()
         fetchTopStories()
     }
@@ -48,7 +51,7 @@ class ViewController: UIViewController {
     // Fetch Data
     private func fetchTopStories() {
         DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
-            BaseReponse.storyResponse(completion: { stories, error  in
+            BaseReponse.shared.storyResponse(completion: { stories, error  in
                 if let error = error {
                     if error == .inConnect {
                         DispatchQueue.main.async {
@@ -97,7 +100,7 @@ class ViewController: UIViewController {
             self.tableView.reloadData()
         }
         self.activityIndicatorView.startAnimating()
-        BaseReponse.storyResponse(completion: { stories, error  in
+        BaseReponse.shared.storyResponse(completion: { stories, error  in
             if let error = error {
                 if error == .inConnect {
                     DispatchQueue.main.async {
@@ -119,7 +122,7 @@ class ViewController: UIViewController {
     
     // Handler refeshController in tableView
     @objc private func onRefesh() {
-        BaseReponse.storyResponse(completion: { stories, error  in
+        BaseReponse.shared.storyResponse(completion: { stories, error  in
             if let error = error {
                 if error == .inConnect {
                     self.alert(title: Titles.internetError, message: Message.checkNetwork)
@@ -141,9 +144,18 @@ class ViewController: UIViewController {
 extension ViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "StoryCell") as! StoryCell
+        cell.delegate = self
         if fetchResultsController.fetchedObjects!.count > 0 {
             let storyAtIndex = fetchResultsController.object(at: indexPath)
             cell.topStory = storyAtIndex
+            let count = fetchSelectedStory.fetchedObjects?.count ?? 0
+            if count > 0 {
+                let stories = fetchSelectedStory.fetchedObjects!
+                let titles = stories.compactMap({ $0.title })
+                if titles.firstIndex(of: storyAtIndex.title!) != nil {
+                    cell.headlineLabel.textColor = .darkGray
+                }
+            }
             self.activityIndicatorView.stopAnimating()
             return cell
         } else {
@@ -222,6 +234,56 @@ extension ViewController: NSFetchedResultsControllerDelegate {
             try fetchResultsController.performFetch()
         } catch {
             print(error.localizedDescription)
+        }
+    }
+    
+    private func initFetchSelectedStory() {
+        guard let context = AppDelegate.managedObjectContext else { return }
+        let fetchRequest = SelectedStory.fetchRequest()
+        fetchRequest.sortDescriptors = []
+        fetchSelectedStory = NSFetchedResultsController(fetchRequest: fetchRequest,
+                                                            managedObjectContext: context,
+                                                            sectionNameKeyPath: nil,
+                                                            cacheName: nil)
+        do {
+            try fetchSelectedStory.performFetch()
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
+    private func saveSelectedStory(title: String) {
+        guard let context = AppDelegate.managedObjectContext else { return }
+        let insertNewObject = NSEntityDescription.insertNewObject(forEntityName: "SelectedStory", into: context) as! SelectedStory
+        insertNewObject.title = title
+        do {
+            try context.save()
+            try fetchSelectedStory.performFetch()
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+}
+
+// MARK: - Headline Blurred Delegate
+
+extension ViewController: HeadlineBlurredDelegate {
+    func headlineBlurred(_ cell: StoryCell) {
+        if let titleAtIndex = cell.topStory?.title {
+            let count = fetchSelectedStory.fetchedObjects?.count ?? 0
+            if count > 0 {
+                let stories = fetchSelectedStory.fetchedObjects!
+                let titles = stories.compactMap({ $0.title })
+                if titles.firstIndex(of: titleAtIndex) != nil {
+                    return
+                } else {
+                    saveSelectedStory(title: titleAtIndex)
+                    print("A new story has been read")
+                }
+            } else {
+                saveSelectedStory(title: titleAtIndex)
+                print("A new story has been read")
+            }
         }
     }
 }

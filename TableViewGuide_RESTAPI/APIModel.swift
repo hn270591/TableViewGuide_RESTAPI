@@ -27,7 +27,7 @@ typealias articleCompletion = ([ArticleItem], BaseResponseError?) -> Void
 class BaseRequest {
     static let shared = BaseRequest()
     
-    func request<T: Codable>(urlRequest: HTTPRouter, method: HTTPMethod, objectType: T.Type, completion: @escaping completion<T>) -> Void {
+    func request<T: Codable>(urlRequest: APIRouter, method: HTTPMethod, objectType: T.Type, completion: @escaping completion<T>) -> Void {
         if !Connectivity.isConnectedToInternet() {
             // Error internet
             print("Internet inconnect")
@@ -60,15 +60,13 @@ class BaseRequest {
 }
 
 class BaseReponse {
-    class func storyResponse(completion: @escaping storyCompletion) {
-        BaseRequest.shared.request(urlRequest: HTTPRouter.topStories, method: .get, objectType: Results.self, completion: { results in
+    static let shared = BaseReponse()
+    
+    func storyResponse(completion: @escaping storyCompletion) {
+        BaseRequest.shared.request(urlRequest: APIRouter.topStories, method: .get, objectType: Results.self, completion: { results in
             switch results {
             case .success(let value):
-                let results = value.results
-                var stories: [Story] = []
-                for result in results {
-                    stories.append(result)
-                }
+                let stories = value.results
                 completion(stories, nil)
             case .failure(let error):
                 completion([], error)
@@ -76,15 +74,11 @@ class BaseReponse {
         })
     }
     
-    class func ariticleResponse(queryName: String, numberPage: Int, completion: @escaping articleCompletion) {
-        BaseRequest.shared.request(urlRequest: HTTPRouter.search(q: queryName, page: numberPage), method: .get, objectType: ArticlesData.self, completion: { results in
+    func ariticleResponse(queryName: String, numberPage: Int, completion: @escaping articleCompletion) {
+        BaseRequest.shared.request(urlRequest: APIRouter.search(q: queryName, page: numberPage), method: .get, objectType: ArticlesData.self, completion: { results in
             switch results {
             case .success(let value):
-                let docs = value.response.docs
-                var articles: [ArticleItem] = []
-                for doc in docs {
-                    articles.append(doc)
-                }
+                let articles = value.response.docs
                 completion(articles, nil)
             case .failure(let error):
                 completion([], error)

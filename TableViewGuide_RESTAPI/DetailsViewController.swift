@@ -28,8 +28,8 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
                                                     style: .plain, target: .none,
                                                     action: #selector(forwardAction))
     private let refreshButtonItem = UIBarButtonItem(barButtonSystemItem: .refresh,
-                                                    target: .none,
-                                                    action: #selector(refeshAction))
+                                                        target: .none,
+                                                        action: #selector(refreshAction))
     
     private var isbookmark = false {
         didSet {
@@ -124,9 +124,9 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
         fixedSpace.width = 50
         
         toolBar.items = [ backButtonItem, fixedSpace, forwardButtonItem, flexibleSpace, refreshButtonItem]
-    }
+        }
     
-    @objc private func refeshAction() {
+    @objc private func refreshAction() {
         webView.reload()
     }
     
@@ -182,6 +182,7 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
     }
     
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        title = webView.title
         activityIndicator.stopAnimating()
         backButtonItem.isEnabled = webView.canGoBack
         forwardButtonItem.isEnabled = webView.canGoForward

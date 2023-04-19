@@ -134,7 +134,7 @@ extension SearchViewController: UISearchBarDelegate {
             }
             self.searchText = String(textArray)
             self.isLoading = true
-            BaseReponse.ariticleResponse(queryName: self.searchText, numberPage: self.numberPage, completion: { articles, error in
+            BaseReponse.shared.ariticleResponse(queryName: self.searchText, numberPage: self.numberPage, completion: { articles, error in
                 if let error = error {
                     self.handlerError(error: error)
                     self.activityIndicatorView.stopAnimating()
@@ -182,7 +182,7 @@ extension SearchViewController: UISearchBarDelegate {
             self.isLoading = true
             let nextPage = self.numberPage + 1
             
-            BaseReponse.ariticleResponse(queryName: self.searchText, numberPage: nextPage, completion: { articles, error in
+            BaseReponse.shared.ariticleResponse(queryName: self.searchText, numberPage: nextPage, completion: { articles, error in
                 if let error = error {
                     self.handlerError(error: error)
                     return
@@ -210,7 +210,7 @@ extension SearchViewController: UISearchBarDelegate {
             break
         case .invalidResponse:
             DispatchQueue.global().asyncAfter(deadline: .now() + 30) {
-                BaseReponse.ariticleResponse(queryName: self.searchText, numberPage: self.numberPage + 1, completion: { articles, error in
+                BaseReponse.shared.ariticleResponse(queryName: self.searchText, numberPage: self.numberPage + 1, completion: { articles, error in
                     if let error = error {
                         self.handlerError(error: error)
                         return

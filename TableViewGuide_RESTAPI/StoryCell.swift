@@ -1,11 +1,29 @@
 import UIKit
 import Alamofire
-import AlamofireImage
+
+protocol HeadlineBlurredDelegate: AnyObject {
+    func headlineBlurred(_ cell: StoryCell)
+}
 
 class StoryCell: UITableViewCell {
 
     @IBOutlet weak var thumbnailView: UIImageView!
     @IBOutlet weak var headlineLabel: UILabel!
+    
+    weak var delegate: HeadlineBlurredDelegate!
+    var isSelectedStory: Bool = false {
+        didSet {
+            headlineLabel.textColor = isSelectedStory ? .darkGray : .label
+        }
+    }
+    
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated)
+        if selected == true {
+            isSelectedStory = true
+            delegate?.headlineBlurred(self)
+        }
+    }
     
     var story: Story? {
         didSet {
@@ -26,6 +44,7 @@ class StoryCell: UITableViewCell {
     var topStory: TopStory? {
         didSet {
             headlineLabel.text = topStory?.title
+            headlineLabel.textColor = .label
             if let urlString = URL(string: topStory?.imagesURL ?? "") {
                 thumbnailView.downloadImage(url: urlString)
                 thumbnailView.contentMode = .scaleToFill

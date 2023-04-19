@@ -8,7 +8,7 @@
 import Foundation
 import Alamofire
 
-enum HTTPRouter: URLRequestConvertible {
+enum APIRouter: URLRequestConvertible {
     case topStories
     case search(q: String, page: Int)
     
