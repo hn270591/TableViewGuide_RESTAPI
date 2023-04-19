@@ -29,7 +29,7 @@ class StoryCell: UITableViewCell {
         didSet {
             headlineLabel?.text = story?.title
             headlineLabel?.sizeToFit()
-            
+            headlineLabel.textColor = .label
             guard let multimedia = story?.multimedia else { return }
             if multimedia.count >= 3 {
                 let thumbnailString = multimedia[2].url
@@ -44,7 +44,7 @@ class StoryCell: UITableViewCell {
     var topStory: TopStory? {
         didSet {
             headlineLabel.text = topStory?.title
-            headlineLabel.textColor = .label
+            isSelectedStory = topStory!.isSelected
             if let urlString = URL(string: topStory?.imagesURL ?? "") {
                 thumbnailView.downloadImage(url: urlString)
                 thumbnailView.contentMode = .scaleToFill

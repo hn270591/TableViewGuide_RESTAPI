@@ -6,7 +6,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     private var activityIndicatorView = UIActivityIndicatorView()
     var fetchResultsController: NSFetchedResultsController<TopStory>!
-    var fetchSelectedStory: NSFetchedResultsController<SelectedStory>!
+    var fetchReadArticle: NSFetchedResultsController<ReadArticle>!
     private let animationDuration: TimeInterval = 1
     private let heightForRow: CGFloat = 100
     var stories: [Story] = []
@@ -34,8 +34,8 @@ class ViewController: UIViewController {
         setupTableView()
         initfetchResultsController()
         fetchResultsController.delegate = self
-        initFetchSelectedStory()
-        fetchSelectedStory.delegate = self
+        initFetchReadArticle()
+        fetchReadArticle.delegate = self
         activityIndicatorView.startAnimating()
         fetchTopStories()
     }
@@ -67,12 +67,31 @@ class ViewController: UIViewController {
                     self.tableView.reloadData()
                 } completion: { _ in
                     self.stories = stories
-                    self.saveStory(stories: stories)
+                    self.deleteAllStory()
+                    self.insertStories(stories: stories)
                     UIView.transition(with: self.tableView, duration: self.animationDuration, options: .transitionCrossDissolve, animations: { self.tableView.reloadData()
                     })
                 }
             })
         }
+    }
+    
+    // Insert Stories
+    private func insertStories(stories: [Story] ) {
+        for story in stories {
+            let count = self.fetchReadArticle.fetchedObjects?.count ?? 0
+            if count > 0 {
+                let urls = self.fetchReadArticle.fetchedObjects!.compactMap({ $0.url })
+                if urls.firstIndex(of: story.url) != nil {
+                    self.insertStory(title: story.title, imageURL: story.multimedia[2].url, url: story.url, isSelected: true)
+                } else {
+                    self.insertStory(title: story.title, imageURL: story.multimedia[2].url, url: story.url, isSelected: false)
+                }
+            } else {
+                self.insertStory(title: story.title, imageURL: story.multimedia[2].url, url: story.url, isSelected: false)
+            }
+        }
+        print("Number TopStory saved: \(fetchResultsController.fetchedObjects?.count ?? 0)")
     }
     
     // MARK: - Layout SubView
@@ -112,7 +131,8 @@ class ViewController: UIViewController {
                 return
             }
             self.stories = stories
-            self.saveStory(stories: stories)
+            self.deleteAllStory()
+            self.insertStories(stories: stories)
             UIView.transition(with: self.tableView, duration: self.animationDuration, options: .transitionCrossDissolve) {
                 self.activityIndicatorView.stopAnimating()
                 self.tableView.reloadData()
@@ -132,7 +152,8 @@ class ViewController: UIViewController {
                 return
             }
             self.stories = stories
-            self.saveStory(stories: stories)
+            self.deleteAllStory()
+            self.insertStories(stories: stories)
             self.tableView.reloadData()
         })
         self.tableView.refreshControl?.endRefreshing()
@@ -148,14 +169,6 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
         if fetchResultsController.fetchedObjects!.count > 0 {
             let storyAtIndex = fetchResultsController.object(at: indexPath)
             cell.topStory = storyAtIndex
-            let count = fetchSelectedStory.fetchedObjects?.count ?? 0
-            if count > 0 {
-                let stories = fetchSelectedStory.fetchedObjects!
-                let titles = stories.compactMap({ $0.title })
-                if titles.firstIndex(of: storyAtIndex.title!) != nil {
-                    cell.headlineLabel.textColor = .darkGray
-                }
-            }
             self.activityIndicatorView.stopAnimating()
             return cell
         } else {
@@ -203,19 +216,13 @@ extension ViewController: NSFetchedResultsControllerDelegate {
         }
     }
     
-    private func saveStory(stories: [Story]) {
-        self.deleteAllStory()
-        for value in stories {
-            insertStory(title: value.title, imageURL: value.multimedia[2].url)
-        }
-        print("Number TopStory saved: \(fetchResultsController.fetchedObjects?.count ?? 0)")
-    }
-    
-    private func insertStory(title: String, imageURL: String) {
+    private func insertStory(title: String, imageURL: String, url: String, isSelected: Bool) {
         guard let context = AppDelegate.managedObjectContext else { return }
         let insertNewObject = NSEntityDescription.insertNewObject(forEntityName: "TopStory", into: context) as! TopStory
         insertNewObject.title = title
         insertNewObject.imagesURL = imageURL
+        insertNewObject.url = url
+        insertNewObject.isSelected = isSelected
         do {
             try context.save()
             try fetchResultsController.performFetch()
@@ -237,28 +244,29 @@ extension ViewController: NSFetchedResultsControllerDelegate {
         }
     }
     
-    private func initFetchSelectedStory() {
+    private func initFetchReadArticle() {
         guard let context = AppDelegate.managedObjectContext else { return }
-        let fetchRequest = SelectedStory.fetchRequest()
+        let fetchRequest = ReadArticle.fetchRequest()
         fetchRequest.sortDescriptors = []
-        fetchSelectedStory = NSFetchedResultsController(fetchRequest: fetchRequest,
+        fetchReadArticle = NSFetchedResultsController(fetchRequest: fetchRequest,
                                                             managedObjectContext: context,
                                                             sectionNameKeyPath: nil,
                                                             cacheName: nil)
         do {
-            try fetchSelectedStory.performFetch()
+            try fetchReadArticle.performFetch()
         } catch {
             print(error.localizedDescription)
         }
     }
     
-    private func saveSelectedStory(title: String) {
+    private func saveReadArticle(title: String, url: String) {
         guard let context = AppDelegate.managedObjectContext else { return }
-        let insertNewObject = NSEntityDescription.insertNewObject(forEntityName: "SelectedStory", into: context) as! SelectedStory
+        let insertNewObject = NSEntityDescription.insertNewObject(forEntityName: "ReadArticle", into: context) as! ReadArticle
         insertNewObject.title = title
+        insertNewObject.url = url
         do {
             try context.save()
-            try fetchSelectedStory.performFetch()
+            try fetchReadArticle.performFetch()
         } catch {
             print(error.localizedDescription)
         }
@@ -269,19 +277,20 @@ extension ViewController: NSFetchedResultsControllerDelegate {
 
 extension ViewController: HeadlineBlurredDelegate {
     func headlineBlurred(_ cell: StoryCell) {
-        if let titleAtIndex = cell.topStory?.title {
-            let count = fetchSelectedStory.fetchedObjects?.count ?? 0
+        if let url = cell.topStory?.url {
+            let titleAtIndex = cell.topStory?.url
+            let count = fetchReadArticle.fetchedObjects?.count ?? 0
             if count > 0 {
-                let stories = fetchSelectedStory.fetchedObjects!
-                let titles = stories.compactMap({ $0.title })
-                if titles.firstIndex(of: titleAtIndex) != nil {
+                let stories = fetchReadArticle.fetchedObjects!
+                let urls = stories.compactMap({ $0.url })
+                if urls.firstIndex(of: url) != nil {
                     return
                 } else {
-                    saveSelectedStory(title: titleAtIndex)
+                    saveReadArticle(title: titleAtIndex!, url: url)
                     print("A new story has been read")
                 }
             } else {
-                saveSelectedStory(title: titleAtIndex)
+                saveReadArticle(title: titleAtIndex!, url: url)
                 print("A new story has been read")
             }
         }

@@ -17,6 +17,8 @@ extension TopStory {
 
     @NSManaged public var imagesURL: String?
     @NSManaged public var title: String?
+    @NSManaged public var url: String?
+    @NSManaged public var isSelected: Bool
 
 }
 
