@@ -1,4 +1,3 @@
-
 import UIKit
 
 class SearchViewController: UIViewController {
@@ -13,8 +12,7 @@ class SearchViewController: UIViewController {
     private let heightForRowOfArticlesCell: CGFloat = 100
     private let heightForRowOfLoadingCell: CGFloat = 50
     private let animationDurationTableView: TimeInterval = 1
-    private var loadingCell: LoadingCell?
-    private var numberPage: Int = 0
+    private var page: Int = 0
     private var isLoading: Bool = false
     private var searchText: String = ""
     
@@ -22,11 +20,11 @@ class SearchViewController: UIViewController {
         static let internetError = "No Internet"
     }
     
-    enum Message {
+    enum Messages {
         static let checkNetwork = "Checking the network cables, modem, and router."
     }
     
-    private func alert(title: String, message: String) {
+    func alert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let ok = UIAlertAction(title: "OK", style: .default)
         alert.addAction(ok)
@@ -50,7 +48,7 @@ class SearchViewController: UIViewController {
         setupIndicationView()
     }
     
-    private func setupIndicationView() {
+    func setupIndicationView() {
         activityIndicatorView.frame = CGRect(x: 0, y: 0, width: 64, height: 64)
         activityIndicatorView.center = CGPoint(x: (UIScreen.main.bounds.width) / 2, y: (UIScreen.main.bounds.height) / 2)
         activityIndicatorView.hidesWhenStopped = true
@@ -70,11 +68,7 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
         case 0:
             return articles.count
         case 1:
-            if isLoading {
-                return 1
-            } else {
-                return 0
-            }
+            return isLoading ? 1 : 0
         default:
             return 0
         }
@@ -82,13 +76,12 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "collectionCell", for: indexPath) as! SearchArticlesCell
-            cell.articles = articles[indexPath.row]
+            let cell = tableView.dequeueReusableCell(withIdentifier: "SearchArticlesCell", for: indexPath) as! SearchArticlesCell
+            cell.article = articles[indexPath.row]
             return cell
         } else if indexPath.section == 1 {
-                let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifierLoadingCell, for: indexPath) as! LoadingCell
-            self.loadingCell = cell
-                return cell
+            let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifierLoadingCell, for: indexPath) as! LoadingCell
+            return cell
         }
         return UITableViewCell()
     }
@@ -120,7 +113,7 @@ extension SearchViewController: UISearchBarDelegate {
         if !articles.isEmpty {
             self.articles.removeAll()
             isLoading = false
-            self.numberPage = 0
+            self.page = 0
             self.tableView.reloadData()
         }
         
@@ -134,23 +127,17 @@ extension SearchViewController: UISearchBarDelegate {
             }
             self.searchText = String(textArray)
             self.isLoading = true
-            BaseReponse.shared.ariticleResponse(queryName: self.searchText, numberPage: self.numberPage, completion: { articles, error in
+            BaseReponse.shared.articleResponse(query: self.searchText, page: self.page, completion: { articles, error in
+                self.activityIndicatorView.stopAnimating()
                 if let error = error {
-                    self.handlerError(error: error)
-                    self.activityIndicatorView.stopAnimating()
+                    self.handleError(error)
                     return
                 }
                 self.articles = articles
-                self.activityIndicatorView.stopAnimating()
-                UIView.transition(with: self.tableView,
-                                  duration: self.animationDurationTableView,
-                                  options: .transitionCrossDissolve)
-                {
-                    self.tableView.reloadData()
-                } completion: { _ in
-                    self.isLoading = false
-                }
-    
+                UIView.transition(with: self.tableView,duration: self.animationDurationTableView,options: .transitionCrossDissolve)
+                { self.tableView.reloadData() }
+                // show activityIndicatorView khi load page 1
+                self.isLoading = false
             })
         }
     }
@@ -163,33 +150,29 @@ extension SearchViewController: UISearchBarDelegate {
         searchBar.showsCancelButton = false
         searchBar.resignFirstResponder()
         searchBar.text = ""
-        numberPage = 0
+        page = 0
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.section == 1 {
-            self.loadingCell?.activityIndicatorView.startAnimating()
-        }
-
         if indexPath.row == articles.count - 1, !isLoading {
             loadMoreData()
-            print("NameQuery: \(self.searchText), page: \(self.numberPage + 1)")
+            print("NameQuery: \(self.searchText), page: \(self.page + 1)")
         }
     }
     
-    private func loadMoreData() {
+    func loadMoreData() {
         if !self.isLoading {
             self.isLoading = true
-            let nextPage = self.numberPage + 1
+            let nextPage = self.page + 1
             
-            BaseReponse.shared.ariticleResponse(queryName: self.searchText, numberPage: nextPage, completion: { articles, error in
+            BaseReponse.shared.articleResponse(query: self.searchText, page: nextPage, completion: { articles, error in
                 if let error = error {
-                    self.handlerError(error: error)
+                    self.handleError(error)
                     return
                 }
                 self.articles = self.articles + articles
                 self.tableView.reloadData()
-                self.numberPage = self.numberPage + 1
+                self.page = self.page + 1
                 self.isLoading = false
             })
         }
@@ -197,27 +180,28 @@ extension SearchViewController: UISearchBarDelegate {
     
     func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.section == 1 {
-            self.loadingCell?.activityIndicatorView.stopAnimating()
+            let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as! LoadingCell
+            cell.activityIndicatorView.stopAnimating()
         }
     }
     
-    private func handlerError(error: BaseResponseError) {
+    func handleError(_ error: BaseResponseError) {
         switch error {
         case .inConnect:
             DispatchQueue.main.async {
-                self.alert(title: Titles.internetError, message: Message.checkNetwork)
+                self.alert(title: Titles.internetError, message: Messages.checkNetwork)
             }
             break
         case .invalidResponse:
             DispatchQueue.global().asyncAfter(deadline: .now() + 30) {
-                BaseReponse.shared.ariticleResponse(queryName: self.searchText, numberPage: self.numberPage + 1, completion: { articles, error in
+                BaseReponse.shared.articleResponse(query: self.searchText, page: self.page + 1, completion: { articles, error in
                     if let error = error {
-                        self.handlerError(error: error)
+                        self.handleError(error)
                         return
                     }
                     self.articles = self.articles + articles
                     self.tableView.reloadData()
-                    self.numberPage = self.numberPage + 1
+                    self.page = self.page + 1
                     self.isLoading = false
                 })
             }

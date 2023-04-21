@@ -15,10 +15,10 @@ extension TopStory {
         return NSFetchRequest<TopStory>(entityName: "TopStory")
     }
 
-    @NSManaged public var imagesURL: String?
+    @NSManaged public var imageURL: String?
     @NSManaged public var title: String?
     @NSManaged public var url: String?
-    @NSManaged public var isSelected: Bool
+    @NSManaged public var isRead: Bool
 
 }
 

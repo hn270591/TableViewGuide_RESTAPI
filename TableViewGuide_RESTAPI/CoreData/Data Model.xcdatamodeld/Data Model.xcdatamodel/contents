@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21754" systemVersion="22D68" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="BookmarkStory" representedClassName="BookmarkStory" syncable="YES">
+    <entity name="BookmarkedArticle" representedClassName="BookmarkedArticle" syncable="YES">
         <attribute name="imageURL" optional="YES" attributeType="String"/>
         <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="url_web" optional="YES" attributeType="String"/>
     </entity>
     <entity name="ReadArticle" representedClassName="ReadArticle" syncable="YES">
+        <attribute name="imageURL" optional="YES" attributeType="String"/>
+        <attribute name="index" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="url" optional="YES" attributeType="String"/>
     </entity>
     <entity name="TopStory" representedClassName="TopStory" syncable="YES">
-        <attribute name="imagesURL" optional="YES" attributeType="String" customClassName="[String]"/>
-        <attribute name="isSelected" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="imageURL" optional="YES" attributeType="String" customClassName="[String]"/>
+        <attribute name="isRead" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="url" optional="YES" attributeType="String"/>
     </entity>

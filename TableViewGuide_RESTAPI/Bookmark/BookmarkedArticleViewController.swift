@@ -1,19 +1,12 @@
-//
-//  BookmarkViewController.swift
-//  TableViewGuide_RESTAPI
-//
-//  Created by Nguyễn Thịnh on 08/04/2023.
-//
-
 import UIKit
 import CoreData
 
-class BookmarkViewController: UIViewController {
+class BookmarkedArticleViewController: UIViewController {
 
     private var tableView = UITableView()
-    private let reuseIdentifier = "BookmarkCell"
+    private let reuseIdentifier = "BookmarkedArticleCell"
     private var searchController = UISearchController()
-    private var fetchResultsController: NSFetchedResultsController<BookmarkStory>!
+    private var bookmarkedResultsController: NSFetchedResultsController<BookmarkedArticle>!
     
     override func loadView() {
         view = tableView
@@ -24,8 +17,8 @@ class BookmarkViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         title = "Favorites"
         setupTableView()
-        initFetchResultsController()
-        fetchResultsController.delegate = self
+        loadBookmarkedArticle()
+        bookmarkedResultsController.delegate = self
         searchController.searchResultsUpdater = self
         navigationItem.searchController = searchController
     }
@@ -38,7 +31,7 @@ class BookmarkViewController: UIViewController {
     private func setupTableView() {
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.register(BookmarkCell.self, forCellReuseIdentifier: reuseIdentifier)
+        tableView.register(BookmarkedArticleCell.self, forCellReuseIdentifier: reuseIdentifier)
         tableView.separatorStyle = .singleLine
         tableView.rowHeight = 100
     }
@@ -46,33 +39,27 @@ class BookmarkViewController: UIViewController {
 
 // MARK: - TableView Datasource and Delegate
 
-extension BookmarkViewController: UITableViewDataSource, UITableViewDelegate {
+extension BookmarkedArticleViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let count = fetchResultsController?.fetchedObjects?.count ?? 0
-        if count != 0 {
-            print("Count: \(count)")
-            return count
-        } else {
-            return 0
-        }
+        let count = bookmarkedResultsController?.fetchedObjects?.count ?? 0
+        return count > 0 ? count : 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! BookmarkCell
-        let count = fetchResultsController?.fetchedObjects?.count ?? 0
-        if count == 0 {
-            return cell
+        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! BookmarkedArticleCell
+        let count = bookmarkedResultsController?.fetchedObjects?.count ?? 0
+        if count > 0 {
+            let object = bookmarkedResultsController?.object(at: indexPath)
+            cell.bookmarkStory = object
         }
-        let storiesAtIndex = fetchResultsController?.object(at: indexPath)
-        cell.bookmarkStory = storiesAtIndex
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let vcDetails = storyboard?.instantiateViewController(withIdentifier: "DetailsViewController") as! DetailsViewController
-        let bookmarkStory = fetchResultsController?.object(at: indexPath)
-        vcDetails.bookmarkStory = bookmarkStory
+        let object = bookmarkedResultsController?.object(at: indexPath)
+        vcDetails.bookmarkedArticle = object
         vcDetails.hidesBottomBarWhenPushed = true
         navigationController?.navigationBar.prefersLargeTitles = false
         navigationController?.pushViewController(vcDetails, animated: true)
@@ -81,47 +68,47 @@ extension BookmarkViewController: UITableViewDataSource, UITableViewDelegate {
 
 // MARK: - SearchController
 
-extension BookmarkViewController: UISearchResultsUpdating {
+extension BookmarkedArticleViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         let searchText = searchController.searchBar.text ?? ""
         if searchText.isEmpty {
-            initFetchResultsController()
+            loadBookmarkedArticle()
         } else {
-            fetchFilterBookmartStories(searchText: searchText)
+            searchArticle(searchText: searchText)
         }
-        fetchResultsController.delegate = self
+        bookmarkedResultsController.delegate = self
         self.tableView.reloadData()
     }
 }
 
 // MARK: - NSFetchedResultsControllerDelegate
 
-extension BookmarkViewController: NSFetchedResultsControllerDelegate {
+extension BookmarkedArticleViewController: NSFetchedResultsControllerDelegate {
     
-    private func initFetchResultsController() {
+    private func loadBookmarkedArticle() {
         guard let context = AppDelegate.managedObjectContext else { return }
-        let fetchRequest = BookmarkStory.fetchRequest()
+        let fetchRequest = BookmarkedArticle.fetchRequest()
         fetchRequest.sortDescriptors = []
-        fetchResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
+        bookmarkedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
                                                             managedObjectContext: context,
                                                             sectionNameKeyPath: nil,
                                                             cacheName: nil)
         do {
-            try fetchResultsController.performFetch()
+            try bookmarkedResultsController.performFetch()
         } catch {
             fatalError(error.localizedDescription)
         }
     }
     
-    private func fetchFilterBookmartStories(searchText: String) {
+    private func searchArticle(searchText: String) {
         guard let context = AppDelegate.managedObjectContext else { return }
-        let fetchRequest = BookmarkStory.fetchRequest()
+        let fetchRequest = BookmarkedArticle.fetchRequest()
         let predicate = NSPredicate(format: "title contains %@", searchText)
         fetchRequest.predicate = predicate
         fetchRequest.sortDescriptors = []
-        fetchResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
+        bookmarkedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
         do {
-            try fetchResultsController.performFetch()
+            try bookmarkedResultsController.performFetch()
         } catch {
             fatalError(error.localizedDescription)
         }
@@ -130,11 +117,10 @@ extension BookmarkViewController: NSFetchedResultsControllerDelegate {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             guard let context = AppDelegate.managedObjectContext else { return }
-            let deleteStories = fetchResultsController?.object(at: indexPath)
+            let deleteStories = bookmarkedResultsController?.object(at: indexPath)
             context.delete(deleteStories!)
             do {
                 try context.save()
-                try fetchResultsController?.performFetch()
             } catch {
                 fatalError(error.localizedDescription)
             }

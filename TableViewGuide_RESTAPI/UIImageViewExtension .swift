@@ -1,11 +1,3 @@
-//
-//  Extension UIImageView.swift
-//  TableViewGuide_RESTAPI
-//
-//  Created by Nguyễn Thịnh on 10/04/2023.
-//
-
-import Foundation
 import UIKit
 import Kingfisher
 import Alamofire

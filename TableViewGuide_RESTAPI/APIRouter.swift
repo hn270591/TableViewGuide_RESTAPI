@@ -1,16 +1,9 @@
-//
-//  HTTPRouter.swift
-//  TableViewGuide_RESTAPI
-//
-//  Created by Nguyễn Thịnh on 14/04/2023.
-//
-
 import Foundation
 import Alamofire
 
 enum APIRouter: URLRequestConvertible {
     case topStories
-    case search(q: String, page: Int)
+    case searchArticle(q: String, page: Int)
     
     var baseURL: URL {
         return URL(string: "https://api.nytimes.com/svc/")!
@@ -19,7 +12,7 @@ enum APIRouter: URLRequestConvertible {
     var method: HTTPMethod {
         switch self {
         case .topStories: return .get
-        case .search: return .get
+        case .searchArticle: return .get
         }
     }
 
@@ -27,7 +20,7 @@ enum APIRouter: URLRequestConvertible {
         switch self {
         case .topStories:
             return "topstories/v2/home.json"
-        case .search:
+        case .searchArticle:
             return "search/v2/articlesearch.json"
         }
     }
@@ -36,8 +29,8 @@ enum APIRouter: URLRequestConvertible {
         switch self {
         case .topStories:
             return nil
-        case .search(let queryName, let numberPage):
-            return ["q": queryName, "page": numberPage]
+        case .searchArticle(let query, let page):
+            return ["q": query, "page": page]
         }
     }
 

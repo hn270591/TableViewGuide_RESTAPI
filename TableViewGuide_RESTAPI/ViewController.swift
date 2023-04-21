@@ -4,11 +4,13 @@ import CoreData
 class ViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
+    
     private var activityIndicatorView = UIActivityIndicatorView()
-    var fetchResultsController: NSFetchedResultsController<TopStory>!
-    var fetchReadArticle: NSFetchedResultsController<ReadArticle>!
+    private var articleResultsController: NSFetchedResultsController<TopStory>!
+    private var readArticleResultsController: NSFetchedResultsController<ReadArticle>!
     private let animationDuration: TimeInterval = 1
     private let heightForRow: CGFloat = 100
+    var selectedIndex: Int?
     var stories: [Story] = []
     
     enum Titles {
@@ -19,7 +21,7 @@ class ViewController: UIViewController {
         static let checkNetwork = "Checking the network cables, modem, and router."
     }
     
-    private func alert(title: String, message: String) {
+    func alert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let ok = UIAlertAction(title: "OK", style: .default)
         alert.addAction(ok)
@@ -32,66 +34,98 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         title = "Top Stories"
         setupTableView()
-        initfetchResultsController()
-        fetchResultsController.delegate = self
-        initFetchReadArticle()
-        fetchReadArticle.delegate = self
-        activityIndicatorView.startAnimating()
+        loadCache()
+        loadReadArticles()
         fetchTopStories()
     }
     
-    private func setupTableView() {
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        loadReadArticles()
+        let readArticle = readArticleResultsController.fetchedObjects ?? []
+        if readArticle.isEmpty {
+            for index in 0..<stories.count {
+                if stories[index].isRead == true {
+                    stories[index].isRead = false
+                    let indexPath = IndexPath(row: index, section: 0)
+                    self.tableView.reloadRows(at: [indexPath], with: .automatic)
+                }
+            }
+        }
+        if let index = selectedIndex {
+            let indexPath = IndexPath(row: index, section: 0)
+            stories[index].isRead = true
+            self.tableView.reloadRows(at: [indexPath], with: .automatic)
+            //Reset
+            selectedIndex = nil
+        }
+    }
+    
+    func setupTableView() {
         tableView.dataSource = self
+        loadReadArticles()
         tableView.delegate = self
         tableView.rowHeight = heightForRow
         tableView.refreshControl = UIRefreshControl()
         tableView.refreshControl?.addTarget(self, action: #selector(onRefesh), for: .valueChanged)
     }
     
-    // Fetch Data
-    private func fetchTopStories() {
-        DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
-            BaseReponse.shared.storyResponse(completion: { stories, error  in
-                if let error = error {
-                    if error == .inConnect {
-                        DispatchQueue.main.async {
-                            self.alert(title: Titles.internetError, message: Message.checkNetwork)
-                        }
-                    } else {
-                        print(error)
-                    }
-                    return
-                }
-                UIView.animate(withDuration: .nan) {
-                    self.deleteAllStory()
-                    self.tableView.reloadData()
-                } completion: { _ in
-                    self.stories = stories
-                    self.deleteAllStory()
-                    self.insertStories(stories: stories)
-                    UIView.transition(with: self.tableView, duration: self.animationDuration, options: .transitionCrossDissolve, animations: { self.tableView.reloadData()
-                    })
-                }
-            })
+    // Handle Error
+    func handleError(_ error: BaseResponseError) {
+        if error == .inConnect {
+            DispatchQueue.main.async {
+                self.alert(title: Titles.internetError, message: Message.checkNetwork)
+            }
+        } else {
+            print(error)
         }
+        return
     }
     
-    // Insert Stories
-    private func insertStories(stories: [Story] ) {
-        for story in stories {
-            let count = self.fetchReadArticle.fetchedObjects?.count ?? 0
-            if count > 0 {
-                let urls = self.fetchReadArticle.fetchedObjects!.compactMap({ $0.url })
-                if urls.firstIndex(of: story.url) != nil {
-                    self.insertStory(title: story.title, imageURL: story.multimedia[2].url, url: story.url, isSelected: true)
-                } else {
-                    self.insertStory(title: story.title, imageURL: story.multimedia[2].url, url: story.url, isSelected: false)
-                }
+    func handleDataLoaded(_ stories: [Story]) {
+        self.stories = self.checkRead(stories)
+        self.setCache(stories: self.stories)
+        UIView.transition(with: self.tableView, duration: self.animationDuration, options: .transitionCrossDissolve, animations: self.tableView.reloadData)
+    }
+    
+    // Fetch Data
+    func fetchTopStories() {
+        if articleResultsController.fetchedObjects?.isEmpty == true, stories.isEmpty {
+            self.activityIndicatorView.startAnimating()
+        }
+        BaseReponse.shared.storyResponse(completion: { stories, error  in
+            self.activityIndicatorView.stopAnimating()
+            if let error = error {
+                self.handleError(error)
             } else {
-                self.insertStory(title: story.title, imageURL: story.multimedia[2].url, url: story.url, isSelected: false)
+                self.handleDataLoaded(stories)
+            }
+        })
+    }
+    
+    // Check Read Article
+    func checkRead(_ stories: [Story]) -> [Story] {
+        let readArticles = readArticleResultsController.fetchedObjects ?? []
+        if readArticles.isEmpty {
+            return stories
+        }
+        var mutable = Array(stories)
+        let readArticleURLs = readArticles.compactMap({ $0.url })
+        for index in 0..<mutable.count {
+            if readArticleURLs.contains(mutable[index].url) {
+                mutable[index].isRead = true
             }
         }
-        print("Number TopStory saved: \(fetchResultsController.fetchedObjects?.count ?? 0)")
+        return mutable
+    }
+    
+    // Set cache Article
+    func setCache(stories: [Story] ) {
+        self.clearArticles()
+        for story in stories {
+            insertStory(title: story.title, imageURL: story.multimedia[2].url, url: story.url, isRead: story.isRead ?? false)
+        }
+        print("Number TopStoris saved: \(articleResultsController.fetchedObjects?.count ?? 0)")
     }
     
     // MARK: - Layout SubView
@@ -104,7 +138,7 @@ class ViewController: UIViewController {
         navigationItem.rightBarButtonItems = [reloadButton]
     }
     
-    private func setupIndicationView() {
+    func setupIndicationView() {
         activityIndicatorView.frame = CGRect(x: 0, y: 0, width: 64, height: 64)
         activityIndicatorView.center = CGPoint(x: (UIScreen.main.bounds.width) / 2, y: 120)
         activityIndicatorView.hidesWhenStopped = true
@@ -112,49 +146,36 @@ class ViewController: UIViewController {
     }
     
     // Handler reload button refesh right BarButtonItem
-    @objc private func handlerReload() {
+    @objc func handlerReload() {
         if !self.stories.isEmpty {
             self.stories.removeAll()
-            self.deleteAllStory()
+            self.clearArticles()
             self.tableView.reloadData()
         }
         self.activityIndicatorView.startAnimating()
         BaseReponse.shared.storyResponse(completion: { stories, error  in
+            self.activityIndicatorView.stopAnimating()
             if let error = error {
-                if error == .inConnect {
-                    DispatchQueue.main.async {
-                        self.alert(title: Titles.internetError, message: Message.checkNetwork)
-                    }
-                } else {
-                    print(error)
-                }
-                return
-            }
-            self.stories = stories
-            self.deleteAllStory()
-            self.insertStories(stories: stories)
-            UIView.transition(with: self.tableView, duration: self.animationDuration, options: .transitionCrossDissolve) {
-                self.activityIndicatorView.stopAnimating()
-                self.tableView.reloadData()
+                self.handleError(error)
+            } else {
+                self.handleDataLoaded(stories)
             }
         })
     }
     
     // Handler refeshController in tableView
-    @objc private func onRefesh() {
+    @objc func onRefesh() {
+        if !self.stories.isEmpty {
+            self.stories.removeAll()
+            self.clearArticles()
+            self.tableView.reloadData()
+        }
         BaseReponse.shared.storyResponse(completion: { stories, error  in
             if let error = error {
-                if error == .inConnect {
-                    self.alert(title: Titles.internetError, message: Message.checkNetwork)
-                } else {
-                    print(error)
-                }
-                return
+                self.handleError(error)
+            } else {
+                self.handleDataLoaded(stories)
             }
-            self.stories = stories
-            self.deleteAllStory()
-            self.insertStories(stories: stories)
-            self.tableView.reloadData()
         })
         self.tableView.refreshControl?.endRefreshing()
     }
@@ -165,26 +186,18 @@ class ViewController: UIViewController {
 extension ViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "StoryCell") as! StoryCell
-        cell.delegate = self
-        if fetchResultsController.fetchedObjects!.count > 0 {
-            let storyAtIndex = fetchResultsController.object(at: indexPath)
-            cell.topStory = storyAtIndex
-            self.activityIndicatorView.stopAnimating()
-            return cell
-        } else {
+        if stories.count > 0 {
             let story = stories[indexPath.row]
             cell.story = story
-            self.activityIndicatorView.stopAnimating()
-            return cell
+        } else {
+            let story = articleResultsController.object(at: indexPath)
+            cell.topStory = story
         }
+        return cell
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if fetchResultsController.fetchedObjects!.count > 0 {
-            return fetchResultsController.fetchedObjects!.count
-        } else {
-            return stories.count
-        }
+        return stories.count > 0 ? stories.count : articleResultsController.fetchedObjects!.count
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -194,6 +207,7 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
             vcDetails.story = stories[indexPath.row]
             vcDetails.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(vcDetails, animated: true)
+            selectedIndex = indexPath.row
         }
     }
 }
@@ -201,98 +215,59 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
 // MARK: - Fetch results controller
 
 extension ViewController: NSFetchedResultsControllerDelegate {
-    private func initfetchResultsController() {
+    func loadCache() {
         guard let context = AppDelegate.managedObjectContext else { return }
         let fetchRequest = TopStory.fetchRequest()
         fetchRequest.sortDescriptors = []
-        fetchResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
+        articleResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
                                                             managedObjectContext: context,
                                                             sectionNameKeyPath: nil,
                                                             cacheName: nil)
         do {
-            try fetchResultsController.performFetch()
+            try articleResultsController.performFetch()
         } catch {
             print(error.localizedDescription)
         }
     }
     
-    private func insertStory(title: String, imageURL: String, url: String, isSelected: Bool) {
+    func insertStory(title: String, imageURL: String, url: String, isRead: Bool) {
         guard let context = AppDelegate.managedObjectContext else { return }
         let insertNewObject = NSEntityDescription.insertNewObject(forEntityName: "TopStory", into: context) as! TopStory
         insertNewObject.title = title
-        insertNewObject.imagesURL = imageURL
+        insertNewObject.imageURL = imageURL
         insertNewObject.url = url
-        insertNewObject.isSelected = isSelected
+        insertNewObject.isRead = isRead
         do {
             try context.save()
-            try fetchResultsController.performFetch()
         } catch {
             print(error.localizedDescription)
         }
     }
     
-    private func deleteAllStory() {
+    func clearArticles() {
         guard let context = AppDelegate.managedObjectContext else { return }
         let fetchRequestResult = NSFetchRequest<NSFetchRequestResult>(entityName: "TopStory")
         let batchDelete = NSBatchDeleteRequest(fetchRequest: fetchRequestResult)
         do {
             try context.execute(batchDelete)
             try context.save()
-            try fetchResultsController.performFetch()
         } catch {
             print(error.localizedDescription)
         }
     }
     
-    private func initFetchReadArticle() {
+    func loadReadArticles() {
         guard let context = AppDelegate.managedObjectContext else { return }
         let fetchRequest = ReadArticle.fetchRequest()
         fetchRequest.sortDescriptors = []
-        fetchReadArticle = NSFetchedResultsController(fetchRequest: fetchRequest,
+        readArticleResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
                                                             managedObjectContext: context,
                                                             sectionNameKeyPath: nil,
                                                             cacheName: nil)
         do {
-            try fetchReadArticle.performFetch()
+            try readArticleResultsController.performFetch()
         } catch {
             print(error.localizedDescription)
-        }
-    }
-    
-    private func saveReadArticle(title: String, url: String) {
-        guard let context = AppDelegate.managedObjectContext else { return }
-        let insertNewObject = NSEntityDescription.insertNewObject(forEntityName: "ReadArticle", into: context) as! ReadArticle
-        insertNewObject.title = title
-        insertNewObject.url = url
-        do {
-            try context.save()
-            try fetchReadArticle.performFetch()
-        } catch {
-            print(error.localizedDescription)
-        }
-    }
-}
-
-// MARK: - Headline Blurred Delegate
-
-extension ViewController: HeadlineBlurredDelegate {
-    func headlineBlurred(_ cell: StoryCell) {
-        if let url = cell.topStory?.url {
-            let titleAtIndex = cell.topStory?.url
-            let count = fetchReadArticle.fetchedObjects?.count ?? 0
-            if count > 0 {
-                let stories = fetchReadArticle.fetchedObjects!
-                let urls = stories.compactMap({ $0.url })
-                if urls.firstIndex(of: url) != nil {
-                    return
-                } else {
-                    saveReadArticle(title: titleAtIndex!, url: url)
-                    print("A new story has been read")
-                }
-            } else {
-                saveReadArticle(title: titleAtIndex!, url: url)
-                print("A new story has been read")
-            }
         }
     }
 }

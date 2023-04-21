@@ -1,21 +1,15 @@
-//
-//  BookmarkCell.swift
-//  TableViewGuide_RESTAPI
-//
-//  Created by Nguyễn Thịnh on 08/04/2023.
-//
-
 import UIKit
 
-class BookmarkCell: UITableViewCell {
+class BookmarkedArticleCell: UITableViewCell {
     
-    private var titleLabel = UILabel()
+    private var headlineLabel = UILabel()
     private var thumbnailView = UIImageView()
     
-    var bookmarkStory: BookmarkStory? {
+    var bookmarkStory: BookmarkedArticle? {
         didSet {
-            titleLabel.text = bookmarkStory?.title
-            if let urlString =  bookmarkStory?.imageURL {
+            guard let bookmarkStory = bookmarkStory else { return }
+            headlineLabel.text = bookmarkStory.title
+            if let urlString =  bookmarkStory.imageURL {
                 let url = URL(string: urlString)!
                 thumbnailView.downloadImage(url: url)
             } else {
@@ -43,12 +37,12 @@ class BookmarkCell: UITableViewCell {
         thumbnailView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
         thumbnailView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10).isActive = true
         
-        titleLabel.numberOfLines = 0
-        contentView.addSubview(titleLabel)
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10).isActive = true
-        titleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 10).isActive = true
-        titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
-        titleLabel.leadingAnchor.constraint(equalTo: thumbnailView.trailingAnchor, constant: 10).isActive = true
+        headlineLabel.numberOfLines = 0
+        contentView.addSubview(headlineLabel)
+        headlineLabel.translatesAutoresizingMaskIntoConstraints = false
+        headlineLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10).isActive = true
+        headlineLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 10).isActive = true
+        headlineLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
+        headlineLabel.leadingAnchor.constraint(equalTo: thumbnailView.trailingAnchor, constant: 10).isActive = true
     }
 }

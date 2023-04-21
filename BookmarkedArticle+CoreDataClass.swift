@@ -9,7 +9,7 @@
 import Foundation
 import CoreData
 
-@objc(BookmarkStory)
-public class BookmarkStory: NSManagedObject {
+@objc(BookmarkedArticle)
+public class BookmarkedArticle: NSManagedObject {
 
 }

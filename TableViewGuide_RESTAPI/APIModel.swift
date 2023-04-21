@@ -1,10 +1,3 @@
-//
-//  APIModel.swift
-//  TableViewGuide_RESTAPI
-//
-//  Created by Nguyễn Thịnh on 14/04/2023.
-//
-
 import Foundation
 import Alamofire
 
@@ -74,8 +67,8 @@ class BaseReponse {
         })
     }
     
-    func ariticleResponse(queryName: String, numberPage: Int, completion: @escaping articleCompletion) {
-        BaseRequest.shared.request(urlRequest: APIRouter.search(q: queryName, page: numberPage), method: .get, objectType: ArticlesData.self, completion: { results in
+    func articleResponse(query: String, page: Int, completion: @escaping articleCompletion) {
+        BaseRequest.shared.request(urlRequest: APIRouter.searchArticle(q: query, page: page), method: .get, objectType: ArticlesData.self, completion: { results in
             switch results {
             case .success(let value):
                 let articles = value.response.docs
@@ -122,9 +115,10 @@ struct Results: Codable {
 struct Story: Codable {
     var title: String
     var url: String
-    var multimedia: [MultimediaStory]
+    var multimedia: [MultiMediaStory]
+    var isRead: Bool?
 }
 
-struct MultimediaStory: Codable {
+struct MultiMediaStory: Codable {
     let url: String
 }

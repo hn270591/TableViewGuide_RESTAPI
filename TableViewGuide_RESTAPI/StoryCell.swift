@@ -1,41 +1,28 @@
 import UIKit
 import Alamofire
 
-protocol HeadlineBlurredDelegate: AnyObject {
-    func headlineBlurred(_ cell: StoryCell)
-}
-
 class StoryCell: UITableViewCell {
 
     @IBOutlet weak var thumbnailView: UIImageView!
     @IBOutlet weak var headlineLabel: UILabel!
     
-    weak var delegate: HeadlineBlurredDelegate!
-    var isSelectedStory: Bool = false {
+    var isRead: Bool = false {
         didSet {
-            headlineLabel.textColor = isSelectedStory ? .darkGray : .label
-        }
-    }
-    
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-        if selected == true {
-            isSelectedStory = true
-            delegate?.headlineBlurred(self)
+            headlineLabel.textColor = isRead ? .lightGray : .label
         }
     }
     
     var story: Story? {
         didSet {
-            headlineLabel?.text = story?.title
-            headlineLabel?.sizeToFit()
-            headlineLabel.textColor = .label
-            guard let multimedia = story?.multimedia else { return }
+            guard let story = story else { return }
+            headlineLabel?.text = story.title
+            isRead = story.isRead ?? false
+            
+            let multimedia = story.multimedia
             if multimedia.count >= 3 {
                 let thumbnailString = multimedia[2].url
                 let urlString = URL(string: thumbnailString)
                 thumbnailView.downloadImage(url: urlString!)
-                thumbnailView.sizeToFit()
                 thumbnailView.contentMode = .scaleToFill
             }
         }
@@ -43,9 +30,10 @@ class StoryCell: UITableViewCell {
     
     var topStory: TopStory? {
         didSet {
-            headlineLabel.text = topStory?.title
-            isSelectedStory = topStory!.isSelected
-            if let urlString = URL(string: topStory?.imagesURL ?? "") {
+            guard let topStory = topStory else { return }
+            headlineLabel.text = topStory.title
+            isRead = topStory.isRead
+            if let urlString = URL(string: topStory.imageURL!) {
                 thumbnailView.downloadImage(url: urlString)
                 thumbnailView.contentMode = .scaleToFill
             }

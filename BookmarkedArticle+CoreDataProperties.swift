@@ -10,10 +10,10 @@ import Foundation
 import CoreData
 
 
-extension BookmarkStory {
+extension BookmarkedArticle {
 
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<BookmarkStory> {
-        return NSFetchRequest<BookmarkStory>(entityName: "BookmarkStory")
+    @nonobjc public class func fetchRequest() -> NSFetchRequest<BookmarkedArticle> {
+        return NSFetchRequest<BookmarkedArticle>(entityName: "BookmarkedArticle")
     }
 
     @NSManaged public var title: String?
@@ -22,6 +22,6 @@ extension BookmarkStory {
 
 }
 
-extension BookmarkStory : Identifiable {
+extension BookmarkedArticle : Identifiable {
 
 }
