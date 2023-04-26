@@ -1,12 +1,12 @@
 import UIKit
 import CoreData
 
-class ViewController: UIViewController {
+class TopStoriesViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     
     private var activityIndicatorView = UIActivityIndicatorView()
-    private var articleResultsController: NSFetchedResultsController<TopStory>!
+    private var articleResultsController: NSFetchedResultsController<Article>!
     private var readArticleResultsController: NSFetchedResultsController<ReadArticle>!
     private let animationDuration: TimeInterval = 1
     private let heightForRow: CGFloat = 100
@@ -123,7 +123,7 @@ class ViewController: UIViewController {
     func setCache(stories: [Story] ) {
         self.clearArticles()
         for story in stories {
-            insertStory(title: story.title, imageURL: story.multimedia[2].url, url: story.url, isRead: story.isRead ?? false)
+            insertStory(title: story.title, imageURL: story.multimedia?[2].url ?? "", url: story.url, isRead: story.isRead ?? false, published_date: story.published_date)
         }
         print("Number TopStoris saved: \(articleResultsController.fetchedObjects?.count ?? 0)")
     }
@@ -183,7 +183,7 @@ class ViewController: UIViewController {
     
 // MARK: - TableView DataSource and Delegate
     
-extension ViewController: UITableViewDataSource, UITableViewDelegate {
+extension TopStoriesViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "StoryCell") as! StoryCell
         if stories.count > 0 {
@@ -191,7 +191,7 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
             cell.story = story
         } else {
             let story = articleResultsController.object(at: indexPath)
-            cell.topStory = story
+            cell.article = story
         }
         return cell
     }
@@ -214,10 +214,10 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
 
 // MARK: - Fetch results controller
 
-extension ViewController: NSFetchedResultsControllerDelegate {
+extension TopStoriesViewController: NSFetchedResultsControllerDelegate {
     func loadCache() {
         guard let context = AppDelegate.managedObjectContext else { return }
-        let fetchRequest = TopStory.fetchRequest()
+        let fetchRequest = Article.fetchRequest()
         fetchRequest.sortDescriptors = []
         articleResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
                                                             managedObjectContext: context,
@@ -230,13 +230,14 @@ extension ViewController: NSFetchedResultsControllerDelegate {
         }
     }
     
-    func insertStory(title: String, imageURL: String, url: String, isRead: Bool) {
+    func insertStory(title: String, imageURL: String, url: String, isRead: Bool, published_date: String) {
         guard let context = AppDelegate.managedObjectContext else { return }
-        let insertNewObject = NSEntityDescription.insertNewObject(forEntityName: "TopStory", into: context) as! TopStory
+        let insertNewObject = NSEntityDescription.insertNewObject(forEntityName: "Article", into: context) as! Article
         insertNewObject.title = title
         insertNewObject.imageURL = imageURL
         insertNewObject.url = url
         insertNewObject.isRead = isRead
+        insertNewObject.published_date = published_date
         do {
             try context.save()
         } catch {
@@ -246,7 +247,7 @@ extension ViewController: NSFetchedResultsControllerDelegate {
     
     func clearArticles() {
         guard let context = AppDelegate.managedObjectContext else { return }
-        let fetchRequestResult = NSFetchRequest<NSFetchRequestResult>(entityName: "TopStory")
+        let fetchRequestResult = NSFetchRequest<NSFetchRequestResult>(entityName: "Article")
         let batchDelete = NSBatchDeleteRequest(fetchRequest: fetchRequestResult)
         do {
             try context.execute(batchDelete)

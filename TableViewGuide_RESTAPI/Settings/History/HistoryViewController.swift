@@ -5,8 +5,23 @@ class HistoryViewController: UIViewController {
 
     private var tableView = UITableView()
     private let reuseIdentifier = "HistoryCell"
-    private var articleResultsController: NSFetchedResultsController<TopStory>!
+    private var articleResultsController: NSFetchedResultsController<Article>!
     private var readArticleResultsController: NSFetchedResultsController<ReadArticle>!
+    
+    private lazy var dateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        return dateFormatter
+    }()
+    
+    private var dateFormatterForSectionHeader: DateFormatter {
+        dateFormatter.setLocalizedDateFormatFromTemplate("EEEE, MMMM dd, yyyy")
+        return dateFormatter
+    }
+    
+    private var dateFormatterForRowPublishTime: DateFormatter {
+        dateFormatter.setLocalizedDateFormatFromTemplate("hh:mm a")
+        return dateFormatter
+    }
     
     override func loadView() {
         view = tableView
@@ -14,14 +29,18 @@ class HistoryViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.prefersLargeTitles = false
         setupTableView()
         loadCache()
         loadReadArticle()
-        readArticleResultsController.delegate = self
     }
     
-    private func setupTableView() {
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.prefersLargeTitles = false
+    }
+    
+    func setupTableView() {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(HistoryCell.self, forCellReuseIdentifier: reuseIdentifier)
@@ -34,7 +53,7 @@ class HistoryViewController: UIViewController {
         setupNavigation()
     }
     
-    private func setupNavigation() {
+    func setupNavigation() {
         let clearHistory = UIBarButtonItem(title: "Clear History", style: .done, target: self, action: #selector(clearAction))
         navigationItem.rightBarButtonItems = [clearHistory]
     }
@@ -48,17 +67,29 @@ class HistoryViewController: UIViewController {
 // MARK: - TableView Datasource and Delegate
 
 extension HistoryViewController: UITableViewDataSource, UITableViewDelegate {
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return readArticleResultsController.sections?.count ?? 1
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let count = readArticleResultsController?.fetchedObjects?.count ?? 0
-        return count > 0 ? count : 0
+        return readArticleResultsController.sections?[section].numberOfObjects ?? 0
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        guard let sections = readArticleResultsController.sections,
+              let date = ReadArticle.date(from: sections[section].name)
+        else { return nil }
+        return dateFormatterForSectionHeader.string(from: date)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! HistoryCell
-        let count = readArticleResultsController?.fetchedObjects?.count ?? 0
-        if count > 0 {
-            let article = readArticleResultsController?.object(at: indexPath)
-            cell.readArticle = article
+        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier) as! HistoryCell
+        let readArticle = readArticleResultsController.object(at: indexPath)
+        cell.readArticle = readArticle
+        
+        if let publishDate = readArticle.publishDate {
+            let publishTime = "\(dateFormatterForRowPublishTime.string(from: publishDate))"
+            cell.publishTimeLabel.text = publishTime
         }
         return cell
     }
@@ -67,14 +98,14 @@ extension HistoryViewController: UITableViewDataSource, UITableViewDelegate {
 // MARK: - NSFetchedResultsControllerDelegate
 
 extension HistoryViewController: NSFetchedResultsControllerDelegate {
-    private func loadCache() {
+    func loadCache() {
         guard let context = AppDelegate.managedObjectContext else { return }
-        let fetchRequest = TopStory.fetchRequest()
+        let fetchRequest = Article.fetchRequest()
         fetchRequest.sortDescriptors = []
         articleResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
-                                                            managedObjectContext: context,
-                                                            sectionNameKeyPath: nil,
-                                                            cacheName: nil)
+                                                              managedObjectContext: context,
+                                                              sectionNameKeyPath: nil,
+                                                              cacheName: nil)
         do {
             try articleResultsController.performFetch()
         } catch {
@@ -82,15 +113,16 @@ extension HistoryViewController: NSFetchedResultsControllerDelegate {
         }
     }
     
-    private func loadReadArticle() {
+    func loadReadArticle() {
         guard let context = AppDelegate.managedObjectContext else { return }
         let fetchRequest = ReadArticle.fetchRequest()
-        let sort = NSSortDescriptor(key: "index", ascending: false)
+        let sort = NSSortDescriptor(key: "publishDate", ascending: false)
         fetchRequest.sortDescriptors = [sort]
         readArticleResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
-                                                            managedObjectContext: context,
-                                                            sectionNameKeyPath: nil,
-                                                            cacheName: nil)
+                                                                  managedObjectContext: context,
+                                                                  sectionNameKeyPath: ReadArticle.Name.publishMonthID,
+                                                                  cacheName: nil)
+        readArticleResultsController.delegate = self
         do {
             try readArticleResultsController.performFetch()
         } catch {
@@ -98,7 +130,7 @@ extension HistoryViewController: NSFetchedResultsControllerDelegate {
         }
     }
     
-    private func clearReadArticles() {
+    func clearReadArticles() {
         guard let context = AppDelegate.managedObjectContext else { return }
         let fetchRequestResult = NSFetchRequest<NSFetchRequestResult>(entityName: "ReadArticle")
         let batchDelete = NSBatchDeleteRequest(fetchRequest: fetchRequestResult)

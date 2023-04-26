@@ -55,24 +55,33 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupWebView()
-        loadReadArticle()
+//        loadReadArticle()
         saveReadArticle()
         checkBookmark()
     }
     
+//    func readArticlesDate() -> String {
+//        let dateFormatter = DateFormatter()
+//        dateFormatter.locale = .current
+//        dateFormatter.timeZone = .current
+//        dateFormatter.dateStyle = .full
+//        dateFormatter.timeStyle = .short
+//        let date = dateFormatter.string(from: Date())
+//        return date
+//    }
+    
     func saveReadArticle() {
         guard let story = story else { return }
-        let count = readArticleResultsController.fetchedObjects?.count ?? 0
-        saveReadArticle(title: story.title, url: story.url, imageURL: story.multimedia[2].url, index: count - 1)
+        saveReadArticle(title: story.title, url: story.url, imageURL: story.multimedia?[2].url ?? "", publishDate: Date())
     }
     
-    func saveReadArticle(title: String, url: String, imageURL: String, index: Int) {
+    func saveReadArticle(title: String, url: String, imageURL: String, publishDate: Date) {
         guard let context = AppDelegate.managedObjectContext else { return }
-        let insertNewObject = NSEntityDescription.insertNewObject(forEntityName: "ReadArticle", into: context) as! ReadArticle
+        let insertNewObject = ReadArticle(context: context)
         insertNewObject.title = title
         insertNewObject.url = url
         insertNewObject.imageURL = imageURL
-        insertNewObject.index = Int32(index)
+        insertNewObject.publishDate = publishDate
         do {
             try context.save()
         } catch {
@@ -151,6 +160,35 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
         webView.reload()
     }
     
+    // Insert stories when isbookmark = true
+    func handleOnBookmark(storyURL: String, articleURL: String) {
+        if !storyURL.isEmpty {
+            guard let story = self.story else { return }
+            insertArticle(title: story.title,
+                          url_web: story.url,
+                          imageURL: story.multimedia?[2].url ?? "")
+        } else if !articleURL.isEmpty {
+            guard let article = self.article else { return }
+            insertArticle(title: article.headline.main,
+                          url_web: article.web_url,
+                          imageURL: "https://static01.nyt.com/" + (article.multimedia?[19].url ?? ""))
+        } else { return }
+    }
+    
+    //  Delete stories when isbookmark = false
+    func handleFalseBookmark(storyURL: String, articleURL: String) {
+        let urlString = resultsUrlString()
+        loadBookmartedArticle(urlFilter: urlString)
+        let deleteArticle = bookmarkedResultsController.object(at: IndexPath(item: 0, section: 0))
+        guard let context = AppDelegate.managedObjectContext else { return }
+        context.delete(deleteArticle)
+        do {
+            try context.save()
+        } catch {
+            fatalError(error.localizedDescription)
+        }
+    }
+    
     // Setup Bookmark
     @objc func onBookmark() {
         isbookmark.toggle()
@@ -158,29 +196,10 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
         let articleURL = article?.web_url ?? ""
         if isbookmark {
             // insert stories
-            if !storyURL.isEmpty {
-                guard let story = self.story else { return }
-                insertArticle(title: story.title,
-                              url_web: story.url,
-                              imageURL: story.multimedia[2].url)
-            } else if !articleURL.isEmpty {
-                guard let article = self.article else { return }
-                insertArticle(title: article.headline.main,
-                              url_web: article.web_url,
-                            imageURL: "https://static01.nyt.com/" + article.multimedia[19].url)
-            } else { return }
+            handleOnBookmark(storyURL: storyURL, articleURL: articleURL)
         } else {
             // delete stories
-            let urlString = resultsUrlString()
-            loadBookmartedArticle(urlFilter: urlString)
-            let deleteArticle = bookmarkedResultsController.object(at: IndexPath(item: 0, section: 0))
-            guard let context = AppDelegate.managedObjectContext else { return }
-            context.delete(deleteArticle)
-            do {
-                try context.save()
-            } catch {
-                fatalError(error.localizedDescription)
-            }
+           handleFalseBookmark(storyURL: storyURL, articleURL: articleURL)
         }
     }
     
@@ -240,19 +259,19 @@ extension DetailsViewController: NSFetchedResultsControllerDelegate {
         }
     }
     
-    func loadReadArticle() {
-        guard let context = AppDelegate.managedObjectContext else { return }
-        let fetchRequest = ReadArticle.fetchRequest()
-        let sort = NSSortDescriptor(key: "index", ascending: false)
-        fetchRequest.sortDescriptors = [sort]
-        readArticleResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
-                                                            managedObjectContext: context,
-                                                            sectionNameKeyPath: nil,
-                                                            cacheName: nil)
-        do {
-            try readArticleResultsController.performFetch()
-        } catch {
-            print(error.localizedDescription)
-        }
-    }
+//    func loadReadArticle() {
+//        guard let context = AppDelegate.managedObjectContext else { return }
+//        let fetchRequest = ReadArticle.fetchRequest()
+//        let sort = NSSortDescriptor(key: "createdDate", ascending: false)
+//        fetchRequest.sortDescriptors = [sort]
+//        readArticleResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
+//                                                                  managedObjectContext: context,
+//                                                                  sectionNameKeyPath: nil,
+//                                                                  cacheName: nil)
+//        do {
+//            try readArticleResultsController.performFetch()
+//        } catch {
+//            print(error.localizedDescription)
+//        }
+//    }
 }

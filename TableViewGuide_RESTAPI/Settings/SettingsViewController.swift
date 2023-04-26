@@ -13,6 +13,11 @@ class SettingsViewController: UIViewController {
         setTitles()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.prefersLargeTitles = true
+    }
+    
     private func setTitles() {
         let settings: [String] = ["History"]
         self.settings = settings

@@ -9,11 +9,12 @@ class BookmarkedArticleCell: UITableViewCell {
         didSet {
             guard let bookmarkStory = bookmarkStory else { return }
             headlineLabel.text = bookmarkStory.title
-            if let urlString =  bookmarkStory.imageURL {
+            if let urlString =  bookmarkStory.imageURL, !urlString.isEmpty {
                 let url = URL(string: urlString)!
                 thumbnailView.downloadImage(url: url)
             } else {
                 thumbnailView.image = UIImage(systemName: "photo")
+                thumbnailView.tintColor = .lightGray
             }
         }
     }
@@ -41,7 +42,7 @@ class BookmarkedArticleCell: UITableViewCell {
         contentView.addSubview(headlineLabel)
         headlineLabel.translatesAutoresizingMaskIntoConstraints = false
         headlineLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10).isActive = true
-        headlineLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 10).isActive = true
+        headlineLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10).isActive = true
         headlineLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
         headlineLabel.leadingAnchor.constraint(equalTo: thumbnailView.trailingAnchor, constant: 10).isActive = true
     }

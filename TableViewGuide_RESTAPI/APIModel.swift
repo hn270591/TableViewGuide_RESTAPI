@@ -93,7 +93,7 @@ struct Response: Codable {
 
 struct ArticleItem: Codable {
     var headline: Headline
-    var multimedia: [MultimediaArticle]
+    var multimedia: [MultimediaArticle]?
     var web_url: String
 }
 
@@ -115,7 +115,8 @@ struct Results: Codable {
 struct Story: Codable {
     var title: String
     var url: String
-    var multimedia: [MultiMediaStory]
+    var published_date: String
+    var multimedia: [MultiMediaStory]?
     var isRead: Bool?
 }
 

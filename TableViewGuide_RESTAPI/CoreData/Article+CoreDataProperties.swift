@@ -9,19 +9,20 @@
 import Foundation
 import CoreData
 
-extension TopStory {
+extension Article {
 
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<TopStory> {
-        return NSFetchRequest<TopStory>(entityName: "TopStory")
+    @nonobjc public class func fetchRequest() -> NSFetchRequest<Article> {
+        return NSFetchRequest<Article>(entityName: "Article")
     }
 
     @NSManaged public var imageURL: String?
     @NSManaged public var title: String?
     @NSManaged public var url: String?
     @NSManaged public var isRead: Bool
+    @NSManaged public var published_date: String?
 
 }
 
-extension TopStory : Identifiable {
+extension Article : Identifiable {
 
 }

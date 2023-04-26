@@ -9,7 +9,7 @@
 import Foundation
 import CoreData
 
-@objc(TopStory)
-public class TopStory: NSManagedObject {
+@objc(Article)
+public class Article: NSManagedObject {
 
 }
