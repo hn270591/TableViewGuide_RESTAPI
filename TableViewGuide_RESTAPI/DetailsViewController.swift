@@ -12,8 +12,26 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
     private var webView: WKWebView!
     private var toolBar = UIToolbar()
     private var activityIndicatorView: UIActivityIndicatorView!
-    private var bookmarkedResultsController: NSFetchedResultsController<BookmarkedArticle>!
-    private var readArticleResultsController: NSFetchedResultsController<ReadArticle>!
+    
+    private lazy var persistentContainer: NSPersistentContainer = {
+        let appDelegate = UIApplication.shared.delegate as? AppDelegate
+        return appDelegate!.persistenContainer
+    }()
+    
+    private lazy var bookmarkedResultsController: NSFetchedResultsController<BookmarkedArticle> = {
+        let fetchRequest = BookmarkedArticle.fetchRequest()
+        fetchRequest.sortDescriptors = []
+        let controller = NSFetchedResultsController(fetchRequest: fetchRequest,
+                                                    managedObjectContext: persistentContainer.viewContext,
+                                                    sectionNameKeyPath: nil, cacheName: nil)
+        controller.delegate = self
+        do {
+            try controller.performFetch()
+        } catch {
+            print(error.localizedDescription)
+        }
+        return controller
+    }()
     
     private let bookmarkButton = UIBarButtonItem(image: UIImage(systemName: "star"),
                                                  style: .done, target: .none,
@@ -55,33 +73,22 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupWebView()
-//        loadReadArticle()
         saveReadArticle()
         checkBookmark()
     }
-    
-//    func readArticlesDate() -> String {
-//        let dateFormatter = DateFormatter()
-//        dateFormatter.locale = .current
-//        dateFormatter.timeZone = .current
-//        dateFormatter.dateStyle = .full
-//        dateFormatter.timeStyle = .short
-//        let date = dateFormatter.string(from: Date())
-//        return date
-//    }
-    
+        
     func saveReadArticle() {
         guard let story = story else { return }
-        saveReadArticle(title: story.title, url: story.url, imageURL: story.multimedia?[2].url ?? "", publishDate: Date())
+        saveReadArticle(title: story.title, url: story.url, imageURL: story.multimedia[2].url , publishDate: Date())
     }
     
     func saveReadArticle(title: String, url: String, imageURL: String, publishDate: Date) {
-        guard let context = AppDelegate.managedObjectContext else { return }
-        let insertNewObject = ReadArticle(context: context)
-        insertNewObject.title = title
-        insertNewObject.url = url
-        insertNewObject.imageURL = imageURL
-        insertNewObject.publishDate = publishDate
+        let context = persistentContainer.viewContext
+        let newArticle = ReadArticle(context: context)
+        newArticle.title = title
+        newArticle.url = url
+        newArticle.imageURL = imageURL
+        newArticle.publishDate = publishDate
         do {
             try context.save()
         } catch {
@@ -115,11 +122,17 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
         webView.allowsBackForwardNavigationGestures = true
     }
     
+    func filterURL_web(urlString: String) {
+        let predicate = NSPredicate(format: "url_web == %@", urlString)
+        bookmarkedResultsController.fetchRequest.predicate = predicate
+        try? bookmarkedResultsController.performFetch()
+    }
+    
     // check bookmarked
     func checkBookmark() {
         let urlString = resultsUrlString()
-        loadBookmartedArticle(urlFilter: urlString)
-        let count = bookmarkedResultsController?.fetchedObjects?.count ?? 0
+        filterURL_web(urlString: urlString)
+        let count = bookmarkedResultsController.fetchedObjects?.count ?? 0
         if count > 0 {
             isbookmark = true
         } else {
@@ -166,7 +179,7 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
             guard let story = self.story else { return }
             insertArticle(title: story.title,
                           url_web: story.url,
-                          imageURL: story.multimedia?[2].url ?? "")
+                          imageURL: story.multimedia[2].url ?? "")
         } else if !articleURL.isEmpty {
             guard let article = self.article else { return }
             insertArticle(title: article.headline.main,
@@ -178,9 +191,9 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
     //  Delete stories when isbookmark = false
     func handleFalseBookmark(storyURL: String, articleURL: String) {
         let urlString = resultsUrlString()
-        loadBookmartedArticle(urlFilter: urlString)
+        filterURL_web(urlString: urlString)
         let deleteArticle = bookmarkedResultsController.object(at: IndexPath(item: 0, section: 0))
-        guard let context = AppDelegate.managedObjectContext else { return }
+        let context = persistentContainer.viewContext
         context.delete(deleteArticle)
         do {
             try context.save()
@@ -231,47 +244,16 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
 
 // MARK: - NSFetchedResultsControllerDelegate
 extension DetailsViewController: NSFetchedResultsControllerDelegate {
-    func loadBookmartedArticle(urlFilter: String) {
-        guard let context = AppDelegate.managedObjectContext else { return }
-        let fetchRequest = BookmarkedArticle.fetchRequest()
-        let predicate = NSPredicate(format: "url_web == %@", urlFilter)
-        fetchRequest.predicate = predicate
-        fetchRequest.sortDescriptors = []
-        bookmarkedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
-        do {
-            try bookmarkedResultsController.performFetch()
-        } catch {
-            fatalError(error.localizedDescription)
-        }
-    }
-    
     func insertArticle(title: String, url_web: String, imageURL: String) {
-        guard let context = AppDelegate.managedObjectContext else { return }
-        let insertNewObject = NSEntityDescription.insertNewObject(forEntityName: "BookmarkedArticle", into: context) as! BookmarkedArticle
+        let context = persistentContainer.viewContext
+        let insertNewObject = BookmarkedArticle(context: context)
         insertNewObject.title = title
         insertNewObject.url_web = url_web
         insertNewObject.imageURL = imageURL
         do {
             try context.save()
-            try bookmarkedResultsController.performFetch()
         } catch {
-            fatalError(error.localizedDescription)
+            print(error.localizedDescription)
         }
     }
-    
-//    func loadReadArticle() {
-//        guard let context = AppDelegate.managedObjectContext else { return }
-//        let fetchRequest = ReadArticle.fetchRequest()
-//        let sort = NSSortDescriptor(key: "createdDate", ascending: false)
-//        fetchRequest.sortDescriptors = [sort]
-//        readArticleResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
-//                                                                  managedObjectContext: context,
-//                                                                  sectionNameKeyPath: nil,
-//                                                                  cacheName: nil)
-//        do {
-//            try readArticleResultsController.performFetch()
-//        } catch {
-//            print(error.localizedDescription)
-//        }
-//    }
 }

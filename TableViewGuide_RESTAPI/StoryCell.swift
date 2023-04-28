@@ -22,7 +22,8 @@ class StoryCell: UITableViewCell {
             dateLabel.textColor = UIColor.secondaryLabel
             isRead = story.isRead ?? false
             
-            if let multimedia = story.multimedia, !multimedia.isEmpty {
+            let multimedia = story.multimedia
+            if !multimedia.isEmpty {
                 if multimedia.count >= 3 {
                     let thumbnailString = multimedia[2].url
                     let urlString = URL(string: thumbnailString)

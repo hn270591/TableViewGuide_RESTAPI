@@ -6,12 +6,45 @@ class TopStoriesViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     private var activityIndicatorView = UIActivityIndicatorView()
-    private var articleResultsController: NSFetchedResultsController<Article>!
-    private var readArticleResultsController: NSFetchedResultsController<ReadArticle>!
     private let animationDuration: TimeInterval = 1
     private let heightForRow: CGFloat = 100
     var selectedIndex: Int?
     var stories: [Story] = []
+    
+    private lazy var persistentContainer: NSPersistentContainer = {
+        let appDelegate = UIApplication.shared.delegate as? AppDelegate
+        return appDelegate!.persistenContainer
+    }()
+    
+    private lazy var articleResultsController: NSFetchedResultsController<Article> = {
+        let fetchRequest = Article.fetchRequest()
+        fetchRequest.sortDescriptors = []
+        let controller = NSFetchedResultsController(fetchRequest: fetchRequest,
+                                                              managedObjectContext: persistentContainer.viewContext,
+                                                              sectionNameKeyPath: nil,cacheName: nil)
+        controller.delegate = self
+        do {
+            try controller.performFetch()
+        } catch {
+            print(error.localizedDescription)
+        }
+        return controller
+    }()
+    
+    private lazy var readArticleResultsController: NSFetchedResultsController<ReadArticle> = {
+        let fetchRequest = ReadArticle.fetchRequest()
+        fetchRequest.sortDescriptors = []
+        let controller = NSFetchedResultsController(fetchRequest: fetchRequest,
+                                                    managedObjectContext: persistentContainer.viewContext,
+                                                    sectionNameKeyPath: nil,cacheName: nil)
+        controller.delegate = self
+        do {
+            try controller.performFetch()
+        } catch {
+            print(error.localizedDescription)
+        }
+        return controller
+    }()
     
     enum Titles {
         static let internetError = "No Internet"
@@ -34,14 +67,13 @@ class TopStoriesViewController: UIViewController {
         super.viewDidLoad()
         title = "Top Stories"
         setupTableView()
-        loadCache()
-        loadReadArticles()
         fetchTopStories()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        loadReadArticles()
+        // Lighten headline when clear ReadArticle
+        try? readArticleResultsController.performFetch()
         let readArticle = readArticleResultsController.fetchedObjects ?? []
         if readArticle.isEmpty {
             for index in 0..<stories.count {
@@ -52,6 +84,8 @@ class TopStoriesViewController: UIViewController {
                 }
             }
         }
+        
+        // Blurred headline when come back from vcDetails
         if let index = selectedIndex {
             let indexPath = IndexPath(row: index, section: 0)
             stories[index].isRead = true
@@ -63,7 +97,6 @@ class TopStoriesViewController: UIViewController {
     
     func setupTableView() {
         tableView.dataSource = self
-        loadReadArticles()
         tableView.delegate = self
         tableView.rowHeight = heightForRow
         tableView.refreshControl = UIRefreshControl()
@@ -85,7 +118,7 @@ class TopStoriesViewController: UIViewController {
     func handleDataLoaded(_ stories: [Story]) {
         self.stories = self.checkRead(stories)
         self.setCache(stories: self.stories)
-        UIView.transition(with: self.tableView, duration: self.animationDuration, options: .transitionCrossDissolve, animations: self.tableView.reloadData)
+        self.tableView.reloadData()
     }
     
     // Fetch Data
@@ -123,8 +156,9 @@ class TopStoriesViewController: UIViewController {
     func setCache(stories: [Story] ) {
         self.clearArticles()
         for story in stories {
-            insertStory(title: story.title, imageURL: story.multimedia?[2].url ?? "", url: story.url, isRead: story.isRead ?? false, published_date: story.published_date)
+            insertStory(title: story.title, imageURL: story.multimedia[2].url, url: story.url, isRead: story.isRead ?? false, published_date: story.published_date)
         }
+        try? articleResultsController.performFetch()
         print("Number TopStoris saved: \(articleResultsController.fetchedObjects?.count ?? 0)")
     }
     
@@ -215,29 +249,14 @@ extension TopStoriesViewController: UITableViewDataSource, UITableViewDelegate {
 // MARK: - Fetch results controller
 
 extension TopStoriesViewController: NSFetchedResultsControllerDelegate {
-    func loadCache() {
-        guard let context = AppDelegate.managedObjectContext else { return }
-        let fetchRequest = Article.fetchRequest()
-        fetchRequest.sortDescriptors = []
-        articleResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
-                                                            managedObjectContext: context,
-                                                            sectionNameKeyPath: nil,
-                                                            cacheName: nil)
-        do {
-            try articleResultsController.performFetch()
-        } catch {
-            print(error.localizedDescription)
-        }
-    }
-    
     func insertStory(title: String, imageURL: String, url: String, isRead: Bool, published_date: String) {
-        guard let context = AppDelegate.managedObjectContext else { return }
-        let insertNewObject = NSEntityDescription.insertNewObject(forEntityName: "Article", into: context) as! Article
-        insertNewObject.title = title
-        insertNewObject.imageURL = imageURL
-        insertNewObject.url = url
-        insertNewObject.isRead = isRead
-        insertNewObject.published_date = published_date
+        let context = persistentContainer.viewContext
+        let newArticle = Article(context: context)
+        newArticle.title = title
+        newArticle.imageURL = imageURL
+        newArticle.url = url
+        newArticle.isRead = isRead
+        newArticle.published_date = published_date
         do {
             try context.save()
         } catch {
@@ -246,27 +265,12 @@ extension TopStoriesViewController: NSFetchedResultsControllerDelegate {
     }
     
     func clearArticles() {
-        guard let context = AppDelegate.managedObjectContext else { return }
+        let context = persistentContainer.viewContext
         let fetchRequestResult = NSFetchRequest<NSFetchRequestResult>(entityName: "Article")
         let batchDelete = NSBatchDeleteRequest(fetchRequest: fetchRequestResult)
         do {
             try context.execute(batchDelete)
             try context.save()
-        } catch {
-            print(error.localizedDescription)
-        }
-    }
-    
-    func loadReadArticles() {
-        guard let context = AppDelegate.managedObjectContext else { return }
-        let fetchRequest = ReadArticle.fetchRequest()
-        fetchRequest.sortDescriptors = []
-        readArticleResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
-                                                            managedObjectContext: context,
-                                                            sectionNameKeyPath: nil,
-                                                            cacheName: nil)
-        do {
-            try readArticleResultsController.performFetch()
         } catch {
             print(error.localizedDescription)
         }
