@@ -115,6 +115,7 @@ struct Results: Codable {
 struct Story: Codable {
     var title: String
     var url: String
+    var published_date: String
     var multimedia: [MultiMediaStory]
     var isRead: Bool?
 }

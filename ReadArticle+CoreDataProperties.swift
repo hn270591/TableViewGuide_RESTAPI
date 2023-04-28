@@ -19,7 +19,7 @@ extension ReadArticle {
     @NSManaged public var title: String?
     @NSManaged public var url: String?
     @NSManaged public var imageURL: String?
-    @NSManaged public var index: Int32
+    @NSManaged public var createdDate: Date?
 
 }
 
