@@ -2,14 +2,22 @@ import UIKit
 
 class SettingsViewController: UIViewController {
 
-    private var tableView: UITableView!
     private let reuseIdentifier = "SettingsTableViewCell"
     private var settings: [String] = []
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView(frame: CGRect(origin: .zero, size: view.bounds.size), style: .insetGrouped)
+        tableView.rowHeight = 50
+        view.addSubview(tableView)
+        tableView.register(SettingsTableViewCell.self, forCellReuseIdentifier: reuseIdentifier)
+        return tableView
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationController?.navigationBar.prefersLargeTitles = true
         title = "Settings"
+        tableView.dataSource = self
+        tableView.delegate = self
+        navigationController?.navigationBar.prefersLargeTitles = true
         setTitles()
     }
     
@@ -18,23 +26,9 @@ class SettingsViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
     }
     
-    private func setTitles() {
+    func setTitles() {
         let settings: [String] = ["History"]
         self.settings = settings
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        setupTableView()
-    }
-    
-    private func setupTableView() {
-        tableView = UITableView(frame: CGRect(origin: .zero, size: view.bounds.size), style: .insetGrouped)
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.rowHeight = 50
-        view.addSubview(tableView)
-        tableView.register(SettingsTableViewCell.self, forCellReuseIdentifier: reuseIdentifier)
     }
 }
 

@@ -3,9 +3,20 @@ import CoreData
 
 class BookmarkedArticleViewController: UIViewController {
     
-    private var tableView = UITableView()
     private let reuseIdentifier = "BookmarkedArticleCell"
-    private var searchController = UISearchController()
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.register(BookmarkedArticleCell.self, forCellReuseIdentifier: reuseIdentifier)
+        tableView.separatorStyle = .singleLine
+        tableView.rowHeight = 100
+        return tableView
+    }()
+    
+    private lazy var searchController: UISearchController = {
+        let searchController = UISearchController()
+        navigationItem.searchController = searchController
+        return searchController
+    }()
     
     private lazy var persistentContainer: NSPersistentContainer = {
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
@@ -33,24 +44,17 @@ class BookmarkedArticleViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationController?.navigationBar.prefersLargeTitles = true
         title = "Favorites"
-        setupTableView()
+        navigationController?.navigationBar.prefersLargeTitles = true
+        tableView.dataSource = self
+        tableView.delegate = self
         searchController.searchResultsUpdater = self
-        navigationItem.searchController = searchController
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         navigationController?.navigationBar.prefersLargeTitles = true
-    }
-    
-    private func setupTableView() {
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.register(BookmarkedArticleCell.self, forCellReuseIdentifier: reuseIdentifier)
-        tableView.separatorStyle = .singleLine
-        tableView.rowHeight = 100
     }
 }
 
@@ -74,7 +78,7 @@ extension BookmarkedArticleViewController: UITableViewDataSource, UITableViewDel
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let vcDetails = storyboard?.instantiateViewController(withIdentifier: "DetailsViewController") as! DetailsViewController
+        let vcDetails = DetailsViewController()
         let object = bookmarkedResultsController.object(at: indexPath)
         vcDetails.bookmarkedArticle = object
         vcDetails.hidesBottomBarWhenPushed = true
@@ -118,8 +122,13 @@ extension BookmarkedArticleViewController: NSFetchedResultsControllerDelegate {
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
         switch type {
         case .insert:
-            if let newIndexPath = newIndexPath {
-                self.tableView.insertRows(at: [newIndexPath], with: .fade)
+            let readArticle = bookmarkedResultsController.fetchedObjects ?? []
+            if readArticle.count > 1 {
+                if let newIndexPath = newIndexPath {
+                    self.tableView.insertRows(at: [newIndexPath], with: .fade)
+                }
+            } else {
+                self.tableView.reloadData()
             }
             break
         case .delete:
@@ -131,7 +140,7 @@ extension BookmarkedArticleViewController: NSFetchedResultsControllerDelegate {
             print("move")
         case .update:
             if let indexPath = indexPath {
-                self.tableView.reloadRows(at: [indexPath], with: .fade)
+                self.tableView.reloadRows(at: [indexPath], with: .none)
             }
             break
         @unknown default:

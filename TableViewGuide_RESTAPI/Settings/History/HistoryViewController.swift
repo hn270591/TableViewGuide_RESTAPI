@@ -2,16 +2,26 @@ import UIKit
 import CoreData
 
 class HistoryViewController: UIViewController {
-
-    private var tableView = UITableView()
-    private var titleLabel: UILabel = {
-        let titleLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 200, height: 35))
+    
+    private let reuseIdentifier = "HistoryCell"
+    private let message: String = "Are you want to delete ?"
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.register(HistoryCell.self, forCellReuseIdentifier: reuseIdentifier)
+        tableView.separatorStyle = .singleLine
+        tableView.rowHeight = 100
+        return tableView
+    }()
+    
+    private lazy var titleLabel: UILabel = {
+        let titleLabel = UILabel()
         titleLabel.textAlignment = .center
         titleLabel.text = "No History"
         titleLabel.isHidden = true
+        titleLabel.center = CGPoint(x: view.bounds.width / 2, y: view.bounds.height / 2 - 100)
+        view.addSubview(titleLabel)
         return titleLabel
     }()
-    private let reuseIdentifier = "HistoryCell"
     
     private lazy var persistentContainer: NSPersistentContainer = {
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
@@ -47,20 +57,27 @@ class HistoryViewController: UIViewController {
         dateFormatter.setLocalizedDateFormatFromTemplate("hh:mm a")
         return dateFormatter
     }
-        
+    
     override func loadView() {
         view = tableView
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.dataSource = self
+        tableView.delegate = self
+        setupNavigation()
         navigationController?.navigationBar.prefersLargeTitles = false
-        setupTableView()
         let readArticle = readArticleResultsController.fetchedObjects ?? []
         
         if readArticle.isEmpty {
             titleLabel.isHidden = false
         }
+    }
+    
+    func setupNavigation() {
+        lazy var clearHistory = UIBarButtonItem(title: "Clear History", style: .done, target: self, action: #selector(clearAction))
+        navigationItem.rightBarButtonItems = [clearHistory]
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -73,30 +90,24 @@ class HistoryViewController: UIViewController {
         }
     }
     
-    func setupTableView() {
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.register(HistoryCell.self, forCellReuseIdentifier: reuseIdentifier)
-        tableView.separatorStyle = .singleLine
-        tableView.rowHeight = 100
+    // Alert
+    func alert(title: String?, message: String, handler: @escaping (() -> Void)) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let ok = UIAlertAction(title: "OK", style: .default) {_ in
+            handler()
+        }
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
+        alert.addAction(ok)
+        alert.addAction(cancel)
+        present(alert, animated: true)
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        titleLabel.center = CGPoint(x: view.bounds.width / 2, y: view.bounds.height / 2 - 100)
-        view.addSubview(titleLabel)
-        setupNavigation()
-    }
-    
-    func setupNavigation() {
-        let clearHistory = UIBarButtonItem(title: "Clear History", style: .done, target: self, action: #selector(clearAction))
-        navigationItem.rightBarButtonItems = [clearHistory]
-    }
-    
-    @objc private func clearAction() {
-        self.clearReadArticles()
-        self.titleLabel.isHidden = false
-        self.tableView.reloadData()
+    @objc func clearAction() {
+        alert(title: nil, message: message, handler: {
+            self.clearReadArticles()
+            self.titleLabel.isHidden = false
+            self.tableView.reloadData()
+        })
     }
     
     func publishDate(from publishDate: Date) -> Int {
@@ -116,9 +127,9 @@ class HistoryViewController: UIViewController {
         let numericYesterday = Int(publishDate(from: yesterdayDate))
         
         if inputDate == numericToday {
-            return "Today, " + dateFormatterForSectionHeader.string(from: date)
+            return "Today"
         } else if inputDate == numericYesterday {
-            return "Yesterday, " + dateFormatterForSectionHeader.string(from: date)
+            return "Yesterday"
         } else {
             return dateFormatterForSectionHeader.string(from: date)
         }
@@ -154,7 +165,7 @@ extension HistoryViewController: UITableViewDataSource, UITableViewDelegate {
         
         if let publishDate = readArticle.publishDate {
             let publishTime = "\(dateFormatterForRowPublishTime.string(from: publishDate))"
-            cell.publishTimeLabel.text = publishTime
+            cell.createdTimeLabel.text = publishTime
         }
         return cell
     }
@@ -197,7 +208,7 @@ extension HistoryViewController: NSFetchedResultsControllerDelegate {
             print("move")
         case .update:
             if let indexPath = indexPath {
-                self.tableView.reloadRows(at: [indexPath], with: .fade)
+                self.tableView.reloadRows(at: [indexPath], with: .none)
             }
             break
         @unknown default:

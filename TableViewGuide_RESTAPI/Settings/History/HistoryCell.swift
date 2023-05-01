@@ -2,9 +2,28 @@ import UIKit
 
 class HistoryCell: UITableViewCell {
     
-    private var headlineLabel = UILabel()
-    private var thumbnailView = UIImageView()
-    var publishTimeLabel = UILabel()
+    private lazy var headlineLabel: UILabel = {
+        let headline = UILabel()
+        headline.numberOfLines = 0
+        contentView.addSubview(headline)
+        return headline
+    }()
+    
+    private lazy var thumbnailView: UIImageView = {
+        let thumbnail = UIImageView()
+        thumbnail.contentMode = .scaleToFill
+        contentView.addSubview(thumbnail)
+        return thumbnail
+    }()
+    
+    public lazy var createdTimeLabel: UILabel = {
+        let createdTime = UILabel()
+        createdTime.textColor = .secondaryLabel
+        createdTime.textAlignment = .right
+        createdTime.font = UIFont.systemFont(ofSize: 15, weight: .light)
+        contentView.addSubview(createdTime)
+        return createdTime
+    }()
     
     var readArticle: ReadArticle? {
         didSet {
@@ -30,32 +49,26 @@ class HistoryCell: UITableViewCell {
     }
     
     private func setupViews() {
-        thumbnailView.image = nil
-        thumbnailView.contentMode = .scaleToFill
-        contentView.addSubview(thumbnailView)
+        // layout thumbnailView
         thumbnailView.translatesAutoresizingMaskIntoConstraints = false
         thumbnailView.heightAnchor.constraint(equalToConstant: 100).isActive = true
         thumbnailView.widthAnchor.constraint(equalToConstant: 120).isActive = true
         thumbnailView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
         thumbnailView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10).isActive = true
         
-        headlineLabel.numberOfLines = 0
-        contentView.addSubview(headlineLabel)
+        // layout headline
         headlineLabel.translatesAutoresizingMaskIntoConstraints = false
         headlineLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0).isActive = true
         headlineLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -30).isActive = true
         headlineLabel.leadingAnchor.constraint(equalTo: thumbnailView.trailingAnchor, constant: 10).isActive = true
         headlineLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
 
-        publishTimeLabel.textColor = .secondaryLabel
-        publishTimeLabel.textAlignment = .right
-        publishTimeLabel.font = UIFont.systemFont(ofSize: 15, weight: .light)
-        contentView.addSubview(publishTimeLabel)
-        publishTimeLabel.translatesAutoresizingMaskIntoConstraints = false
-        publishTimeLabel.topAnchor.constraint(equalTo: headlineLabel.bottomAnchor, constant: 0).isActive = true
-        publishTimeLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0).isActive = true
-        publishTimeLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
-        publishTimeLabel.leadingAnchor.constraint(equalTo: thumbnailView.trailingAnchor, constant: 10).isActive = true
+        // layout createdTime
+        createdTimeLabel.translatesAutoresizingMaskIntoConstraints = false
+        createdTimeLabel.topAnchor.constraint(equalTo: headlineLabel.bottomAnchor, constant: 0).isActive = true
+        createdTimeLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0).isActive = true
+        createdTimeLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
+        createdTimeLabel.leadingAnchor.constraint(equalTo: thumbnailView.trailingAnchor, constant: 10).isActive = true
     }
 }
 

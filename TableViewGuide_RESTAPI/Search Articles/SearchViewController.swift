@@ -5,8 +5,7 @@ class SearchViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     private var articles: [ArticleItem] = []
-    private var searchBar = UISearchBar()
-    private var activityIndicatorView = UIActivityIndicatorView()
+    
     private let reuseIdentifierLoadingCell = "LoadingCell"
     private let placeholderSearch = "Search"
     private let heightForRowOfArticlesCell: CGFloat = 100
@@ -15,6 +14,22 @@ class SearchViewController: UIViewController {
     private var page: Int = 0
     private var isLoading: Bool = false
     private var searchText: String = ""
+    
+    private lazy var searchBar: UISearchBar = {
+        let searchBar = UISearchBar()
+        searchBar.placeholder = placeholderSearch
+        searchBar.becomeFirstResponder()
+        navigationItem.titleView = searchBar
+        return searchBar
+    }()
+    
+    private lazy var activityIndicatorView: UIActivityIndicatorView = {
+        let indicatorView = UIActivityIndicatorView()
+        indicatorView.center = view.center
+        view.addSubview(indicatorView)
+        indicatorView.startAnimating()
+        return indicatorView
+    }()
     
     enum Titles {
         static let internetError = "No Internet"
@@ -36,23 +51,7 @@ class SearchViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(LoadingCell.self, forCellReuseIdentifier: reuseIdentifierLoadingCell)
-        
         searchBar.delegate = self
-        searchBar.placeholder = placeholderSearch
-        searchBar.becomeFirstResponder()
-        navigationItem.titleView = searchBar
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        setupIndicationView()
-    }
-    
-    func setupIndicationView() {
-        activityIndicatorView.frame = CGRect(x: 0, y: 0, width: 64, height: 64)
-        activityIndicatorView.center = CGPoint(x: (UIScreen.main.bounds.width) / 2, y: (UIScreen.main.bounds.height) / 2)
-        activityIndicatorView.hidesWhenStopped = true
-        view.addSubview(activityIndicatorView)
     }
 }
 
@@ -88,7 +87,7 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let vcDetails = storyboard?.instantiateViewController(withIdentifier: "DetailsViewController") as! DetailsViewController
+        let vcDetails = DetailsViewController()
         vcDetails.article = articles[indexPath.row]
         vcDetails.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(vcDetails, animated: true)
@@ -175,13 +174,6 @@ extension SearchViewController: UISearchBarDelegate {
                 self.page = self.page + 1
                 self.isLoading = false
             })
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.section == 1 {
-            let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as! LoadingCell
-            cell.activityIndicatorView.stopAnimating()
         }
     }
     

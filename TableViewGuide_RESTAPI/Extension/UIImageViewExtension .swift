@@ -16,15 +16,6 @@ extension UIImageView {
                                 .cacheOriginalImage,
                                 .transition(.fade(0.25))
                               ])
-        {
-            result in
-            switch result {
-            case .success(let value):
-                self.image = value.image
-            case .failure(let error):
-                print("Error: \(error)")
-            }
-        }
     }
     
     // MARK: - download thumbnail by AlamofireImage

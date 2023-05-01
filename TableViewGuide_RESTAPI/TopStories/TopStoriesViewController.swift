@@ -5,11 +5,17 @@ class TopStoriesViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     
-    private var activityIndicatorView = UIActivityIndicatorView()
     private let animationDuration: TimeInterval = 1
     private let heightForRow: CGFloat = 100
     var selectedIndex: Int?
     var stories: [Story] = []
+    
+    private lazy var activityIndicatorView: UIActivityIndicatorView = {
+        let indicatorView = UIActivityIndicatorView()
+        indicatorView.center = view.center
+        view.addSubview(indicatorView)
+        return indicatorView
+    }()
     
     private lazy var persistentContainer: NSPersistentContainer = {
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
@@ -66,12 +72,26 @@ class TopStoriesViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Top Stories"
+        setupNavigationItem()
         setupTableView()
         fetchTopStories()
     }
     
+    func setupTableView() {
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.rowHeight = heightForRow
+        tableView.refreshControl = UIRefreshControl()
+        tableView.refreshControl?.addTarget(self, action: #selector(onRefesh), for: .valueChanged)
+    }
+    
+    func setupNavigationItem() {
+        let reloadButton = UIBarButtonItem(image: UIImage(systemName: "arrow.clockwise"), style: .plain, target: self, action: #selector(handlerReload))
+        navigationItem.rightBarButtonItems = [reloadButton]
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+        super.viewDidAppear(animated)        
         // Lighten headline when clear ReadArticle
         try? readArticleResultsController.performFetch()
         let readArticle = readArticleResultsController.fetchedObjects ?? []
@@ -89,20 +109,12 @@ class TopStoriesViewController: UIViewController {
         if let index = selectedIndex {
             let indexPath = IndexPath(row: index, section: 0)
             stories[index].isRead = true
-            self.tableView.reloadRows(at: [indexPath], with: .automatic)
+            self.tableView.reloadRows(at: [indexPath], with: .none)
             //Reset
             selectedIndex = nil
         }
     }
-    
-    func setupTableView() {
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.rowHeight = heightForRow
-        tableView.refreshControl = UIRefreshControl()
-        tableView.refreshControl?.addTarget(self, action: #selector(onRefesh), for: .valueChanged)
-    }
-    
+        
     // Handle Error
     func handleError(_ error: BaseResponseError) {
         if error == .inConnect {
@@ -156,27 +168,10 @@ class TopStoriesViewController: UIViewController {
     func setCache(stories: [Story] ) {
         self.clearArticles()
         for story in stories {
-            insertStory(title: story.title, imageURL: story.multimedia[2].url, url: story.url, isRead: story.isRead ?? false, published_date: story.published_date)
+            insertStory(title: story.title, imageURL: story.multimedia?[2].url ?? "", url: story.url, isRead: story.isRead ?? false, published_date: story.published_date)
         }
         try? articleResultsController.performFetch()
         print("Number TopStoris saved: \(articleResultsController.fetchedObjects?.count ?? 0)")
-    }
-    
-    // MARK: - Layout SubView
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        setupIndicationView()
-        
-        let reloadButton = UIBarButtonItem(image: UIImage(systemName: "arrow.clockwise"), style: .plain, target: self, action: #selector(handlerReload))
-        navigationItem.rightBarButtonItems = [reloadButton]
-    }
-    
-    func setupIndicationView() {
-        activityIndicatorView.frame = CGRect(x: 0, y: 0, width: 64, height: 64)
-        activityIndicatorView.center = CGPoint(x: (UIScreen.main.bounds.width) / 2, y: 120)
-        activityIndicatorView.hidesWhenStopped = true
-        view.addSubview(activityIndicatorView)
     }
     
     // Handler reload button refesh right BarButtonItem
@@ -236,7 +231,7 @@ extension TopStoriesViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let vcDetails = storyboard?.instantiateViewController(withIdentifier: "DetailsViewController") as! DetailsViewController
+        let vcDetails = DetailsViewController()
         if !stories.isEmpty {
             vcDetails.story = stories[indexPath.row]
             vcDetails.hidesBottomBarWhenPushed = true
@@ -256,7 +251,7 @@ extension TopStoriesViewController: NSFetchedResultsControllerDelegate {
         newArticle.imageURL = imageURL
         newArticle.url = url
         newArticle.isRead = isRead
-        newArticle.published_date = published_date
+        newArticle.publishedDate = published_date
         do {
             try context.save()
         } catch {

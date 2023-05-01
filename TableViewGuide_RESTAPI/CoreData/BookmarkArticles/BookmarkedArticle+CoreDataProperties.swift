@@ -17,8 +17,9 @@ extension BookmarkedArticle {
     }
 
     @NSManaged public var title: String?
-    @NSManaged public var url_web: String?
+    @NSManaged public var webURL: String?
     @NSManaged public var imageURL: String?
+    @NSManaged public var publishedDate: String?
 
 }
 
