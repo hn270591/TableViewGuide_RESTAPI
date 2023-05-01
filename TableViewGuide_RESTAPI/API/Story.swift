@@ -97,6 +97,7 @@ struct ArticleItem: Codable {
     var headline: Headline
     var multimedia: [MultimediaArticle]
     var web_url: String
+    var pub_date: String
 }
 
 struct Headline: Codable {
@@ -118,7 +119,8 @@ struct Story: Codable {
     var title: String
     var url: String
     var published_date: String
-    var multimedia: [MultimediaStory]
+    var multimedia: [MultiMediaStory]
+    var isRead: Bool?
 }
 
 struct MultimediaStory: Codable {

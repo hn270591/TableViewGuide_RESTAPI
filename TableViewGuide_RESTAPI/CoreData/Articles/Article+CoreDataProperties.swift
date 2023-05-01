@@ -19,7 +19,7 @@ extension Article {
     @NSManaged public var title: String?
     @NSManaged public var url: String?
     @NSManaged public var isRead: Bool
-    @NSManaged public var published_date: String?
+    @NSManaged public var publishedDate: String?
 
 }
 

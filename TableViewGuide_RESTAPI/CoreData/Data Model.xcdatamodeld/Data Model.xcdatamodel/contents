@@ -3,14 +3,15 @@
     <entity name="Article" representedClassName="Article" syncable="YES">
         <attribute name="imageURL" optional="YES" attributeType="String" customClassName="[String]"/>
         <attribute name="isRead" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="published_date" optional="YES" attributeType="String"/>
+        <attribute name="publishedDate" optional="YES" attributeType="String"/>
         <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="url" optional="YES" attributeType="String"/>
     </entity>
     <entity name="BookmarkedArticle" representedClassName="BookmarkedArticle" syncable="YES">
         <attribute name="imageURL" optional="YES" attributeType="String"/>
+        <attribute name="publishedDate" optional="YES" attributeType="String"/>
         <attribute name="title" optional="YES" attributeType="String"/>
-        <attribute name="url_web" optional="YES" attributeType="String"/>
+        <attribute name="webURL" optional="YES" attributeType="String"/>
     </entity>
     <entity name="ReadArticle" representedClassName="ReadArticle" syncable="YES">
         <attribute name="createdDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>

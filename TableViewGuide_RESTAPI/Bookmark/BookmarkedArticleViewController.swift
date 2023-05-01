@@ -3,9 +3,20 @@ import CoreData
 
 class BookmarkedArticleViewController: UIViewController {
     
-    private var tableView = UITableView()
     private let reuseIdentifier = "BookmarkedArticleCell"
-    private var searchController = UISearchController()
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.register(BookmarkedArticleCell.self, forCellReuseIdentifier: reuseIdentifier)
+        tableView.separatorStyle = .singleLine
+        tableView.rowHeight = 100
+        return tableView
+    }()
+    
+    private lazy var searchController: UISearchController = {
+        let searchController = UISearchController()
+        navigationItem.searchController = searchController
+        return searchController
+    }()
     
     private lazy var persistentContainer: NSPersistentContainer = {
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
@@ -33,24 +44,16 @@ class BookmarkedArticleViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationController?.navigationBar.prefersLargeTitles = true
         title = "Favorites"
-        setupTableView()
+        navigationController?.navigationBar.prefersLargeTitles = true
+        tableView.dataSource = self
+        tableView.delegate = self
         searchController.searchResultsUpdater = self
-        navigationItem.searchController = searchController
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         navigationController?.navigationBar.prefersLargeTitles = true
-    }
-    
-    private func setupTableView() {
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.register(BookmarkedArticleCell.self, forCellReuseIdentifier: reuseIdentifier)
-        tableView.separatorStyle = .singleLine
-        tableView.rowHeight = 100
     }
 }
 

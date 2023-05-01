@@ -2,7 +2,12 @@ import UIKit
 
 class SettingsTableViewCell: UITableViewCell {
 
-    var headlineLabel = UILabel()
+    lazy var headlineLabel: UILabel = {
+        let headline = UILabel()
+        headline.numberOfLines = 1
+        contentView.addSubview(headline)
+        return headline
+    }()
     
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -18,9 +23,7 @@ class SettingsTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func setupViews() {
-        headlineLabel.numberOfLines = 1
-        contentView.addSubview(headlineLabel)
+    func setupViews() {
         headlineLabel.translatesAutoresizingMaskIntoConstraints = false
         headlineLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10).isActive = true
         headlineLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10).isActive = true

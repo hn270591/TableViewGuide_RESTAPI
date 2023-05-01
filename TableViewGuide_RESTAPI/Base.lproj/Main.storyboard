@@ -62,8 +62,8 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="dateLabel" destination="jRH-0o-P81" id="ZtD-Kc-c40"/>
                                             <outlet property="headlineLabel" destination="Uoa-FF-3CM" id="R0K-sj-OPs"/>
+                                            <outlet property="publishedDateLabel" destination="jRH-0o-P81" id="ZtD-Kc-c40"/>
                                             <outlet property="thumbnailView" destination="TnL-jT-ALm" id="xWW-n9-MKd"/>
                                         </connections>
                                     </tableViewCell>
@@ -123,7 +123,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="headline" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="B96-Dt-bdn">
-                                                    <rect key="frame" x="140" y="0.0" width="243" height="100"/>
+                                                    <rect key="frame" x="140" y="10" width="243" height="60"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -136,18 +136,29 @@
                                                         <constraint firstAttribute="height" constant="100" id="nyD-a0-578"/>
                                                     </constraints>
                                                 </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Date" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qd5-2F-rtR">
+                                                    <rect key="frame" x="140" y="70" width="243" height="30"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                             </subviews>
                                             <constraints>
+                                                <constraint firstAttribute="trailing" secondItem="Qd5-2F-rtR" secondAttribute="trailing" constant="10" id="1pa-40-qgg"/>
+                                                <constraint firstItem="B96-Dt-bdn" firstAttribute="leading" secondItem="Kj6-J2-A85" secondAttribute="trailing" constant="10" id="49f-yN-6fZ"/>
                                                 <constraint firstItem="Kj6-J2-A85" firstAttribute="leading" secondItem="5Ud-K2-yLy" secondAttribute="leading" constant="10" id="4X5-gA-IbO"/>
-                                                <constraint firstAttribute="trailing" secondItem="B96-Dt-bdn" secondAttribute="trailing" constant="10" id="NGS-lA-hfd"/>
-                                                <constraint firstItem="B96-Dt-bdn" firstAttribute="top" secondItem="5Ud-K2-yLy" secondAttribute="top" id="NnC-6d-7YI"/>
-                                                <constraint firstItem="B96-Dt-bdn" firstAttribute="leading" secondItem="Kj6-J2-A85" secondAttribute="trailing" constant="10" id="OJd-av-lSq"/>
-                                                <constraint firstAttribute="bottom" secondItem="B96-Dt-bdn" secondAttribute="bottom" id="Yi7-On-O3d"/>
+                                                <constraint firstItem="Qd5-2F-rtR" firstAttribute="top" secondItem="B96-Dt-bdn" secondAttribute="bottom" id="D7D-Bh-1J5"/>
+                                                <constraint firstAttribute="trailing" secondItem="B96-Dt-bdn" secondAttribute="trailing" constant="10" id="EMN-Uy-gmh"/>
+                                                <constraint firstItem="B96-Dt-bdn" firstAttribute="top" secondItem="5Ud-K2-yLy" secondAttribute="top" constant="10" id="FPi-9i-UoQ"/>
+                                                <constraint firstItem="Qd5-2F-rtR" firstAttribute="leading" secondItem="Kj6-J2-A85" secondAttribute="trailing" constant="10" id="QYt-aK-3d3"/>
+                                                <constraint firstAttribute="bottom" secondItem="Qd5-2F-rtR" secondAttribute="bottom" id="TVW-2w-PNP"/>
                                                 <constraint firstItem="Kj6-J2-A85" firstAttribute="centerY" secondItem="5Ud-K2-yLy" secondAttribute="centerY" id="dQZ-y5-VZE"/>
+                                                <constraint firstAttribute="bottom" secondItem="B96-Dt-bdn" secondAttribute="bottom" constant="30" id="iK1-TR-eyH"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
                                             <outlet property="headLineLabel" destination="B96-Dt-bdn" id="TSp-3k-jZX"/>
+                                            <outlet property="publishDateLabel" destination="Qd5-2F-rtR" id="6EB-wm-2tT"/>
                                             <outlet property="thumbnailView" destination="Kj6-J2-A85" id="Yjt-ls-Pxj"/>
                                         </connections>
                                     </tableViewCell>

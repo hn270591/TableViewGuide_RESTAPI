@@ -9,9 +9,25 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
     var story: Story?
     var article: ArticleItem?
     var bookmarkedArticle: BookmarkedArticle?
-    private var webView: WKWebView!
-    private var toolBar = UIToolbar()
-    private var activityIndicatorView: UIActivityIndicatorView!
+    private lazy var webView: WKWebView = {
+        let webView = WKWebView()
+        webView.navigationDelegate = self
+        return webView
+    }()
+    
+    private lazy var activityIndicatorView: UIActivityIndicatorView = {
+        let activityIndicatorView = UIActivityIndicatorView(style: .medium)
+        activityIndicatorView.tintColor = .black
+        activityIndicatorView.startAnimating()
+        webView.addSubview(activityIndicatorView)
+        return activityIndicatorView
+    }()
+    
+    private lazy var backAllButtonItem: UIBarButtonItem! = nil
+    private lazy var bookmarkButton: UIBarButtonItem! = nil
+    private lazy var backButtonItem: UIBarButtonItem! = nil
+    private lazy var forwardButtonItem: UIBarButtonItem! = nil
+    private lazy var refreshButtonItem: UIBarButtonItem! = nil
     
     private lazy var persistentContainer: NSPersistentContainer = {
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
@@ -33,21 +49,6 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
         return controller
     }()
     
-    private let bookmarkButton = UIBarButtonItem(image: UIImage(systemName: "star"),
-                                                 style: .done, target: .none,
-                                                 action: #selector(onBookmark))
-    private let backButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.left"),
-                                                 style: .done, target: .none,
-                                                 action: #selector(backAction))
-    private let backAllButtonItem = UIBarButtonItem(image: UIImage(systemName: "xmark"),
-                                                    style: .done, target: .none,
-                                                    action: #selector(backAllAction))
-    private let forwardButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.right"),
-                                                    style: .plain, target: .none,
-                                                    action: #selector(forwardAction))
-    private let refreshButtonItem = UIBarButtonItem(barButtonSystemItem: .refresh,
-                                                        target: .none,
-                                                        action: #selector(refreshAction))
     
     private var isbookmark = false {
         didSet {
@@ -58,133 +59,66 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
     // Load View
     override func loadView() {
         super.loadView()
-        webView = WKWebView()
-        webView.navigationDelegate = self
         view = webView
-        activityIndicatorView = UIActivityIndicatorView(style: .medium)
-        activityIndicatorView.frame = CGRect(x: 60, y: -7, width: 64, height: 64)
-        activityIndicatorView.tintColor = .black
-        activityIndicatorView.hidesWhenStopped = true
-        activityIndicatorView.startAnimating()
-        webView.addSubview(activityIndicatorView)
     }
     
-    // Life cycle View
+    // MARK: - Life cycle View
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupWebView()
+        setupNavigationViewAndToolBar()
+        loadWebView()
         saveReadArticle()
         checkBookmark()
     }
-        
-    func saveReadArticle() {
-        guard let story = story else { return }
-        saveReadArticle(title: story.title, url: story.url, imageURL: story.multimedia[2].url, createdDate: Date())
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setToolbarHidden(true, animated: false)
     }
     
-    func saveReadArticle(title: String, url: String, imageURL: String, createdDate: Date) {
-        let context = persistentContainer.viewContext
-        let newArticle = ReadArticle(context: context)
-        newArticle.title = title
-        newArticle.url = url
-        newArticle.imageURL = imageURL
-        newArticle.createdDate = createdDate
-        do {
-            try context.save()
-        } catch {
-            print(error.localizedDescription)
-        }
-    }
-    
-    func resultsUrlString() -> String {
-        var urlString: String!
-        let storyURL = story?.url ?? ""
-        let articleURL = article?.web_url ?? ""
-        if !storyURL.isEmpty {
-            urlString = story!.url
-            title = story!.title
-        } else if !articleURL.isEmpty {
-            urlString = article!.web_url
-            title = article!.headline.main
-        } else {
-            urlString = bookmarkedArticle?.url_web
-            title = bookmarkedArticle?.title
-        }
-        return urlString
-    }
-    
-    // Setup WebView
-    func setupWebView() {
-        webView.navigationDelegate = self
-        let urlString = resultsUrlString()
-        let urlRequest = URLRequest(url: URL(string: urlString)!)
-        webView.load(urlRequest)
-        webView.allowsBackForwardNavigationGestures = true
-    }
-    
-    func filterURL_web(urlString: String) {
-        let predicate = NSPredicate(format: "url_web == %@", urlString)
-        bookmarkedResultsController.fetchRequest.predicate = predicate
-        try? bookmarkedResultsController.performFetch()
-    }
-    
-    // check bookmarked
-    func checkBookmark() {
-        let urlString = resultsUrlString()
-        filterURL_web(urlString: urlString)
-        let count = bookmarkedResultsController.fetchedObjects?.count ?? 0
-        if count > 0 {
-            isbookmark = true
-        } else {
-            isbookmark = false
-        }
-    }
-    
-    // Layout SubView
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        setupNavigationViewAndToolBar()
-    }
+    // MARK: - NavigationView And ToolBar
     
     func setupNavigationViewAndToolBar() {
-        backButtonItem.isEnabled = false
-        forwardButtonItem.isEnabled = false
+        backAllButtonItem = UIBarButtonItem(image: UIImage(systemName: "xmark"),
+                                            style: .done, target: self,
+                                            action: #selector(backAllAction))
+        bookmarkButton = UIBarButtonItem(image: UIImage(systemName: "star"),
+                                         style: .done, target: self,
+                                         action: #selector(onBookmark))
+        forwardButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.right"),
+                                            style: .plain, target: self,
+                                            action: #selector(forwardAction))
+        refreshButtonItem = UIBarButtonItem(barButtonSystemItem: .refresh,
+                                            target: self,
+                                            action: #selector(refreshAction))
+        backButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.left"),
+                                         style: .done, target: self,
+                                         action: #selector(backAction))
         
-        backAllButtonItem.target = self
-        bookmarkButton.target = self
         navigationItem.leftBarButtonItems = [ backAllButtonItem]
         navigationItem.rightBarButtonItems = [ bookmarkButton ]
         
-        view.addSubview(toolBar)
-        toolBar.translatesAutoresizingMaskIntoConstraints = false
-        toolBar.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
-        toolBar.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        toolBar.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20).isActive = true
-        toolBar.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        
         let flexibleSpace = UIBarButtonItem(systemItem: .flexibleSpace)
         let fixedSpace = UIBarButtonItem(systemItem: .fixedSpace)
-        fixedSpace.width = 50
+        fixedSpace.width = 40
         
-        toolBar.items = [ backButtonItem, fixedSpace, forwardButtonItem, flexibleSpace, refreshButtonItem]
-        }
-    
-    @objc func refreshAction() {
-        webView.reload()
+        navigationController?.setToolbarHidden(false, animated: false)
+        toolbarItems = [backButtonItem, fixedSpace, forwardButtonItem, flexibleSpace, refreshButtonItem]
     }
     
     // Insert stories when isbookmark = true
     func handleOnBookmark(storyURL: String, articleURL: String) {
         if !storyURL.isEmpty {
             guard let story = self.story else { return }
-            insertArticle(title: story.title,
-                          url_web: story.url,
-                          imageURL: story.multimedia[2].url)
+            insertArticle(title: story.title, webURL: story.url,
+                          imageURL: story.multimedia?[2].url ?? "",
+                          publishedDate: story.published_date)
         } else if !articleURL.isEmpty {
             guard let article = self.article else { return }
-            insertArticle(title: article.headline.main,
-                          url_web: article.web_url,
-                          imageURL: "https://static01.nyt.com/" + (article.multimedia[19].url))
+            insertArticle(title: article.headline.main, webURL: article.web_url,
+                          imageURL: "https://static01.nyt.com/" + (article.multimedia[19].url),
+                          publishedDate: article.pub_date)
         } else { return }
     }
     
@@ -216,6 +150,10 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
         }
     }
     
+    @objc func refreshAction() {
+        webView.reload()
+    }
+    
     @objc func backAction() {
         guard webView.canGoBack else { return }
         webView.goBack()
@@ -228,6 +166,71 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
     
     @objc func backAllAction() {
         navigationController?.popViewController(animated: true)
+    }
+    
+    // MARK: - Save ReadArticle, Load webView and Check Bookmark
+        
+    func saveReadArticle() {
+        guard let story = story else { return }
+        saveReadArticle(title: story.title, url: story.url, imageURL: story.multimedia?[2].url ?? "", createdDate: Date())
+    }
+    
+    func saveReadArticle(title: String, url: String, imageURL: String, createdDate: Date) {
+        let context = persistentContainer.viewContext
+        let newArticle = ReadArticle(context: context)
+        newArticle.title = title
+        newArticle.url = url
+        newArticle.imageURL = imageURL
+        newArticle.createdDate = createdDate
+        do {
+            try context.save()
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
+    func resultsUrlString() -> String {
+        var urlString: String!
+        let storyURL = story?.url ?? ""
+        let articleURL = article?.web_url ?? ""
+        if !storyURL.isEmpty {
+            urlString = story!.url
+            title = story!.title
+        } else if !articleURL.isEmpty {
+            urlString = article!.web_url
+            title = article!.headline.main
+        } else {
+            urlString = bookmarkedArticle?.webURL
+            title = bookmarkedArticle?.title
+        }
+        return urlString
+    }
+    
+    // load WebView
+    func loadWebView() {
+        webView.navigationDelegate = self
+        let urlString = resultsUrlString()
+        let urlRequest = URLRequest(url: URL(string: urlString)!)
+        webView.load(urlRequest)
+        webView.allowsBackForwardNavigationGestures = true
+    }
+    
+    func filterURL_web(urlString: String) {
+        let predicate = NSPredicate(format: "webURL == %@", urlString)
+        bookmarkedResultsController.fetchRequest.predicate = predicate
+        try? bookmarkedResultsController.performFetch()
+    }
+    
+    // check bookmarked
+    func checkBookmark() {
+        let urlString = resultsUrlString()
+        filterURL_web(urlString: urlString)
+        let count = bookmarkedResultsController.fetchedObjects?.count ?? 0
+        if count > 0 {
+            isbookmark = true
+        } else {
+            isbookmark = false
+        }
     }
     
     func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
@@ -244,12 +247,13 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
 
 // MARK: - NSFetchedResultsControllerDelegate
 extension DetailsViewController: NSFetchedResultsControllerDelegate {
-    func insertArticle(title: String, url_web: String, imageURL: String) {
+    func insertArticle(title: String, webURL: String, imageURL: String, publishedDate: String) {
         let context = persistentContainer.viewContext
-        let insertNewObject = BookmarkedArticle(context: context)
-        insertNewObject.title = title
-        insertNewObject.url_web = url_web
-        insertNewObject.imageURL = imageURL
+        let newObject = BookmarkedArticle(context: context)
+        newObject.title = title
+        newObject.webURL = webURL
+        newObject.imageURL = imageURL
+        newObject.publishedDate = publishedDate
         do {
             try context.save()
         } catch {

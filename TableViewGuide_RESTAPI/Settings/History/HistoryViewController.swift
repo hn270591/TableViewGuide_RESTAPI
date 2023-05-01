@@ -9,12 +9,21 @@ struct ReadArticles: Hashable {
 }
 
 class HistoryViewController: UIViewController {
-
-    private var tableView = UITableView()
+    // MARK: - Properties
+    
     private let reuseIdentifier = "HistoryCell"
-    private var readArticles: [(String, [ReadArticles])] = []
-    private var titleLabel: UILabel = {
-        let titleLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 200, height: 35))
+    private let message: String = "Are you want to delete ?"
+    private var readArticles: [String: [ReadArticles]] = [:]
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.register(HistoryCell.self, forCellReuseIdentifier: reuseIdentifier)
+        tableView.separatorStyle = .singleLine
+        tableView.rowHeight = 100
+        return tableView
+    }()
+    
+    private lazy var titleLabel: UILabel = {
+        let titleLabel = UILabel()
         titleLabel.textAlignment = .center
         titleLabel.text = "No History"
         titleLabel.isHidden = true
@@ -24,21 +33,6 @@ class HistoryViewController: UIViewController {
     private lazy var persistentContainer: NSPersistentContainer = {
         let appDalegate = UIApplication.shared.delegate as? AppDelegate
         return appDalegate!.persistenContainer
-    }()
-    
-    private lazy var articleResultsController: NSFetchedResultsController<Article> = {
-        let fetchRequest = Article.fetchRequest()
-        fetchRequest.sortDescriptors = []
-        let controller = NSFetchedResultsController(fetchRequest: fetchRequest,
-                                                    managedObjectContext: persistentContainer.viewContext,
-                                                    sectionNameKeyPath: nil, cacheName: nil)
-        controller.delegate = self
-        do {
-            try controller.performFetch()
-        } catch {
-            print(error.localizedDescription)
-        }
-        return controller
     }()
     
     private lazy var readArticleResultsController: NSFetchedResultsController<ReadArticle> = {
@@ -62,13 +56,20 @@ class HistoryViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.dataSource = self
+        tableView.delegate = self
         navigationController?.navigationBar.prefersLargeTitles = true
-        setupTableView()
+        setupNavigation()
         readArticles = readArticlesArray()
         
         if readArticles.isEmpty {
             titleLabel.isHidden = false
         }
+    }
+    
+    func setupNavigation() {
+        lazy var clearHistory = UIBarButtonItem(title: "Clear History", style: .done, target: self, action: #selector(clearAction))
+        navigationItem.rightBarButtonItems = [clearHistory]
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -112,21 +113,16 @@ class HistoryViewController: UIViewController {
         let numericYesterday = Int(createdDate(from: yesterdayDate))
         
         if inputDate == numericToday {
-            return "Today, " + dateFormatterForSectionHeader.string(from: date)
+            return "Today"
         } else if inputDate == numericYesterday {
-            return "Yesterday, " + dateFormatterForSectionHeader.string(from: date)
+            return "Yesterday"
         } else {
             return dateFormatterForSectionHeader.string(from: date)
         }
     }
     
-    func readArticlesArray() -> [(String, [ReadArticles])] {
-        var readArticles: [(String, [ReadArticles])] = []
-        let grouping = Dictionary(grouping: getReadArticles()) { $0.createdDate }
-        for (key,value) in grouping {
-            readArticles.append((key,value))
-        }
-        return readArticles
+    func readArticlesArray() -> [String: [ReadArticles]] {
+        return Dictionary(grouping: getReadArticles()) { $0.createdDate }
     }
     
     func getReadArticles() -> [ReadArticles] {
@@ -153,28 +149,24 @@ class HistoryViewController: UIViewController {
         return readArticlesResults
     }
     
-    func setupTableView() {
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.register(HistoryCell.self, forCellReuseIdentifier: reuseIdentifier)
-        tableView.separatorStyle = .singleLine
-        tableView.rowHeight = 100
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        setupNavigation()
-    }
-    
-    func setupNavigation() {
-        let clearHistory = UIBarButtonItem(title: "Clear History", style: .done, target: self, action: #selector(clearAction))
-        navigationItem.rightBarButtonItems = [clearHistory]
+    // Alert
+    func alert(title: String?, message: String, handler: @escaping (() -> Void)) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let ok = UIAlertAction(title: "OK", style: .default) {_ in
+            handler()
+        }
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
+        alert.addAction(ok)
+        alert.addAction(cancel)
+        present(alert, animated: true)
     }
     
     @objc private func clearAction() {
-        self.readArticles.removeAll()
-        self.clearReadArticles()
-        self.tableView.reloadData()
+        alert(title: nil, message: message, handler: {
+            self.readArticles.removeAll()
+            self.clearReadArticles()
+            self.tableView.reloadData()
+        })
     }
 }
 
@@ -182,24 +174,26 @@ class HistoryViewController: UIViewController {
 
 extension HistoryViewController: UITableViewDataSource, UITableViewDelegate {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return readArticles.count
-    }
-    
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return readArticles[section].0
-    }
-    
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 40
+        return readArticles.keys.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return readArticles[section].1.count
+        let arrayValue = Array(readArticles.values)[section]
+        return arrayValue.count
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return Array(readArticles.keys)[section]
+    }
+
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 30
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! HistoryCell
-        cell.readArticles = readArticles[indexPath.section].1[indexPath.row]
+        let value = Array(readArticles.values)[indexPath.section]
+        cell.readArticles = value[indexPath.row]
         return cell
     }
 }
@@ -212,7 +206,8 @@ extension HistoryViewController: NSFetchedResultsControllerDelegate {
         if readArticless.count == 1 {
             self.readArticles = readArticlesArray()
             tableView.reloadData()
-        } else {
+        }
+        else {
             self.readArticles = readArticlesArray()
             let indexPath = IndexPath(row: 0, section: 0)
             tableView.insertRows(at: [indexPath], with: .automatic)
