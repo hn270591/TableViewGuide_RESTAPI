@@ -9,6 +9,10 @@ class TopStoriesViewController: UIViewController {
     private let heightForRow: CGFloat = 100
     var selectedIndex: Int?
     var stories: [Story] = []
+    private var sectionValue: String?
+    private var defaultValue: String = "Home"
+    private var temporaryValue: String = "Home"
+    private lazy var filterButton: UIBarButtonItem! = nil
     
     private lazy var activityIndicatorView: UIActivityIndicatorView = {
         let indicatorView = UIActivityIndicatorView()
@@ -52,6 +56,21 @@ class TopStoriesViewController: UIViewController {
         return controller
     }()
     
+    private lazy var categoryResultsController: NSFetchedResultsController<CategoryTopStories> = {
+        let fetchRequest = CategoryTopStories.fetchRequest()
+        fetchRequest.sortDescriptors = []
+        let controller = NSFetchedResultsController(fetchRequest: fetchRequest,
+                                                    managedObjectContext: persistentContainer.viewContext,
+                                                    sectionNameKeyPath: nil, cacheName: nil)
+        controller.delegate = self
+        do {
+            try controller.performFetch()
+        } catch {
+            print(error.localizedDescription)
+        }
+        return controller
+    }()
+    
     enum Titles {
         static let internetError = "No Internet"
     }
@@ -86,12 +105,13 @@ class TopStoriesViewController: UIViewController {
     }
     
     func setupNavigationItem() {
-        let reloadButton = UIBarButtonItem(image: UIImage(systemName: "arrow.clockwise"), style: .plain, target: self, action: #selector(handlerReload))
-        navigationItem.rightBarButtonItems = [reloadButton]
+        filterButton = UIBarButtonItem(title: temporaryValue, style: .done, target: self, action: #selector(handleCategory))
+        filterButton.tintColor = .systemGray2
+        navigationItem.rightBarButtonItems = [filterButton]
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)        
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         // Lighten headline when clear ReadArticle
         try? readArticleResultsController.performFetch()
         let readArticle = readArticleResultsController.fetchedObjects ?? []
@@ -112,6 +132,17 @@ class TopStoriesViewController: UIViewController {
             self.tableView.reloadRows(at: [indexPath], with: .none)
             //Reset
             selectedIndex = nil
+        }
+        
+        // Change title Of right BarButtonItems
+        if sectionValue != temporaryValue && sectionValue != nil {
+            temporaryValue = sectionValue!
+            filterButton.title = temporaryValue
+            
+            // reload TopStories
+            onRefesh()
+            // Reset
+            sectionValue = nil
         }
     }
         
@@ -135,10 +166,11 @@ class TopStoriesViewController: UIViewController {
     
     // Fetch Data
     func fetchTopStories() {
+        let defaultValue = self.defaultValue.lowercased()
         if articleResultsController.fetchedObjects?.isEmpty == true, stories.isEmpty {
             self.activityIndicatorView.startAnimating()
         }
-        BaseReponse.shared.storyResponse(completion: { stories, error  in
+        BaseReponse.shared.storyResponse(sectionValue: defaultValue, completion: { stories, error  in
             self.activityIndicatorView.stopAnimating()
             if let error = error {
                 self.handleError(error)
@@ -166,40 +198,20 @@ class TopStoriesViewController: UIViewController {
     
     // Set cache Article
     func setCache(stories: [Story] ) {
-        self.clearArticles()
-        for story in stories {
-            insertStory(title: story.title, imageURL: story.multimedia?[2].url ?? "", url: story.url, isRead: story.isRead ?? false, published_date: story.published_date)
-        }
-        try? articleResultsController.performFetch()
-        print("Number TopStoris saved: \(articleResultsController.fetchedObjects?.count ?? 0)")
-    }
-    
-    // Handler reload button refesh right BarButtonItem
-    @objc func handlerReload() {
-        if !self.stories.isEmpty {
-            self.stories.removeAll()
+        if temporaryValue == defaultValue {
             self.clearArticles()
-            self.tableView.reloadData()
-        }
-        self.activityIndicatorView.startAnimating()
-        BaseReponse.shared.storyResponse(completion: { stories, error  in
-            self.activityIndicatorView.stopAnimating()
-            if let error = error {
-                self.handleError(error)
-            } else {
-                self.handleDataLoaded(stories)
+            for story in stories {
+                insertStory(title: story.title, imageURL: story.multimedia?[2].url ?? "", url: story.url, isRead: story.isRead ?? false, published_date: story.published_date)
             }
-        })
+            try? articleResultsController.performFetch()
+            print("Number TopStoris saved: \(articleResultsController.fetchedObjects?.count ?? 0)")
+        }
     }
     
     // Handler refeshController in tableView
     @objc func onRefesh() {
-        if !self.stories.isEmpty {
-            self.stories.removeAll()
-            self.clearArticles()
-            self.tableView.reloadData()
-        }
-        BaseReponse.shared.storyResponse(completion: { stories, error  in
+        let temporaryValue = self.temporaryValue.lowercased()
+        BaseReponse.shared.storyResponse(sectionValue: temporaryValue , completion: { stories, error  in
             if let error = error {
                 self.handleError(error)
             } else {
@@ -207,6 +219,12 @@ class TopStoriesViewController: UIViewController {
             }
         })
         self.tableView.refreshControl?.endRefreshing()
+    }
+    
+    // Handler filter category
+    @objc func handleCategory() {
+        let vcCategory = CategoryViewController()
+        navigationController?.pushViewController(vcCategory, animated: true)
     }
 }
     
@@ -244,6 +262,15 @@ extension TopStoriesViewController: UITableViewDataSource, UITableViewDelegate {
 // MARK: - Fetch results controller
 
 extension TopStoriesViewController: NSFetchedResultsControllerDelegate {
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+ 
+        let isBookmark = categoryResultsController.fetchedObjects?.compactMap({ $0.isBookmark })
+        if let index = isBookmark?.firstIndex(of: true) {
+            let object = categoryResultsController.object(at: IndexPath(row: index, section: 0))
+            sectionValue = object.title ?? ""
+        }
+    }
+    
     func insertStory(title: String, imageURL: String, url: String, isRead: Bool, published_date: String) {
         let context = persistentContainer.viewContext
         let newArticle = Article(context: context)

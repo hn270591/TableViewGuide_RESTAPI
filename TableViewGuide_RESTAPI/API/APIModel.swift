@@ -55,8 +55,8 @@ class BaseRequest {
 class BaseReponse {
     static let shared = BaseReponse()
     
-    func storyResponse(completion: @escaping storyCompletion) {
-        BaseRequest.shared.request(urlRequest: APIRouter.topStories, method: .get, objectType: Results.self, completion: { results in
+    func storyResponse(sectionValue: String, completion: @escaping storyCompletion) {
+        BaseRequest.shared.request(urlRequest: APIRouter.topStories(sectionValue), method: .get, objectType: Results.self, completion: { results in
             switch results {
             case .success(let value):
                 let stories = value.results

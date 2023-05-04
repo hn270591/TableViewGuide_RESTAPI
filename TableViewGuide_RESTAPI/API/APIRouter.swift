@@ -2,7 +2,7 @@ import Foundation
 import Alamofire
 
 enum APIRouter: URLRequestConvertible {
-    case topStories
+    case topStories(_ sectionValue: String)
     case searchArticle(q: String, page: Int)
     
     var baseURL: URL {
@@ -18,8 +18,8 @@ enum APIRouter: URLRequestConvertible {
 
     var path: String {
         switch self {
-        case .topStories:
-            return "topstories/v2/home.json"
+        case .topStories(let sectionValue):
+            return "topstories/v2/\(sectionValue).json"
         case .searchArticle:
             return "search/v2/articlesearch.json"
         }
