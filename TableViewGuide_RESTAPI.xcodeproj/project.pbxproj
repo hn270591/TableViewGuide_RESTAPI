@@ -24,8 +24,6 @@
 		82A3E6C62A039C8B0065381C /* CategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A3E6C52A039C8B0065381C /* CategoryCell.swift */; };
 		82A3E6C92A039C9F0065381C /* CategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A3E6C72A039C9F0065381C /* CategoryViewController.swift */; };
 		82A3E6CA2A039C9F0065381C /* CategoryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 82A3E6C82A039C9F0065381C /* CategoryViewController.xib */; };
-		82A3E6CD2A039D350065381C /* CategoryTopStories+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A3E6CB2A039D350065381C /* CategoryTopStories+CoreDataClass.swift */; };
-		82A3E6CE2A039D350065381C /* CategoryTopStories+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A3E6CC2A039D350065381C /* CategoryTopStories+CoreDataProperties.swift */; };
 		82DCBCD829DAEA3D004A70D3 /* Data Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 82DCBCD629DAEA3D004A70D3 /* Data Model.xcdatamodeld */; };
 		82DCBCE429DC1A37004A70D3 /* Article+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82DCBCE229DC1A37004A70D3 /* Article+CoreDataClass.swift */; };
 		82DCBCE529DC1A37004A70D3 /* Article+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82DCBCE329DC1A37004A70D3 /* Article+CoreDataProperties.swift */; };
@@ -63,8 +61,6 @@
 		82A3E6C52A039C8B0065381C /* CategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCell.swift; sourceTree = "<group>"; };
 		82A3E6C72A039C9F0065381C /* CategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewController.swift; sourceTree = "<group>"; };
 		82A3E6C82A039C9F0065381C /* CategoryViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CategoryViewController.xib; sourceTree = "<group>"; };
-		82A3E6CB2A039D350065381C /* CategoryTopStories+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "CategoryTopStories+CoreDataClass.swift"; path = "TableViewGuide_RESTAPI/CoreData/CategoryTopStories/CategoryTopStories+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
-		82A3E6CC2A039D350065381C /* CategoryTopStories+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "CategoryTopStories+CoreDataProperties.swift"; path = "TableViewGuide_RESTAPI/CoreData/CategoryTopStories/CategoryTopStories+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
 		82DCBCD729DAEA3D004A70D3 /* Data Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Data Model.xcdatamodel"; sourceTree = "<group>"; };
 		82DCBCE229DC1A37004A70D3 /* Article+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Article+CoreDataClass.swift"; sourceTree = "<group>"; };
 		82DCBCE329DC1A37004A70D3 /* Article+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Article+CoreDataProperties.swift"; sourceTree = "<group>"; };
@@ -205,19 +201,9 @@
 			path = Category;
 			sourceTree = "<group>";
 		};
-		82A3E6CF2A039D3F0065381C /* CategoryTopStories */ = {
-			isa = PBXGroup;
-			children = (
-				82A3E6CB2A039D350065381C /* CategoryTopStories+CoreDataClass.swift */,
-				82A3E6CC2A039D350065381C /* CategoryTopStories+CoreDataProperties.swift */,
-			);
-			path = CategoryTopStories;
-			sourceTree = "<group>";
-		};
 		82DCBCD929DAEB82004A70D3 /* CoreData */ = {
 			isa = PBXGroup;
 			children = (
-				82A3E6CF2A039D3F0065381C /* CategoryTopStories */,
 				827FF70629FCB4D5007D35A9 /* Articles */,
 				827FF70729FCB4DE007D35A9 /* ReadArticles */,
 				827FF70929FCB549007D35A9 /* BookmarkArticles */,
@@ -414,7 +400,6 @@
 				82DCBCD829DAEA3D004A70D3 /* Data Model.xcdatamodeld in Sources */,
 				9350944D295A6E3A0055725F /* TopStoriesViewController.swift in Sources */,
 				93509449295A6E3A0055725F /* AppDelegate.swift in Sources */,
-				82A3E6CE2A039D350065381C /* CategoryTopStories+CoreDataProperties.swift in Sources */,
 				F0ADB4AB29D3EB5200D56F8B /* SearchViewController.swift in Sources */,
 				9350944B295A6E3A0055725F /* SceneDelegate.swift in Sources */,
 				827FF6BD29FBDA86007D35A9 /* DateExtension.swift in Sources */,
@@ -425,7 +410,6 @@
 				F0ADB4D629D53C8400D56F8B /* LoadingCell.swift in Sources */,
 				823D71D429FD32A900026CB9 /* DetailsViewController.swift in Sources */,
 				F0ADB4A929D3EB3900D56F8B /* SearchArticlesCell.swift in Sources */,
-				82A3E6CD2A039D350065381C /* CategoryTopStories+CoreDataClass.swift in Sources */,
 				9350945F295A6E9C0055725F /* StoryCell.swift in Sources */,
 				82A1D7A129E93237001780C6 /* APIModel.swift in Sources */,
 				82DCBD6629E17BEB004A70D3 /* BookmarkedArticleViewController.swift in Sources */,
