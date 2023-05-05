@@ -9,6 +9,7 @@ class CategoriesViewController: UIViewController {
     private let reuseIdentifiter = "CategoriesCell"
     private let userDefaults = UserDefaults.standard
     private let categoryKey = "category"
+    private var categories: [String] = []
     public weak var delegate: CategoryValueDelegate!
     
     private lazy var tableView: UITableView = {
@@ -18,9 +19,7 @@ class CategoriesViewController: UIViewController {
         return tableView
     }()
     
-    private let categories = [
-        "Arts", "Automobiles", "Books", "Business", "Fashion", "Food", "Health", "Home", "Insider", "Magazine", "Movies", "Nyregion", "Obituaries", "Opinion", "Politics", "Realestate", "Science", "Sports", "Sundayreview", "Technology", "Theater", "T-magazine", "Travel", "Upshot", "Us", "World"
-    ]
+    
 
     // MARK: - LifeCycle ViewController
     
@@ -28,7 +27,16 @@ class CategoriesViewController: UIViewController {
         super.viewDidLoad()
         navigationController?.navigationBar.prefersLargeTitles = true
         tableView.dataSource = self
-        tableView.delegate = self  
+        tableView.delegate = self
+        initCategories()
+    }
+    
+    func initCategories() {
+        let categories = [
+            "Arts", "Automobiles", "Books", "Business", "Fashion", "Food", "Health", "Home", "Insider", "Magazine", "Movies", "Nyregion", "Obituaries", "Opinion", "Politics", "Realestate", "Science", "Sports", "Sundayreview", "Technology", "Theater", "T-magazine", "Travel", "Upshot", "Us", "World"
+        ]
+        self.categories = categories
+        
     }
 }
 

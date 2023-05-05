@@ -11,7 +11,7 @@ class SearchArticlesCell: UITableViewCell {
         didSet {
             guard let article = article else { return }
             headLineLabel.text = article.headline.main
-            publishedDateLabel.text = date.publishDate(date: article.pub_date)
+            publishedDateLabel.text = date.publishDate(dateString: article.pub_date)
             publishedDateLabel.textColor = UIColor.secondaryLabel
             
             if let multimedia = article.multimedia, !multimedia.isEmpty {

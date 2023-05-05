@@ -18,7 +18,7 @@ class StoryCell: UITableViewCell {
         didSet {
             guard let story = story else { return }
             headlineLabel?.text = story.title
-            publishedDateLabel.text = date.publishDate(date: story.published_date)
+            publishedDateLabel.text = date.publishDate(dateString: story.published_date)
             publishedDateLabel.textColor = UIColor.secondaryLabel
             isRead = story.isRead ?? false
             
@@ -40,7 +40,7 @@ class StoryCell: UITableViewCell {
         didSet {
             guard let article = article else { return }
             headlineLabel.text = article.title
-            publishedDateLabel.text = date.publishDate(date: article.publishedDate!)
+            publishedDateLabel.text = date.publishDate(dateString: article.publishedDate!)
             publishedDateLabel.textColor = UIColor.secondaryLabel
             isRead = article.isRead
             if let urlString = article.imageURL, !urlString.isEmpty {

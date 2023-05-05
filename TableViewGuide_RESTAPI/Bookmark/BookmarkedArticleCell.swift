@@ -31,7 +31,7 @@ class BookmarkedArticleCell: UITableViewCell {
         didSet {
             guard let bookmarkStory = bookmarkStory else { return }
             headlineLabel.text = bookmarkStory.title
-            publishedTimeLabel.text = date.publishDate(date: bookmarkStory.publishedDate!)
+            publishedTimeLabel.text = date.publishDate(dateString: bookmarkStory.publishedDate!)
             
             if let urlString =  bookmarkStory.imageURL, !urlString.isEmpty {
                 let url = URL(string: urlString)!
