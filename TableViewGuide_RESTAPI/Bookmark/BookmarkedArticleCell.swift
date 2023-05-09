@@ -16,7 +16,7 @@ class BookmarkedArticleCell: UITableViewCell {
         return thumbnail
     }()
     
-    private lazy var publishedTimeLabel: UILabel = {
+    private lazy var publishedDateLabel: UILabel = {
         let publishedTime = UILabel()
         publishedTime.textColor = .secondaryLabel
         publishedTime.textAlignment = .right
@@ -25,13 +25,12 @@ class BookmarkedArticleCell: UITableViewCell {
         return publishedTime
     }()
     
-    private var date = Date()
-    
     var bookmarkStory: BookmarkedArticle? {
         didSet {
             guard let bookmarkStory = bookmarkStory else { return }
+            let publishedDate = DateFormatter.publishedDateFormatterForArticles(dateString: bookmarkStory.publishedDate!)
             headlineLabel.text = bookmarkStory.title
-            publishedTimeLabel.text = date.publishDate(date: bookmarkStory.publishedDate!)
+            publishedDateLabel.text = publishedDate
             
             if let urlString =  bookmarkStory.imageURL, !urlString.isEmpty {
                 let url = URL(string: urlString)!
@@ -68,10 +67,10 @@ class BookmarkedArticleCell: UITableViewCell {
         headlineLabel.leadingAnchor.constraint(equalTo: thumbnailView.trailingAnchor, constant: 10).isActive = true
         
         // set publishedTimeLabel
-        publishedTimeLabel.translatesAutoresizingMaskIntoConstraints = false
-        publishedTimeLabel.topAnchor.constraint(equalTo: headlineLabel.bottomAnchor, constant: 0).isActive = true
-        publishedTimeLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0).isActive = true
-        publishedTimeLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
-        publishedTimeLabel.leadingAnchor.constraint(equalTo: thumbnailView.trailingAnchor, constant: 10).isActive = true
+        publishedDateLabel.translatesAutoresizingMaskIntoConstraints = false
+        publishedDateLabel.topAnchor.constraint(equalTo: headlineLabel.bottomAnchor, constant: 0).isActive = true
+        publishedDateLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0).isActive = true
+        publishedDateLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
+        publishedDateLabel.leadingAnchor.constraint(equalTo: thumbnailView.trailingAnchor, constant: 10).isActive = true
     }
 }

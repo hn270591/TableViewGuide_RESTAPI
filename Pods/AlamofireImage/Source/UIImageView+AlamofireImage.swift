@@ -45,7 +45,7 @@ extension UIImageView {
         case custom(duration: TimeInterval,
                     animationOptions: AnimationOptions,
                     animations: (UIImageView, Image) -> Void,
-                    completion: ((Bool) -> Void)?)
+                    requestCompletion: ((Bool) -> Void)?)
 
         /// The duration of the image transition in seconds.
         public var duration: TimeInterval {
@@ -106,10 +106,10 @@ extension UIImageView {
         }
 
         /// The completion closure associated with the image transition.
-        public var completion: ((Bool) -> Void)? {
+        public var requestCompletion: ((Bool) -> Void)? {
             switch self {
-            case let .custom(_, _, _, completion):
-                return completion
+            case let .custom(_, _, _, requestCompletion):
+                return requestCompletion
             default:
                 return nil
             }
@@ -208,7 +208,7 @@ extension AlamofireExtension where ExtendedType: UIImageView {
                          progressQueue: DispatchQueue = DispatchQueue.main,
                          imageTransition: UIImageView.ImageTransition = .noTransition,
                          runImageTransitionIfCached: Bool = false,
-                         completion: ((AFIDataResponse<UIImage>) -> Void)? = nil) {
+                         requestCompletion: ((AFIDataResponse<UIImage>) -> Void)? = nil) {
         setImage(withURLRequest: urlRequest(with: url),
                  cacheKey: cacheKey,
                  placeholderImage: placeholderImage,
@@ -218,7 +218,7 @@ extension AlamofireExtension where ExtendedType: UIImageView {
                  progressQueue: progressQueue,
                  imageTransition: imageTransition,
                  runImageTransitionIfCached: runImageTransitionIfCached,
-                 completion: completion)
+                 requestCompletion: requestCompletion)
     }
 
     /// Asynchronously downloads an image from the specified URL Request, applies the specified image filter to the downloaded
@@ -266,7 +266,7 @@ extension AlamofireExtension where ExtendedType: UIImageView {
                          progressQueue: DispatchQueue = DispatchQueue.main,
                          imageTransition: UIImageView.ImageTransition = .noTransition,
                          runImageTransitionIfCached: Bool = false,
-                         completion: ((AFIDataResponse<UIImage>) -> Void)? = nil) {
+                         requestCompletion: ((AFIDataResponse<UIImage>) -> Void)? = nil) {
         guard !isURLRequestURLEqualToActiveRequestURL(urlRequest) else {
             let response = AFIDataResponse<UIImage>(request: nil,
                                                     response: nil,
@@ -275,7 +275,7 @@ extension AlamofireExtension where ExtendedType: UIImageView {
                                                     serializationDuration: 0.0,
                                                     result: .failure(AFIError.requestCancelled))
 
-            completion?(response)
+            requestCompletion?(response)
 
             return
         }
@@ -315,11 +315,11 @@ extension AlamofireExtension where ExtendedType: UIImageView {
                         guard self.activeRequestReceipt == nil else { return }
 
                         self.run(imageTransition, with: image)
-                        completion?(response)
+                        requestCompletion?(response)
                     }
                 } else {
                     type.image = image
-                    completion?(response)
+                    requestCompletion?(response)
                 }
 
                 return
@@ -343,13 +343,13 @@ extension AlamofireExtension where ExtendedType: UIImageView {
                                                       filter: filter,
                                                       progress: progress,
                                                       progressQueue: progressQueue,
-                                                      completion: { response in
+                                                      requestCompletion: { response in
                                                           guard
                                                               let strongSelf = imageView?.af,
                                                               strongSelf.isURLRequestURLEqualToActiveRequestURL(response.request) &&
                                                               strongSelf.activeRequestReceipt?.receiptID == downloadID
                                                           else {
-                                                              completion?(response)
+                                                              requestCompletion?(response)
                                                               return
                                                           }
 
@@ -359,7 +359,7 @@ extension AlamofireExtension where ExtendedType: UIImageView {
 
                                                           strongSelf.activeRequestReceipt = nil
 
-                                                          completion?(response)
+                                                          requestCompletion?(response)
                                                       })
 
         activeRequestReceipt = requestReceipt
@@ -390,7 +390,7 @@ extension AlamofireExtension where ExtendedType: UIImageView {
                           duration: imageTransition.duration,
                           options: imageTransition.animationOptions,
                           animations: { imageTransition.animations(imageView, image) },
-                          completion: imageTransition.completion)
+                          requestCompletion: imageTransition.requestCompletion)
     }
 
     // MARK: - Private - URL Request Helper Methods
@@ -442,7 +442,7 @@ extension UIImageView {
                             progressQueue: DispatchQueue = DispatchQueue.main,
                             imageTransition: ImageTransition = .noTransition,
                             runImageTransitionIfCached: Bool = false,
-                            completion: ((AFIDataResponse<UIImage>) -> Void)? = nil) {
+                            requestCompletion: ((AFIDataResponse<UIImage>) -> Void)? = nil) {
         af.setImage(withURL: url,
                     cacheKey: cacheKey,
                     placeholderImage: placeholderImage,
@@ -452,7 +452,7 @@ extension UIImageView {
                     progressQueue: progressQueue,
                     imageTransition: imageTransition,
                     runImageTransitionIfCached: runImageTransitionIfCached,
-                    completion: completion)
+                    requestCompletion: requestCompletion)
     }
 
     @available(*, deprecated, message: "Replaced by `imageView.af.setImage(withURLRequest: ...)`")
@@ -465,7 +465,7 @@ extension UIImageView {
                             progressQueue: DispatchQueue = DispatchQueue.main,
                             imageTransition: ImageTransition = .noTransition,
                             runImageTransitionIfCached: Bool = false,
-                            completion: ((AFIDataResponse<UIImage>) -> Void)? = nil) {
+                            requestCompletion: ((AFIDataResponse<UIImage>) -> Void)? = nil) {
         af.setImage(withURLRequest: urlRequest,
                     cacheKey: cacheKey,
                     placeholderImage: placeholderImage,
@@ -475,7 +475,7 @@ extension UIImageView {
                     progressQueue: progressQueue,
                     imageTransition: imageTransition,
                     runImageTransitionIfCached: runImageTransitionIfCached,
-                    completion: completion)
+                    requestCompletion: requestCompletion)
     }
 
     @available(*, deprecated, message: "Replaced by `imageView.af.cancelImageRequest()`")

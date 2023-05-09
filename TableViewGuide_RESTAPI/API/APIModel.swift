@@ -13,14 +13,14 @@ class Connectivity {
     }
 }
 
-typealias completion<T> = (Result<T, BaseResponseError>) -> Void
-typealias storyCompletion = ([Story], BaseResponseError?) -> Void
-typealias articleCompletion = ([ArticleItem], BaseResponseError?) -> Void
+typealias requestCompletion<T> = (Result<T, BaseResponseError>) -> Void
+typealias topStoryCompletion = ([Story], BaseResponseError?) -> Void
+typealias searchArticlesCompletion = ([ArticleItem], BaseResponseError?) -> Void
 
-class BaseRequest {
-    static let shared = BaseRequest()
+class APIManager {
+    static let shared = APIManager()
     
-    func request<T: Codable>(urlRequest: APIRouter, method: HTTPMethod, objectType: T.Type, completion: @escaping completion<T>) -> Void {
+    func request<T: Codable>(urlRequest: APIRouter, method: HTTPMethod, objectType: T.Type, completion: @escaping requestCompletion<T>) -> Void {
         if !Connectivity.isConnectedToInternet() {
             // Error internet
             print("Internet inconnect")
@@ -52,11 +52,11 @@ class BaseRequest {
     }
 }
 
-class BaseReponse {
-    static let shared = BaseReponse()
+class NYTimeClient {
+    static let shared = NYTimeClient()
     
-    func storyResponse(sectionValue: String, completion: @escaping storyCompletion) {
-        BaseRequest.shared.request(urlRequest: APIRouter.topStories(sectionValue), method: .get, objectType: Results.self, completion: { results in
+    func getTopStories(sectionValue: String, completion: @escaping topStoryCompletion) {
+        APIManager.shared.request(urlRequest: APIRouter.topStories(sectionValue), method: .get, objectType: Results.self, completion: { results in
             switch results {
             case .success(let value):
                 let stories = value.results
@@ -67,8 +67,8 @@ class BaseReponse {
         })
     }
     
-    func articleResponse(query: String, page: Int, completion: @escaping articleCompletion) {
-        BaseRequest.shared.request(urlRequest: APIRouter.searchArticle(q: query, page: page), method: .get, objectType: ArticlesData.self, completion: { results in
+    func getSearchArticles(query: String, page: Int, completion: @escaping searchArticlesCompletion) {
+        APIManager.shared.request(urlRequest: APIRouter.searchArticle(q: query, page: page), method: .get, objectType: ArticlesData.self, completion: { results in
             switch results {
             case .success(let value):
                 let articles = value.response.docs

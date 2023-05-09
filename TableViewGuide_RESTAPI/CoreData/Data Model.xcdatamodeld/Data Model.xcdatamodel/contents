@@ -13,10 +13,6 @@
         <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="webURL" optional="YES" attributeType="String"/>
     </entity>
-    <entity name="CategoryTopStories" representedClassName="CategoryTopStories" syncable="YES">
-        <attribute name="isBookmark" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="title" optional="YES" attributeType="String"/>
-    </entity>
     <entity name="ReadArticle" representedClassName="ReadArticle" syncable="YES">
         <attribute name="imageURL" optional="YES" attributeType="String"/>
         <attribute name="publishDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>

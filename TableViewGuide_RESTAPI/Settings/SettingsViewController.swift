@@ -18,7 +18,7 @@ class SettingsViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         navigationController?.navigationBar.prefersLargeTitles = true
-        setTitles()
+        initSettings()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -26,8 +26,8 @@ class SettingsViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
     }
     
-    func setTitles() {
-        let settings: [String] = ["History"]
+    func initSettings() {
+        let settings: [String] = ["History", "Display Settings"]
         self.settings = settings
     }
 }
@@ -48,6 +48,9 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let vcHistory = HistoryViewController()
-        navigationController?.pushViewController(vcHistory, animated: true)
+        let vcDisplay = DisplaySettingsViewController()
+        let vc: [UIViewController] = [vcHistory, vcDisplay]
+        let vcPresent = vc[indexPath.row]
+        navigationController?.pushViewController(vcPresent, animated: true)
     }
 }

@@ -17,8 +17,10 @@ class StoryCell: UITableViewCell {
     var story: Story? {
         didSet {
             guard let story = story else { return }
+            let publishedDate = DateFormatter.publishedDateFormatterForArticles(dateString: story.published_date)
+            
             headlineLabel?.text = story.title
-            publishedDateLabel.text = date.publishDate(date: story.published_date)
+            publishedDateLabel.text = publishedDate
             publishedDateLabel.textColor = UIColor.secondaryLabel
             isRead = story.isRead ?? false
             
@@ -39,8 +41,10 @@ class StoryCell: UITableViewCell {
     var article: Article? {
         didSet {
             guard let article = article else { return }
+            let publishedDate = DateFormatter.publishedDateFormatterForArticles(dateString: article.publishedDate!)
+            
             headlineLabel.text = article.title
-            publishedDateLabel.text = date.publishDate(date: article.publishedDate!)
+            publishedDateLabel.text = publishedDate
             publishedDateLabel.textColor = UIColor.secondaryLabel
             isRead = article.isRead
             if let urlString = article.imageURL, !urlString.isEmpty {

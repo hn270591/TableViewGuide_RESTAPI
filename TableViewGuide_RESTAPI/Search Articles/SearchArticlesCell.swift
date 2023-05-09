@@ -6,12 +6,13 @@ class SearchArticlesCell: UITableViewCell {
     @IBOutlet weak var thumbnailView: UIImageView!
     @IBOutlet weak var publishedDateLabel: UILabel!
     
-    private var date = Date()
     var article: ArticleItem? {
         didSet {
             guard let article = article else { return }
+            let publishedDate = DateFormatter.publishedDateFormatterForArticles(dateString: article.pub_date)
+            
             headLineLabel.text = article.headline.main
-            publishedDateLabel.text = date.publishDate(date: article.pub_date)
+            publishedDateLabel.text = publishedDate
             publishedDateLabel.textColor = UIColor.secondaryLabel
             
             if let multimedia = article.multimedia, !multimedia.isEmpty {

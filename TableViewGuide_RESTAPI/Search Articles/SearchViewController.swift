@@ -117,16 +117,9 @@ extension SearchViewController: UISearchBarDelegate {
         }
         
         if let searchText = searchBar.text {
-            var textArray: [Character] = []
-            for text in searchText {
-                textArray.append(text)
-                if let valueChange = textArray.firstIndex(of: " ") {
-                    textArray[valueChange] = "+"
-                }
-            }
-            self.searchText = String(textArray)
+            self.searchText = searchText
             self.isLoading = true
-            BaseReponse.shared.articleResponse(query: self.searchText, page: self.page, completion: { articles, error in
+            NYTimeClient.shared.getSearchArticles(query: self.searchText, page: self.page, completion: { articles, error in
                 self.activityIndicatorView.stopAnimating()
                 if let error = error {
                     self.handleError(error)
@@ -164,7 +157,7 @@ extension SearchViewController: UISearchBarDelegate {
             self.isLoading = true
             let nextPage = self.page + 1
             
-            BaseReponse.shared.articleResponse(query: self.searchText, page: nextPage, completion: { articles, error in
+            NYTimeClient.shared.getSearchArticles(query: self.searchText, page: nextPage, completion: { articles, error in
                 if let error = error {
                     self.handleError(error)
                     return
@@ -186,7 +179,7 @@ extension SearchViewController: UISearchBarDelegate {
             break
         case .invalidResponse:
             DispatchQueue.global().asyncAfter(deadline: .now() + 30) {
-                BaseReponse.shared.articleResponse(query: self.searchText, page: self.page + 1, completion: { articles, error in
+                NYTimeClient.shared.getSearchArticles(query: self.searchText, page: self.page + 1, completion: { articles, error in
                     if let error = error {
                         self.handleError(error)
                         return

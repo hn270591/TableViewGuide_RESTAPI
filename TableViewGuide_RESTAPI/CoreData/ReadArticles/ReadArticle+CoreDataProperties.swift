@@ -56,31 +56,10 @@ extension ReadArticle {
                 return primitivePublishDayID
             }
             
-            let calenar = Calendar(identifier: .gregorian)
-            let components = calenar.dateComponents([.year, .month, .day], from: date)
-            if let year = components.year, let month = components.month, let day = components.day {
-                primitivePublishDayID = "\((year * 1000000) + (month * 1000) + day)"
-            }
+            primitivePublishDayID = DateFormatter.dateFormatterForSectionHeader(date: date)
             return primitivePublishDayID
         }
     }
-    
-    class func date(from publishDayString: String) -> Date? {
-        guard let numericSection = Int(publishDayString) else { return nil }
-        var dateComponents = DateComponents()
-        let calenar = Calendar(identifier: .gregorian)
-        dateComponents.calendar = calenar
-        
-        let year = numericSection / 1000000
-        let month = (numericSection - year * 1000000) / 1000
-        let day = numericSection - (year * 1000000) - (month * 1000)
-        dateComponents.year = year
-        dateComponents.month = month
-        dateComponents.day = day
-        
-        return dateComponents.calendar?.date(from: dateComponents)
-    }
-
 }
 
 extension ReadArticle : Identifiable {

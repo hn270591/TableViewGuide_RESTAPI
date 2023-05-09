@@ -110,7 +110,7 @@ public struct DataResponsePublisher<Value>: Publisher {
             self.downstream = nil
             responseHandler { response in
                 _ = downstream.receive(response)
-                downstream.receive(completion: .finished)
+                downstream.receive(requestCompletion: .finished)
             }.resume()
         }
 
@@ -287,8 +287,8 @@ public struct DataStreamPublisher<Value>: Publisher {
             case let .stream(result):
                 return result
             // If the stream has completed with an error, send the error value downstream as a `.failure`.
-            case let .complete(completion):
-                return completion.error.map(Result.failure)
+            case let .complete(requestCompletion):
+                return requestCompletion.error.map(Result.failure)
             }
         }
         .eraseToAnyPublisher()
@@ -332,7 +332,7 @@ public struct DataStreamPublisher<Value>: Publisher {
             streamHandler { stream in
                 _ = downstream.receive(stream)
                 if case .complete = stream.event {
-                    downstream.receive(completion: .finished)
+                    downstream.receive(requestCompletion: .finished)
                 }
             }.resume()
         }
@@ -481,7 +481,7 @@ public struct DownloadResponsePublisher<Value>: Publisher {
             self.downstream = nil
             responseHandler { response in
                 _ = downstream.receive(response)
-                downstream.receive(completion: .finished)
+                downstream.receive(requestCompletion: .finished)
             }.resume()
         }
 

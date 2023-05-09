@@ -1,32 +1,64 @@
 import UIKit
 
-extension Date {
-    func publishDate(date: String) -> String {
-        // Format according to ISO 8601
-        let iSO8601DateFormatter = ISO8601DateFormatter()
-        guard let publishedDate = iSO8601DateFormatter.date(from: date) else { return "" }
-        let formatter = RelativeDateTimeFormatter()
-        formatter.dateTimeStyle = .numeric
-        
-        // Format according to yyyy/dd/MM
+extension DateFormatter {
+    private static var dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .long
+        formatter.doesRelativeDateFormatting = true
+        return formatter
+    }()
+    
+    private static var timeFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.timeStyle = .short
+        formatter.doesRelativeDateFormatting = true
+        return formatter
+    }()
+    
+    private static var iso8601Full: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        formatter.calendar = Calendar(identifier: .iso8601)
+        formatter.locale = .current
+        return formatter
+    }()
+    
+    private static var YYYYMMdd: DateFormatter = {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy/dd/MM"
-        let dateString = dateFormatter.string(from: publishedDate)
+        dateFormatter.dateFormat = "YYYY/MM/dd"
+        return dateFormatter
+    }()
+    
+    // MARK: -  Top Stories and Search
+    
+    class func publishedDateFormatterForArticles(dateString: String) -> String {
+        let currentDate = Date()
+        let publishedDate = DateFormatter.iso8601Full.date(from: dateString) ?? Date()
         
-        //
-        var pubDateString = String(formatter.localizedString(for: Date(), relativeTo: publishedDate))
-        var isCheck: Bool = false
-        let abc = ["day", "moth", "year"]
-        for a in abc {
-            if pubDateString.contains(a) {
-               isCheck = true
-                break
-            }
+        if publishedDate <= currentDate.addingTimeInterval(-24*60*60) { // 1 day passed
+            return String(DateFormatter.YYYYMMdd.string(from: publishedDate))
+        } else {
+            return String(publishedDate.timeAgoDisplay())
         }
-        
-        // Delete 'in' and add 'ago' for pubDateString
-        let index = pubDateString.firstIndex(of: " ") ?? pubDateString.endIndex
-        let pubDate = String(pubDateString[index...] + " ago")
-        return isCheck ? dateString : pubDate
+    }
+    
+    // MARK: - History
+    
+    class func dateFormatterForSectionHeader(date: Date) -> String {
+        return DateFormatter.dateFormatter.string(from: date)
+    }
+    
+    class func dateFormatterForRowPublishTime(date: Date) -> String {
+        return DateFormatter.timeFormatter.string(from: date)
     }
 }
+
+extension Date {
+    func timeAgoDisplay() -> String {
+        let date = Date()
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .full
+        return formatter.localizedString(for: self, relativeTo: date)
+    }
+}
+

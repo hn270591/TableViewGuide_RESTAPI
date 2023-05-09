@@ -13,14 +13,14 @@ class HistoryViewController: UIViewController {
         return tableView
     }()
     
-    private lazy var titleLabel: UILabel = {
-        let titleLabel = UILabel()
-        titleLabel.textAlignment = .center
-        titleLabel.text = "No History"
-        titleLabel.isHidden = true
-        titleLabel.center = CGPoint(x: view.bounds.width / 2, y: view.bounds.height / 2 - 100)
-        view.addSubview(titleLabel)
-        return titleLabel
+    private lazy var noHistoryLabel: UILabel = {
+        let noHistoryLabel = UILabel()
+        noHistoryLabel.textAlignment = .center
+        noHistoryLabel.text = "No History"
+        noHistoryLabel.isHidden = true
+        noHistoryLabel.center = CGPoint(x: view.bounds.width / 2, y: view.bounds.height / 2 - 100)
+        view.addSubview(noHistoryLabel)
+        return noHistoryLabel
     }()
     
     private lazy var persistentContainer: NSPersistentContainer = {
@@ -43,21 +43,6 @@ class HistoryViewController: UIViewController {
         return controller
     }()
     
-    private lazy var dateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        return dateFormatter
-    }()
-    
-    private var dateFormatterForSectionHeader: DateFormatter {
-        dateFormatter.setLocalizedDateFormatFromTemplate("EEEE, MMMM dd, yyyy")
-        return dateFormatter
-    }
-    
-    private var dateFormatterForRowPublishTime: DateFormatter {
-        dateFormatter.setLocalizedDateFormatFromTemplate("hh:mm a")
-        return dateFormatter
-    }
-    
     override func loadView() {
         view = tableView
     }
@@ -71,7 +56,7 @@ class HistoryViewController: UIViewController {
         let readArticle = readArticleResultsController.fetchedObjects ?? []
         
         if readArticle.isEmpty {
-            titleLabel.isHidden = false
+            noHistoryLabel.isHidden = false
         }
     }
     
@@ -86,7 +71,7 @@ class HistoryViewController: UIViewController {
         let readArticle = readArticleResultsController.fetchedObjects ?? []
         
         if !readArticle.isEmpty {
-            titleLabel.isHidden = true
+            noHistoryLabel.isHidden = true
         }
     }
     
@@ -105,34 +90,9 @@ class HistoryViewController: UIViewController {
     @objc func clearAction() {
         alert(title: nil, message: message, handler: {
             self.clearReadArticles()
-            self.titleLabel.isHidden = false
+            self.noHistoryLabel.isHidden = false
             self.tableView.reloadData()
         })
-    }
-    
-    func publishDate(from publishDate: Date) -> Int {
-        var date: String!
-        let calendar = Calendar(identifier: .gregorian)
-        let components = calendar.dateComponents([.year, .month, .day], from: publishDate)
-        if let year = components.year, let month = components.month, let day = components.day {
-            date = "\((year * 1000000) + (month * 1000) + day)"
-        }
-        return Int(date) ?? 0
-    }
-    
-    func checkPublishDate(_ inputDate: Int, will date: Date) -> String {
-        let yesterdayDate = Date().addingTimeInterval(-60 * 60 * 24)
-
-        let numericToday = Int(publishDate(from: Date()))
-        let numericYesterday = Int(publishDate(from: yesterdayDate))
-        
-        if inputDate == numericToday {
-            return "Today"
-        } else if inputDate == numericYesterday {
-            return "Yesterday"
-        } else {
-            return dateFormatterForSectionHeader.string(from: date)
-        }
     }
 }
 
@@ -148,14 +108,9 @@ extension HistoryViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        guard let sections = readArticleResultsController.sections,
-              let date = ReadArticle.date(from: sections[section].name)
-        else { return nil }
-
-        let numericName = Int(sections[section].name) ?? 0
-        let titleForHeader = checkPublishDate(numericName, will: date)
-        
-        return titleForHeader
+        guard let sections = readArticleResultsController.sections else { return nil }
+        let title = sections[section].name
+        return title
     }
         
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -164,7 +119,7 @@ extension HistoryViewController: UITableViewDataSource, UITableViewDelegate {
         cell.readArticle = readArticle
         
         if let publishDate = readArticle.publishDate {
-            let publishTime = "\(dateFormatterForRowPublishTime.string(from: publishDate))"
+            let publishTime = DateFormatter.dateFormatterForRowPublishTime(date: publishDate)
             cell.createdTimeLabel.text = publishTime
         }
         return cell

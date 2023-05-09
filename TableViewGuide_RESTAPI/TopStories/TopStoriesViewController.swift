@@ -9,10 +9,10 @@ class TopStoriesViewController: UIViewController {
     private let heightForRow: CGFloat = 100
     var selectedIndex: Int?
     var stories: [Story] = []
-    private var sectionValue: String?
-    private var defaultValue: String = "Home"
-    private var temporaryValue: String = "Home"
-    private lazy var filterButton: UIBarButtonItem! = nil
+    private lazy var categoryButton: UIBarButtonItem! = nil
+    private var userDefaults = UserDefaults.standard
+    private var currentCategory = "Home"
+    
     
     private lazy var activityIndicatorView: UIActivityIndicatorView = {
         let indicatorView = UIActivityIndicatorView()
@@ -56,21 +56,6 @@ class TopStoriesViewController: UIViewController {
         return controller
     }()
     
-    private lazy var categoryResultsController: NSFetchedResultsController<CategoryTopStories> = {
-        let fetchRequest = CategoryTopStories.fetchRequest()
-        fetchRequest.sortDescriptors = []
-        let controller = NSFetchedResultsController(fetchRequest: fetchRequest,
-                                                    managedObjectContext: persistentContainer.viewContext,
-                                                    sectionNameKeyPath: nil, cacheName: nil)
-        controller.delegate = self
-        do {
-            try controller.performFetch()
-        } catch {
-            print(error.localizedDescription)
-        }
-        return controller
-    }()
-    
     enum Titles {
         static let internetError = "No Internet"
     }
@@ -105,9 +90,9 @@ class TopStoriesViewController: UIViewController {
     }
     
     func setupNavigationItem() {
-        filterButton = UIBarButtonItem(title: temporaryValue, style: .done, target: self, action: #selector(handleCategory))
-        filterButton.tintColor = .systemGray2
-        navigationItem.rightBarButtonItems = [filterButton]
+        categoryButton = UIBarButtonItem(title: currentCategory, style: .done, target: self, action: #selector(handleCategory))
+        categoryButton.tintColor = .systemGray2
+        navigationItem.rightBarButtonItems = [categoryButton]
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -133,17 +118,6 @@ class TopStoriesViewController: UIViewController {
             //Reset
             selectedIndex = nil
         }
-        
-        // Change title Of right BarButtonItems
-        if sectionValue != temporaryValue && sectionValue != nil {
-            temporaryValue = sectionValue!
-            filterButton.title = temporaryValue
-            
-            // reload TopStories
-            onRefesh()
-            // Reset
-            sectionValue = nil
-        }
     }
         
     // Handle Error
@@ -166,11 +140,11 @@ class TopStoriesViewController: UIViewController {
     
     // Fetch Data
     func fetchTopStories() {
-        let defaultValue = self.defaultValue.lowercased()
+        let category = currentCategory.lowercased()
         if articleResultsController.fetchedObjects?.isEmpty == true, stories.isEmpty {
             self.activityIndicatorView.startAnimating()
         }
-        BaseReponse.shared.storyResponse(sectionValue: defaultValue, completion: { stories, error  in
+        NYTimeClient.shared.getTopStories(sectionValue: category, completion: { stories, error  in
             self.activityIndicatorView.stopAnimating()
             if let error = error {
                 self.handleError(error)
@@ -198,10 +172,10 @@ class TopStoriesViewController: UIViewController {
     
     // Set cache Article
     func setCache(stories: [Story] ) {
-        if temporaryValue == defaultValue {
+        if currentCategory == "Home" {
             self.clearArticles()
             for story in stories {
-                insertStory(title: story.title, imageURL: story.multimedia?[2].url ?? "", url: story.url, isRead: story.isRead ?? false, published_date: story.published_date)
+                insertStory(title: story.title, imageURL: story.multimedia?[2].url ?? "", url: story.url, isRead: story.isRead ?? false, publishedDate: story.published_date)
             }
             try? articleResultsController.performFetch()
             print("Number TopStoris saved: \(articleResultsController.fetchedObjects?.count ?? 0)")
@@ -210,8 +184,8 @@ class TopStoriesViewController: UIViewController {
     
     // Handler refeshController in tableView
     @objc func onRefesh() {
-        let temporaryValue = self.temporaryValue.lowercased()
-        BaseReponse.shared.storyResponse(sectionValue: temporaryValue , completion: { stories, error  in
+        let category = currentCategory.lowercased()
+        NYTimeClient.shared.getTopStories(sectionValue: category , completion: { stories, error  in
             if let error = error {
                 self.handleError(error)
             } else {
@@ -223,7 +197,8 @@ class TopStoriesViewController: UIViewController {
     
     // Handler filter category
     @objc func handleCategory() {
-        let vcCategory = CategoryViewController()
+        let vcCategory = CategoriesViewController()
+        vcCategory.delegate = self
         navigationController?.pushViewController(vcCategory, animated: true)
     }
 }
@@ -259,26 +234,32 @@ extension TopStoriesViewController: UITableViewDataSource, UITableViewDelegate {
     }
 }
 
+// MARK: - CategoryValueDelegate
+
+extension TopStoriesViewController: CategoriesViewControllerDelegate {
+    func setCategoryValue(_ sender: CategoriesViewController, category: String) {
+        categoryButton.title = category
+        currentCategory = category.lowercased()
+        
+        // Save Category
+        userDefaults.setCategory(value: category)
+        
+        // Reload TopStories
+        onRefesh()
+    }
+}
+
 // MARK: - Fetch results controller
 
 extension TopStoriesViewController: NSFetchedResultsControllerDelegate {
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
- 
-        let isBookmark = categoryResultsController.fetchedObjects?.compactMap({ $0.isBookmark })
-        if let index = isBookmark?.firstIndex(of: true) {
-            let object = categoryResultsController.object(at: IndexPath(row: index, section: 0))
-            sectionValue = object.title ?? ""
-        }
-    }
-    
-    func insertStory(title: String, imageURL: String, url: String, isRead: Bool, published_date: String) {
+    func insertStory(title: String, imageURL: String, url: String, isRead: Bool, publishedDate: String) {
         let context = persistentContainer.viewContext
         let newArticle = Article(context: context)
         newArticle.title = title
         newArticle.imageURL = imageURL
         newArticle.url = url
         newArticle.isRead = isRead
-        newArticle.publishedDate = published_date
+        newArticle.publishedDate = publishedDate
         do {
             try context.save()
         } catch {

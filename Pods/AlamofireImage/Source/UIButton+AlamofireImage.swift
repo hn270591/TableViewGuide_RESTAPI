@@ -123,7 +123,7 @@ extension AlamofireExtension where ExtendedType: UIButton {
                          filter: ImageFilter? = nil,
                          progress: ImageDownloader.ProgressHandler? = nil,
                          progressQueue: DispatchQueue = DispatchQueue.main,
-                         completion: ((AFIDataResponse<UIImage>) -> Void)? = nil) {
+                         requestCompletion: ((AFIDataResponse<UIImage>) -> Void)? = nil) {
         setImage(for: state,
                  urlRequest: urlRequest(with: url),
                  cacheKey: cacheKey,
@@ -132,7 +132,7 @@ extension AlamofireExtension where ExtendedType: UIButton {
                  filter: filter,
                  progress: progress,
                  progressQueue: progressQueue,
-                 completion: completion)
+                 requestCompletion: requestCompletion)
     }
 
     /// Asynchronously downloads an image from the specified URL and sets it once the request is finished.
@@ -166,7 +166,7 @@ extension AlamofireExtension where ExtendedType: UIButton {
                          filter: ImageFilter? = nil,
                          progress: ImageDownloader.ProgressHandler? = nil,
                          progressQueue: DispatchQueue = DispatchQueue.main,
-                         completion: ((AFIDataResponse<UIImage>) -> Void)? = nil) {
+                         requestCompletion: ((AFIDataResponse<UIImage>) -> Void)? = nil) {
         guard !isImageURLRequest(urlRequest, equalToActiveRequestURLForState: state) else {
             let response = AFIDataResponse<UIImage>(request: nil,
                                                     response: nil,
@@ -175,7 +175,7 @@ extension AlamofireExtension where ExtendedType: UIButton {
                                                     serializationDuration: 0.0,
                                                     result: .failure(AFIError.requestCancelled))
 
-            completion?(response)
+            requestCompletion?(response)
 
             return
         }
@@ -204,7 +204,7 @@ extension AlamofireExtension where ExtendedType: UIButton {
                                                         result: .success(image))
 
                 type.setImage(image, for: state)
-                completion?(response)
+                requestCompletion?(response)
 
                 return
             }
@@ -227,13 +227,13 @@ extension AlamofireExtension where ExtendedType: UIButton {
                                                       filter: filter,
                                                       progress: progress,
                                                       progressQueue: progressQueue,
-                                                      completion: { response in
+                                                      requestCompletion: { response in
                                                           guard
                                                               let strongSelf = button?.af,
                                                               strongSelf.isImageURLRequest(response.request, equalToActiveRequestURLForState: state) &&
                                                               strongSelf.imageRequestReceipt(for: state)?.receiptID == downloadID
                                                           else {
-                                                              completion?(response)
+                                                              requestCompletion?(response)
                                                               return
                                                           }
 
@@ -243,7 +243,7 @@ extension AlamofireExtension where ExtendedType: UIButton {
 
                                                           strongSelf.setImageRequestReceipt(nil, for: state)
 
-                                                          completion?(response)
+                                                          requestCompletion?(response)
                                                       })
 
         setImageRequestReceipt(requestReceipt, for: state)
@@ -292,7 +292,7 @@ extension AlamofireExtension where ExtendedType: UIButton {
                                    filter: ImageFilter? = nil,
                                    progress: ImageDownloader.ProgressHandler? = nil,
                                    progressQueue: DispatchQueue = DispatchQueue.main,
-                                   completion: ((AFIDataResponse<UIImage>) -> Void)? = nil) {
+                                   requestCompletion: ((AFIDataResponse<UIImage>) -> Void)? = nil) {
         setBackgroundImage(for: state,
                            urlRequest: urlRequest(with: url),
                            cacheKey: cacheKey,
@@ -301,7 +301,7 @@ extension AlamofireExtension where ExtendedType: UIButton {
                            filter: filter,
                            progress: progress,
                            progressQueue: progressQueue,
-                           completion: completion)
+                           requestCompletion: requestCompletion)
     }
 
     /// Asynchronously downloads an image from the specified URL request and sets it once the request is finished.
@@ -335,7 +335,7 @@ extension AlamofireExtension where ExtendedType: UIButton {
                                    filter: ImageFilter? = nil,
                                    progress: ImageDownloader.ProgressHandler? = nil,
                                    progressQueue: DispatchQueue = DispatchQueue.main,
-                                   completion: ((AFIDataResponse<UIImage>) -> Void)? = nil) {
+                                   requestCompletion: ((AFIDataResponse<UIImage>) -> Void)? = nil) {
         guard !isImageURLRequest(urlRequest, equalToActiveRequestURLForState: state) else {
             let response = AFIDataResponse<UIImage>(request: nil,
                                                     response: nil,
@@ -344,7 +344,7 @@ extension AlamofireExtension where ExtendedType: UIButton {
                                                     serializationDuration: 0.0,
                                                     result: .failure(AFIError.requestCancelled))
 
-            completion?(response)
+            requestCompletion?(response)
 
             return
         }
@@ -373,7 +373,7 @@ extension AlamofireExtension where ExtendedType: UIButton {
                                                         result: .success(image))
 
                 type.setBackgroundImage(image, for: state)
-                completion?(response)
+                requestCompletion?(response)
 
                 return
             }
@@ -396,13 +396,13 @@ extension AlamofireExtension where ExtendedType: UIButton {
                                                       filter: filter,
                                                       progress: progress,
                                                       progressQueue: progressQueue,
-                                                      completion: { response in
+                                                      requestCompletion: { response in
                                                           guard
                                                               let strongSelf = button?.af,
                                                               strongSelf.isBackgroundImageURLRequest(response.request, equalToActiveRequestURLForState: state) &&
                                                               strongSelf.backgroundImageRequestReceipt(for: state)?.receiptID == downloadID
                                                           else {
-                                                              completion?(response)
+                                                              requestCompletion?(response)
                                                               return
                                                           }
 
@@ -412,7 +412,7 @@ extension AlamofireExtension where ExtendedType: UIButton {
 
                                                           strongSelf.setBackgroundImageRequestReceipt(nil, for: state)
 
-                                                          completion?(response)
+                                                          requestCompletion?(response)
                                                       })
 
         setBackgroundImageRequestReceipt(requestReceipt, for: state)
@@ -519,7 +519,7 @@ extension UIButton {
                             filter: ImageFilter? = nil,
                             progress: ImageDownloader.ProgressHandler? = nil,
                             progressQueue: DispatchQueue = DispatchQueue.main,
-                            completion: ((AFIDataResponse<UIImage>) -> Void)? = nil) {
+                            requestCompletion: ((AFIDataResponse<UIImage>) -> Void)? = nil) {
         af.setImage(for: state,
                     url: url,
                     cacheKey: cacheKey,
@@ -528,7 +528,7 @@ extension UIButton {
                     filter: filter,
                     progress: progress,
                     progressQueue: progressQueue,
-                    completion: completion)
+                    requestCompletion: requestCompletion)
     }
 
     @available(*, deprecated, message: "Replaced by `button.af.sharedImageDownloader`")
@@ -540,7 +540,7 @@ extension UIButton {
                             filter: ImageFilter? = nil,
                             progress: ImageDownloader.ProgressHandler? = nil,
                             progressQueue: DispatchQueue = DispatchQueue.main,
-                            completion: ((AFIDataResponse<UIImage>) -> Void)? = nil) {
+                            requestCompletion: ((AFIDataResponse<UIImage>) -> Void)? = nil) {
         af.setImage(for: state,
                     urlRequest: urlRequest,
                     cacheKey: cacheKey,
@@ -549,7 +549,7 @@ extension UIButton {
                     filter: filter,
                     progress: progress,
                     progressQueue: progressQueue,
-                    completion: completion)
+                    requestCompletion: requestCompletion)
     }
 
     /// Cancels the active download request for the image, if one exists.
@@ -566,7 +566,7 @@ extension UIButton {
                                       filter: ImageFilter? = nil,
                                       progress: ImageDownloader.ProgressHandler? = nil,
                                       progressQueue: DispatchQueue = DispatchQueue.main,
-                                      completion: ((AFIDataResponse<UIImage>) -> Void)? = nil) {
+                                      requestCompletion: ((AFIDataResponse<UIImage>) -> Void)? = nil) {
         af.setBackgroundImage(for: state,
                               url: url,
                               cacheKey: cacheKey,
@@ -575,7 +575,7 @@ extension UIButton {
                               filter: filter,
                               progress: progress,
                               progressQueue: progressQueue,
-                              completion: completion)
+                              requestCompletion: requestCompletion)
     }
 
     @available(*, deprecated, message: "Replaced by `button.af.sharedImageDownloader`")
@@ -587,7 +587,7 @@ extension UIButton {
                                       filter: ImageFilter? = nil,
                                       progress: ImageDownloader.ProgressHandler? = nil,
                                       progressQueue: DispatchQueue = DispatchQueue.main,
-                                      completion: ((AFIDataResponse<UIImage>) -> Void)? = nil) {
+                                      requestCompletion: ((AFIDataResponse<UIImage>) -> Void)? = nil) {
         af.setBackgroundImage(for: state,
                               urlRequest: urlRequest,
                               cacheKey: cacheKey,
@@ -596,7 +596,7 @@ extension UIButton {
                               filter: filter,
                               progress: progress,
                               progressQueue: progressQueue,
-                              completion: completion)
+                              requestCompletion: requestCompletion)
     }
 
     /// Cancels the active download request for the background image, if one exists.
