@@ -64,7 +64,7 @@ public enum ImageTransition {
     case custom(duration: TimeInterval,
                  options: UIView.AnimationOptions,
               animations: ((UIImageView, UIImage) -> Void)?,
-              requestCompletion: ((Bool) -> Void)?)
+              completion: ((Bool) -> Void)?)
     
     var duration: TimeInterval {
         switch self {
@@ -101,9 +101,9 @@ public enum ImageTransition {
         }
     }
     
-    var requestCompletion: ((Bool) -> Void)? {
+    var completion: ((Bool) -> Void)? {
         switch self {
-        case .custom(_, _, _, let requestCompletion): return requestCompletion
+        case .custom(_, _, _, let completion): return completion
         default: return nil
         }
     }

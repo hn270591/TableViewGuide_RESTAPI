@@ -13,14 +13,14 @@ class Connectivity {
     }
 }
 
-typealias requestCompletion<T> = (Result<T, BaseResponseError>) -> Void
+typealias completion<T> = (Result<T, BaseResponseError>) -> Void
 typealias topStoryCompletion = ([Story], BaseResponseError?) -> Void
 typealias searchArticlesCompletion = ([ArticleItem], BaseResponseError?) -> Void
 
 class APIManager {
     static let shared = APIManager()
     
-    func request<T: Codable>(urlRequest: APIRouter, method: HTTPMethod, objectType: T.Type, completion: @escaping requestCompletion<T>) -> Void {
+    func request<T: Codable>(urlRequest: APIRouter, method: HTTPMethod, objectType: T.Type, completion: @escaping completion<T>) -> Void {
         if !Connectivity.isConnectedToInternet() {
             // Error internet
             print("Internet inconnect")

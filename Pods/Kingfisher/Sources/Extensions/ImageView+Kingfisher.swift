@@ -396,7 +396,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
             duration: 0.0,
             options: [],
             animations: { self.indicator?.stopAnimatingView() },
-            requestCompletion: { _ in
+            completion: { _ in
                 var mutatingSelf = self
                 mutatingSelf.placeholder = nil
                 UIView.transition(
@@ -404,8 +404,8 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
                     duration: transition.duration,
                     options: [transition.animationOptions, .allowUserInteraction],
                     animations: { transition.animations?(self.base, image) },
-                    requestCompletion: { finished in
-                        transition.requestCompletion?(finished)
+                    completion: { finished in
+                        transition.completion?(finished)
                         done()
                     }
                 )
