@@ -76,6 +76,7 @@ class TopStoriesViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Top Stories"
+        navigationController?.navigationBar.prefersLargeTitles = true
         setupNavigationItem()
         setupTableView()
         fetchTopStories()
@@ -97,6 +98,7 @@ class TopStoriesViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationController?.navigationBar.prefersLargeTitles = true
         // Lighten headline when clear ReadArticle
         try? readArticleResultsController.performFetch()
         let readArticle = readArticleResultsController.fetchedObjects ?? []

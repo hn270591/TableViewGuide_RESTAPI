@@ -1,32 +1,21 @@
 import UIKit
 
-struct DisplaySettings {
-    var headline: String
-    var description: String
-}
-
-enum Titles: String {
-    case automatic = "Automatic"
-    case dark = "Dark"
-    case light = "Light"
-}
-
-enum Description: String {
-    case automatic = "User your device setting to determine appearance. The app will change modes when your device setting is changed"
-    case dark = "Ignore your device setting and always render is dark mode"
-    case light = "Ignore your device setting and always render is light mode"
+struct structTableSection {
+    var header: String!
+    var cells: [Any]!
+    var showHeader: Bool!
 }
 
 class DisplaySettingsViewController: UIViewController {
     
-    private let reuseIdentifier = "DisplaySettingsCell"
+    private var tableData: [structTableSection] = []
     private let userDefaults = UserDefaults.standard
-    private var displaySettings: [String: [DisplaySettings]] = [:]
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
-        tableView.register(DisplaySettingsCell.self, forCellReuseIdentifier: reuseIdentifier)
+        tableView.register(DisplaySettingsCell.self, forCellReuseIdentifier: DisplaySettingsCell.identifier)
+        tableView.register(TextSizeCell.self, forCellReuseIdentifier: TextSizeCell.identifier)
         tableView.separatorStyle = .singleLine
-        tableView.rowHeight = 100
+        tableView.sectionHeaderTopPadding = 0
         return tableView
     }()
     
@@ -39,47 +28,95 @@ class DisplaySettingsViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = false
         title = "Display Settings"
         tableView.dataSource = self
-        initDisplaySettings()
+        tableView.delegate = self
+        setTableDate()
     }
     
-    func initDisplaySettings() {
-        let automatic = DisplaySettings(headline: Titles.automatic.rawValue, description: Description.automatic.rawValue)
-        let dark = DisplaySettings(headline: Titles.dark.rawValue, description: Description.dark.rawValue)
-        let light = DisplaySettings(headline: Titles.light.rawValue, description: Description.light.rawValue)
-        
-        let headlineForSection = "APPEARANCE"
-        let displaySettings = [headlineForSection: [automatic, dark, light] ]
-        self.displaySettings = displaySettings
+    override func viewWillAppear(_ animated: Bool) {
+        title = "Display Settings"
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        title = nil
+    }
+    
+    func setTableDate() {
+        let displaySettingsSection = structTableSection(header: DisplaySettings.header ,
+                                                 cells: DisplaySettings.getDisplaySettingsArray(),
+                                                 showHeader: true)
+        let textSizeSection = structTableSection(header: TextSize.header,
+                                          cells: TextSize.getTextSizeArray(),
+                                          showHeader: false)
+        tableData.append(displaySettingsSection)
+        tableData.append(textSizeSection)
     }
 }
 
 // MARK: - TableView Datasource and Delegate
 
-extension DisplaySettingsViewController: UITableViewDataSource {
+extension DisplaySettingsViewController: UITableViewDataSource, UITableViewDelegate {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return displaySettings.keys.count
+        return tableData.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let values = Array(displaySettings.values)[section]
-        return values.count
+        return tableData[section].cells.count
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        let keys = Array(Array(displaySettings.keys))
-        return keys[section]
+        if !tableData[section].showHeader {
+            return " "
+        }
+        return tableData[section].header
     }
         
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier) as! DisplaySettingsCell
-        let values = Array(Array(displaySettings.values))[indexPath.section]
-        let displaySettings = values[indexPath.row]
+        switch indexPath.section {
+        case 0:
+            let cell = tableView.dequeueReusableCell(withIdentifier: DisplaySettingsCell.identifier) as! DisplaySettingsCell
+            let displaySettingsArray = tableData[indexPath.section].cells as! [DisplaySettings]
+            
+            cell.index = indexPath.row
+            cell.delegate = self
+            cell.displaySettings = displaySettingsArray[indexPath.row]
+            
+            if indexPath.section == 0 {
+                let headline = displaySettingsArray[indexPath.row].headline!
+                let userInterfaceStyle = userDefaults.getUserInterfaceStyle().rawValue
+                cell.isCheckmark = headline == userInterfaceStyle ? true : false
+            }
+            return cell
+        case 1:
+            let cell = tableView.dequeueReusableCell(withIdentifier: TextSizeCell.identifier) as! TextSizeCell
+            let textSizeArray = tableData[indexPath.section].cells as! [TextSize]
+            cell.textSize = textSizeArray[indexPath.row]
+            return cell
+        default:
+            return UITableViewCell()
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return indexPath.section == 0 ? 100 : 60
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 35
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        view.tintColor = UIColor(cgColor: CGColor(red: 0.754, green: 0.786, blue: 1.000, alpha: 0.2))
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        if indexPath.section == 0 {
+            return
+        }
         
-        cell.index = indexPath.row
-        cell.delegate = self
-        cell.displaySettings = displaySettings
-        cell.isCheckmark = userDefaults.getIsCheckmark()[indexPath.row]
-        return cell
+        let vcTextSize = TextSizeViewController()
+        navigationController?.pushViewController(vcTextSize, animated: true)
     }
 }
 

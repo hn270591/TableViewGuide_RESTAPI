@@ -9,6 +9,7 @@ class HistoryViewController: UIViewController {
         let tableView = UITableView()
         tableView.register(HistoryCell.self, forCellReuseIdentifier: reuseIdentifier)
         tableView.separatorStyle = .singleLine
+        tableView.sectionHeaderTopPadding = 0
         tableView.rowHeight = 100
         return tableView
     }()
@@ -111,6 +112,14 @@ extension HistoryViewController: UITableViewDataSource, UITableViewDelegate {
         guard let sections = readArticleResultsController.sections else { return nil }
         let title = sections[section].name
         return title
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 35
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        view.tintColor = UIColor(cgColor: CGColor(red: 0.754, green: 0.786, blue: 1.000, alpha: 0.2))
     }
         
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

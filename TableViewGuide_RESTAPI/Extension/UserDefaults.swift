@@ -1,7 +1,7 @@
 import UIKit
 
 enum UserInterfaceStyleType: String {
-    case system = "System Default"
+    case system = "Automatic"
     case dark = "Dark"
     case light = "Light"
    
@@ -20,8 +20,13 @@ enum UserInterfaceStyleType: String {
 
 extension UserDefaults {
     
-    static let defaultsCategory = "Home" 
     private static let categoryKey = "category"
+    static let defaultsCategory = "Home" 
+    
+    static let fontStyleKey = "FontStyle"
+    private static let nameFontDefault: String = "System Font Regular"
+    private static let sizeFontDefault: CGFloat = 17
+    
     private static let userInterfaceStyle = "UserInterfaceStyle"
     
     // MARK: - Category
@@ -33,6 +38,25 @@ extension UserDefaults {
     func setCategory(value: String) {
         set(value, forKey: UserDefaults.categoryKey)
     }
+    
+    // MARK: - Font Style
+    
+    func getFontStyle() {
+        var size = CGFloat(float(forKey: UserDefaults.fontStyleKey))
+        if !size.isNormal {
+            size = UserDefaults.sizeFontDefault
+        }
+        UILabel.appearance().font = UIFont(name: UserDefaults.nameFontDefault, size: size)
+    }
+    
+    func setFontStyle(name: String = UserDefaults.nameFontDefault, size: Float) {
+        // set
+        set(size, forKey: UserDefaults.fontStyleKey)
+        
+        // get
+        UILabel.appearance().font = UIFont(name: name, size: CGFloat(size))
+    }
+    
     
     // MARK: - User prefered interface style
     
@@ -53,22 +77,9 @@ extension UserDefaults {
         default: return .system
         }
     }
-    
-    func getIsCheckmark() -> [Bool] {
-        let style = UserDefaults.standard.value(forKey: UserDefaults.userInterfaceStyle) as? String ?? ""
-        switch style {
-        case UserInterfaceStyleType.system.rawValue:
-            return [true, false, false]
-        case UserInterfaceStyleType.dark.rawValue:
-            return [false, true, false]
-        case UserInterfaceStyleType.light.rawValue:
-            return [false, false, true]
-        default: return [true, false, false]
-        }
-    }
 }
 
-// MARK: - Change Style of User Interface Style
+// MARK: - Change User Interface Style
 
 final class UserInterfaceStyle {
     static func changeStyle(style:UserInterfaceStyleType, animate:Bool = true){
@@ -92,4 +103,47 @@ final class UserInterfaceStyle {
         }
     }
 }
+
+// MARK: - Change Font Style
+
+final class FontStyle {
+    class func setFontStyle(index: Float) -> (Float, String) {
+        var currentSize: Float = 17
+        var currentText = "Default"
+        switch index {
+        case 0:
+            currentSize = 0.8 * currentSize
+            currentText = "0.8 times"
+        case 1:
+            return (currentSize, currentText)
+        case 2:
+            currentSize = 1.2 * currentSize
+            currentText = "1.2 times"
+        case 3:
+            currentSize = 1.5 * currentSize
+            currentText = "1.5 times"
+        default:
+            return (currentSize, currentText)
+        }
+        return (currentSize, currentText)
+    }
+    
+    class func setSliderIndex() -> Int {
+        var currentSize: Float = 17
+        let size = UserDefaults.standard.float(forKey: UserDefaults.fontStyleKey)
+        switch size {
+        case 0.8 * currentSize:
+            return 0
+        case currentSize:
+            return 1
+        case 1.2 * currentSize:
+            return 2
+        case 1.5 * currentSize:
+            return 3
+        default:
+            return 1
+        }
+    }
+}
+
 

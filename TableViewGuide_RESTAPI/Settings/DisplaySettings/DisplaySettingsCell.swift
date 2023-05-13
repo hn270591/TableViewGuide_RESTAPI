@@ -5,6 +5,8 @@ protocol DisplaySettingsCellDelegate: AnyObject {
 }
 
 class DisplaySettingsCell: UITableViewCell {
+    
+    static let identifier = "DisplaySettingsCell"
 
     private lazy var headlineLabel: UILabel = {
         let headline = UILabel()
@@ -26,7 +28,7 @@ class DisplaySettingsCell: UITableViewCell {
         let description = UILabel()
         description.numberOfLines = 0
         description.textColor = .secondaryLabel
-        description.font = UIFont.systemFont(ofSize: 13, weight: .light)
+        description.font = UIFont.systemFont(ofSize: 13)
         contentView.addSubview(description)
         return description
     }()

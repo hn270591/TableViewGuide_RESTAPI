@@ -9,5 +9,7 @@ target 'TableViewGuide_RESTAPI' do
     pod 'Kingfisher'
     pod 'Alamofire'
     pod 'AlamofireImage'
+    
+    pod 'StepSlider'
 
 end
