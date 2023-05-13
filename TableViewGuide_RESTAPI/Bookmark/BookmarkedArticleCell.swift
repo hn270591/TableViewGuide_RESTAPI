@@ -4,6 +4,7 @@ class BookmarkedArticleCell: UITableViewCell {
     
     private lazy var headlineLabel: UILabel = {
         let headline = UILabel()
+        headline.font = .fontOfHeadline()
         headline.numberOfLines = 0
         contentView.addSubview(headline)
         return headline
@@ -20,7 +21,7 @@ class BookmarkedArticleCell: UITableViewCell {
         let publishedTime = UILabel()
         publishedTime.textColor = .secondaryLabel
         publishedTime.textAlignment = .right
-        publishedTime.font = UIFont.systemFont(ofSize: 15, weight: .light)
+        publishedTime.font = .fontOfSubtitle()
         contentView.addSubview(publishedTime)
         return publishedTime
     }()
@@ -62,14 +63,12 @@ class BookmarkedArticleCell: UITableViewCell {
         // set headlineLabel
         headlineLabel.translatesAutoresizingMaskIntoConstraints = false
         headlineLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10).isActive = true
-        headlineLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -30).isActive = true
         headlineLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
         headlineLabel.leadingAnchor.constraint(equalTo: thumbnailView.trailingAnchor, constant: 10).isActive = true
         
         // set publishedTimeLabel
         publishedDateLabel.translatesAutoresizingMaskIntoConstraints = false
-        publishedDateLabel.topAnchor.constraint(equalTo: headlineLabel.bottomAnchor, constant: 0).isActive = true
-        publishedDateLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0).isActive = true
+        publishedDateLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -3).isActive = true
         publishedDateLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
         publishedDateLabel.leadingAnchor.constraint(equalTo: thumbnailView.trailingAnchor, constant: 10).isActive = true
     }

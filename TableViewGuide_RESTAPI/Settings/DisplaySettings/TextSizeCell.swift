@@ -6,6 +6,7 @@ class TextSizeCell: UITableViewCell {
     
     lazy var headlineLabel: UILabel = {
         let headline = UILabel()
+        headline.font = .fontOfHeadline()
         contentView.addSubview(headline)
         return headline
     }()

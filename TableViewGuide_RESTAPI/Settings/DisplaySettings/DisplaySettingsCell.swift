@@ -10,6 +10,7 @@ class DisplaySettingsCell: UITableViewCell {
 
     private lazy var headlineLabel: UILabel = {
         let headline = UILabel()
+        headline.font = .fontOfHeadline()
         contentView.addSubview(headline)
         return headline
     }()
@@ -28,7 +29,7 @@ class DisplaySettingsCell: UITableViewCell {
         let description = UILabel()
         description.numberOfLines = 0
         description.textColor = .secondaryLabel
-        description.font = UIFont.systemFont(ofSize: 13)
+        description.font = .fontOfSubtitle()
         contentView.addSubview(description)
         return description
     }()

@@ -6,6 +6,15 @@ class SearchArticlesCell: UITableViewCell {
     @IBOutlet weak var thumbnailView: UIImageView!
     @IBOutlet weak var publishedDateLabel: UILabel!
     
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        headLineLabel.font = .fontOfHeadline()
+        publishedDateLabel.font = .fontOfSubtitle()
+        publishedDateLabel.textColor = UIColor.secondaryLabel
+        
+        thumbnailView.contentMode = .scaleToFill
+    }
+    
     var article: ArticleItem? {
         didSet {
             guard let article = article else { return }
@@ -13,14 +22,12 @@ class SearchArticlesCell: UITableViewCell {
             
             headLineLabel.text = article.headline.main
             publishedDateLabel.text = publishedDate
-            publishedDateLabel.textColor = UIColor.secondaryLabel
             
             if let multimedia = article.multimedia, !multimedia.isEmpty {
                 if multimedia.count >= 20 {
                     let stringURL = "https://static01.nyt.com/" + multimedia[19].url
                     let imageURL = URL(string: stringURL)
                     thumbnailView.downloadImage(url: imageURL!)
-                    thumbnailView.contentMode = .scaleToFill
                 }
             } else {
                 thumbnailView.image = UIImage(systemName: "photo")

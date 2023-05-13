@@ -5,6 +5,7 @@ class HistoryCell: UITableViewCell {
     private lazy var headlineLabel: UILabel = {
         let headline = UILabel()
         headline.numberOfLines = 0
+        headline.font = .fontOfHeadline()
         contentView.addSubview(headline)
         return headline
     }()
@@ -20,7 +21,7 @@ class HistoryCell: UITableViewCell {
         let createdTime = UILabel()
         createdTime.textColor = .secondaryLabel
         createdTime.textAlignment = .right
-        createdTime.font = UIFont.systemFont(ofSize: 15, weight: .light)
+        createdTime.font = .fontOfSubtitle()
         contentView.addSubview(createdTime)
         return createdTime
     }()
@@ -59,14 +60,12 @@ class HistoryCell: UITableViewCell {
         // layout headline
         headlineLabel.translatesAutoresizingMaskIntoConstraints = false
         headlineLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0).isActive = true
-        headlineLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -30).isActive = true
         headlineLabel.leadingAnchor.constraint(equalTo: thumbnailView.trailingAnchor, constant: 10).isActive = true
         headlineLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
 
         // layout createdTime
         createdTimeLabel.translatesAutoresizingMaskIntoConstraints = false
-        createdTimeLabel.topAnchor.constraint(equalTo: headlineLabel.bottomAnchor, constant: 0).isActive = true
-        createdTimeLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0).isActive = true
+        createdTimeLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -3).isActive = true
         createdTimeLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
         createdTimeLabel.leadingAnchor.constraint(equalTo: thumbnailView.trailingAnchor, constant: 10).isActive = true
     }

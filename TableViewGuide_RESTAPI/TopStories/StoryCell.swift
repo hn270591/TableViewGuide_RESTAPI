@@ -7,11 +7,19 @@ class StoryCell: UITableViewCell {
     @IBOutlet weak var headlineLabel: UILabel!
     @IBOutlet weak var publishedDateLabel: UILabel!
     
-    private var date = Date()
     var isRead: Bool = false {
         didSet {
             headlineLabel.textColor = isRead ? .lightGray : .label
         }
+    }
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        headlineLabel.font = .fontOfHeadline()
+        publishedDateLabel.font = .fontOfSubtitle()
+        publishedDateLabel.textColor = UIColor.secondaryLabel
+        
+        thumbnailView.contentMode = .scaleToFill
     }
     
     var story: Story? {
@@ -21,7 +29,6 @@ class StoryCell: UITableViewCell {
             
             headlineLabel?.text = story.title
             publishedDateLabel.text = publishedDate
-            publishedDateLabel.textColor = UIColor.secondaryLabel
             isRead = story.isRead ?? false
             
             if let multimedia = story.multimedia, !multimedia.isEmpty {
@@ -29,7 +36,6 @@ class StoryCell: UITableViewCell {
                     let thumbnailString = multimedia[2].url
                     let urlString = URL(string: thumbnailString)
                     thumbnailView.downloadImage(url: urlString!)
-                    thumbnailView.contentMode = .scaleToFill
                 }
             } else {
                 thumbnailView.image = UIImage(systemName: "photo")
@@ -45,11 +51,9 @@ class StoryCell: UITableViewCell {
             
             headlineLabel.text = article.title
             publishedDateLabel.text = publishedDate
-            publishedDateLabel.textColor = UIColor.secondaryLabel
             isRead = article.isRead
             if let urlString = article.imageURL, !urlString.isEmpty {
                 thumbnailView.downloadImage(url: URL(string: urlString)!)
-                thumbnailView.contentMode = .scaleToFill
             } else {
                 thumbnailView.image = UIImage(systemName: "photo")
                 thumbnailView.tintColor = .lightGray

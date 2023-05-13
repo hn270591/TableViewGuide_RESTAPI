@@ -14,6 +14,7 @@
 		8241A65C2A0D07F7008057A1 /* TextSizeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241A65A2A0D07F7008057A1 /* TextSizeViewController.swift */; };
 		8241A65D2A0D07F7008057A1 /* TextSizeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8241A65B2A0D07F7008057A1 /* TextSizeViewController.xib */; };
 		8241A65F2A0DE75E008057A1 /* DisplaySettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241A65E2A0DE75E008057A1 /* DisplaySettingsModel.swift */; };
+		8241A6622A0F83EA008057A1 /* UILabel Font .swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241A6612A0F83EA008057A1 /* UILabel Font .swift */; };
 		824F39D92A0A0859009D0AA0 /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 824F39D82A0A0859009D0AA0 /* UserDefaults.swift */; };
 		824F39DE2A0A1AC8009D0AA0 /* DisplaySettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 824F39DC2A0A1AC8009D0AA0 /* DisplaySettingsViewController.swift */; };
 		824F39DF2A0A1AC8009D0AA0 /* DisplaySettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 824F39DD2A0A1AC8009D0AA0 /* DisplaySettingsViewController.xib */; };
@@ -59,6 +60,7 @@
 		8241A65A2A0D07F7008057A1 /* TextSizeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextSizeViewController.swift; sourceTree = "<group>"; };
 		8241A65B2A0D07F7008057A1 /* TextSizeViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TextSizeViewController.xib; sourceTree = "<group>"; };
 		8241A65E2A0DE75E008057A1 /* DisplaySettingsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsModel.swift; sourceTree = "<group>"; };
+		8241A6612A0F83EA008057A1 /* UILabel Font .swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel Font .swift"; sourceTree = "<group>"; };
 		824F39D82A0A0859009D0AA0 /* UserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaults.swift; sourceTree = "<group>"; };
 		824F39DC2A0A1AC8009D0AA0 /* DisplaySettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsViewController.swift; sourceTree = "<group>"; };
 		824F39DD2A0A1AC8009D0AA0 /* DisplaySettingsViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DisplaySettingsViewController.xib; sourceTree = "<group>"; };
@@ -185,6 +187,7 @@
 			isa = PBXGroup;
 			children = (
 				827CA8B929E3FA4A00026FFF /* UIImageViewExtension .swift */,
+				8241A6612A0F83EA008057A1 /* UILabel Font .swift */,
 				827FF6BC29FBDA86007D35A9 /* DateExtension.swift */,
 				824F39D82A0A0859009D0AA0 /* UserDefaults.swift */,
 			);
@@ -481,6 +484,7 @@
 				829C3F1829EFE49400C6DD3B /* ReadArticle+CoreDataProperties.swift in Sources */,
 				827CA8BA29E3FA4A00026FFF /* UIImageViewExtension .swift in Sources */,
 				829C3F2529EFF31C00C6DD3B /* SettingsViewController.swift in Sources */,
+				8241A6622A0F83EA008057A1 /* UILabel Font .swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
