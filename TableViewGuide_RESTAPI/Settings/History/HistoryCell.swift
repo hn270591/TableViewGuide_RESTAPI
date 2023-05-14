@@ -40,6 +40,11 @@ class HistoryCell: UITableViewCell {
         }
     }
     
+    func configureUI() {
+        self.headlineLabel.font = .fontOfHeadline()
+        self.createdTimeLabel.font = .fontOfSubtitle()
+    }
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupViews()
@@ -62,6 +67,7 @@ class HistoryCell: UITableViewCell {
         headlineLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0).isActive = true
         headlineLabel.leadingAnchor.constraint(equalTo: thumbnailView.trailingAnchor, constant: 10).isActive = true
         headlineLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
+        headlineLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -18).isActive = true
 
         // layout createdTime
         createdTimeLabel.translatesAutoresizingMaskIntoConstraints = false

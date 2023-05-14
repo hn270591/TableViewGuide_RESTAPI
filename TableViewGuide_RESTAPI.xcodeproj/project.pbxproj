@@ -11,8 +11,8 @@
 		823D71D429FD32A900026CB9 /* DetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 823D71D229FD32A900026CB9 /* DetailsViewController.swift */; };
 		823D71D529FD32A900026CB9 /* DetailsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 823D71D329FD32A900026CB9 /* DetailsViewController.xib */; };
 		8241A6582A0CF99A008057A1 /* TextSizeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241A6572A0CF99A008057A1 /* TextSizeCell.swift */; };
-		8241A65C2A0D07F7008057A1 /* TextSizeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241A65A2A0D07F7008057A1 /* TextSizeViewController.swift */; };
-		8241A65D2A0D07F7008057A1 /* TextSizeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8241A65B2A0D07F7008057A1 /* TextSizeViewController.xib */; };
+		8241A65C2A0D07F7008057A1 /* FontSizeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241A65A2A0D07F7008057A1 /* FontSizeViewController.swift */; };
+		8241A65D2A0D07F7008057A1 /* FontSizeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8241A65B2A0D07F7008057A1 /* FontSizeViewController.xib */; };
 		8241A65F2A0DE75E008057A1 /* DisplaySettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241A65E2A0DE75E008057A1 /* DisplaySettingsModel.swift */; };
 		8241A6622A0F83EA008057A1 /* UILabel Font .swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241A6612A0F83EA008057A1 /* UILabel Font .swift */; };
 		824F39D92A0A0859009D0AA0 /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 824F39D82A0A0859009D0AA0 /* UserDefaults.swift */; };
@@ -57,8 +57,8 @@
 		823D71D229FD32A900026CB9 /* DetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsViewController.swift; sourceTree = "<group>"; };
 		823D71D329FD32A900026CB9 /* DetailsViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DetailsViewController.xib; sourceTree = "<group>"; };
 		8241A6572A0CF99A008057A1 /* TextSizeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextSizeCell.swift; sourceTree = "<group>"; };
-		8241A65A2A0D07F7008057A1 /* TextSizeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextSizeViewController.swift; sourceTree = "<group>"; };
-		8241A65B2A0D07F7008057A1 /* TextSizeViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TextSizeViewController.xib; sourceTree = "<group>"; };
+		8241A65A2A0D07F7008057A1 /* FontSizeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontSizeViewController.swift; sourceTree = "<group>"; };
+		8241A65B2A0D07F7008057A1 /* FontSizeViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FontSizeViewController.xib; sourceTree = "<group>"; };
 		8241A65E2A0DE75E008057A1 /* DisplaySettingsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsModel.swift; sourceTree = "<group>"; };
 		8241A6612A0F83EA008057A1 /* UILabel Font .swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel Font .swift"; sourceTree = "<group>"; };
 		824F39D82A0A0859009D0AA0 /* UserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaults.swift; sourceTree = "<group>"; };
@@ -136,8 +136,8 @@
 		8241A6592A0D0366008057A1 /* TextSizeDetails */ = {
 			isa = PBXGroup;
 			children = (
-				8241A65A2A0D07F7008057A1 /* TextSizeViewController.swift */,
-				8241A65B2A0D07F7008057A1 /* TextSizeViewController.xib */,
+				8241A65A2A0D07F7008057A1 /* FontSizeViewController.swift */,
+				8241A65B2A0D07F7008057A1 /* FontSizeViewController.xib */,
 			);
 			path = TextSizeDetails;
 			sourceTree = "<group>";
@@ -397,7 +397,7 @@
 				823D71D529FD32A900026CB9 /* DetailsViewController.xib in Resources */,
 				93509452295A6E3B0055725F /* Assets.xcassets in Resources */,
 				93509450295A6E3A0055725F /* Main.storyboard in Resources */,
-				8241A65D2A0D07F7008057A1 /* TextSizeViewController.xib in Resources */,
+				8241A65D2A0D07F7008057A1 /* FontSizeViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -464,7 +464,7 @@
 				F0ADB4D629D53C8400D56F8B /* LoadingCell.swift in Sources */,
 				824F39DE2A0A1AC8009D0AA0 /* DisplaySettingsViewController.swift in Sources */,
 				8241A6582A0CF99A008057A1 /* TextSizeCell.swift in Sources */,
-				8241A65C2A0D07F7008057A1 /* TextSizeViewController.swift in Sources */,
+				8241A65C2A0D07F7008057A1 /* FontSizeViewController.swift in Sources */,
 				823D71D429FD32A900026CB9 /* DetailsViewController.swift in Sources */,
 				F0ADB4A929D3EB3900D56F8B /* SearchArticlesCell.swift in Sources */,
 				824F39E12A0A1AEE009D0AA0 /* DisplaySettingsCell.swift in Sources */,

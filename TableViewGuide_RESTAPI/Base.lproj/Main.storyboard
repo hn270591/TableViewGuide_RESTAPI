@@ -29,8 +29,8 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Headline" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Uoa-FF-3CM">
-                                                    <rect key="frame" x="140" y="9.9999999999999982" width="243" height="20.333333333333329"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <rect key="frame" x="140" y="10" width="243" height="92"/>
+                                                    <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -51,6 +51,7 @@
                                             <constraints>
                                                 <constraint firstItem="Uoa-FF-3CM" firstAttribute="top" secondItem="rXo-CV-CUn" secondAttribute="top" constant="10" id="ABd-FA-kc8"/>
                                                 <constraint firstAttribute="bottom" secondItem="jRH-0o-P81" secondAttribute="bottom" constant="3" id="CDT-te-VxF"/>
+                                                <constraint firstAttribute="bottom" secondItem="Uoa-FF-3CM" secondAttribute="bottom" constant="18" id="Fdg-c2-Lus"/>
                                                 <constraint firstItem="TnL-jT-ALm" firstAttribute="centerY" secondItem="rXo-CV-CUn" secondAttribute="centerY" id="L2u-Ol-gHD"/>
                                                 <constraint firstAttribute="trailing" secondItem="jRH-0o-P81" secondAttribute="trailing" constant="10" id="QBp-x8-fFi"/>
                                                 <constraint firstAttribute="trailing" secondItem="Uoa-FF-3CM" secondAttribute="trailing" constant="10" id="TCq-sN-vzX"/>
@@ -106,7 +107,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="headline" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="B96-Dt-bdn">
-                                                    <rect key="frame" x="140" y="9.9999999999999982" width="243" height="20.333333333333329"/>
+                                                    <rect key="frame" x="140" y="10" width="243" height="72"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -131,6 +132,7 @@
                                                 <constraint firstItem="Kj6-J2-A85" firstAttribute="leading" secondItem="5Ud-K2-yLy" secondAttribute="leading" constant="10" id="4X5-gA-IbO"/>
                                                 <constraint firstItem="biX-Dg-f9r" firstAttribute="leading" secondItem="Kj6-J2-A85" secondAttribute="trailing" constant="10" id="MYf-zc-OWS"/>
                                                 <constraint firstItem="B96-Dt-bdn" firstAttribute="leading" secondItem="Kj6-J2-A85" secondAttribute="trailing" constant="10" id="Mh0-Z8-lcF"/>
+                                                <constraint firstAttribute="bottom" secondItem="B96-Dt-bdn" secondAttribute="bottom" constant="18" id="UeA-yT-MIM"/>
                                                 <constraint firstAttribute="trailing" secondItem="B96-Dt-bdn" secondAttribute="trailing" constant="10" id="W5x-rg-6eS"/>
                                                 <constraint firstItem="B96-Dt-bdn" firstAttribute="top" secondItem="5Ud-K2-yLy" secondAttribute="top" constant="10" id="XXo-js-Z41"/>
                                                 <constraint firstItem="Kj6-J2-A85" firstAttribute="centerY" secondItem="5Ud-K2-yLy" secondAttribute="centerY" id="dQZ-y5-VZE"/>

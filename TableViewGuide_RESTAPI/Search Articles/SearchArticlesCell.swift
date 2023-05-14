@@ -15,6 +15,11 @@ class SearchArticlesCell: UITableViewCell {
         thumbnailView.contentMode = .scaleToFill
     }
     
+    func configureUI() {
+        self.headLineLabel.font = .fontOfHeadline()
+        self.publishedDateLabel.font = .fontOfSubtitle()
+    }
+    
     var article: ArticleItem? {
         didSet {
             guard let article = article else { return }

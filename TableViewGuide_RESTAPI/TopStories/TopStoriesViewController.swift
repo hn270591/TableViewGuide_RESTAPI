@@ -80,6 +80,14 @@ class TopStoriesViewController: UIViewController {
         setupNavigationItem()
         setupTableView()
         fetchTopStories()
+        
+        // Notification when changed font size
+        let notification = NotificationCenter.default
+        notification.addObserver(self, selector: #selector(updateUI), name: FontUpdateNotification, object: nil)
+    }
+    
+    @objc func updateUI() {
+        tableView.reloadData()
     }
     
     func setupTableView() {
@@ -216,6 +224,12 @@ extension TopStoriesViewController: UITableViewDataSource, UITableViewDelegate {
         } else {
             let story = articleResultsController.object(at: indexPath)
             cell.article = story
+        }
+        
+        // Notification when changed font size
+        let notification = NotificationCenter.default
+        notification.addObserver(forName: FontUpdateNotification, object: nil, queue: .main) { _ in
+            cell.configureUI()
         }
         return cell
     }

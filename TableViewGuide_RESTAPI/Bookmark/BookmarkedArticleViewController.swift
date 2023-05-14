@@ -50,6 +50,13 @@ class BookmarkedArticleViewController: UIViewController {
         tableView.delegate = self
         searchController.searchResultsUpdater = self
         
+        // Notification when changed font size
+        let notification = NotificationCenter.default
+        notification.addObserver(self, selector: #selector(updateUI), name: FontUpdateNotification, object: nil)
+    }
+    
+    @objc func updateUI() {
+        tableView.reloadData()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -72,6 +79,12 @@ extension BookmarkedArticleViewController: UITableViewDataSource, UITableViewDel
         if count > 0 {
             let object = bookmarkedResultsController.object(at: indexPath)
             cell.bookmarkStory = object
+        }
+        
+        // Notification when changed font size
+        let notification = NotificationCenter.default
+        notification.addObserver(forName: FontUpdateNotification, object: nil, queue: .main) { _ in
+            cell.configureUI()
         }
         return cell
     }

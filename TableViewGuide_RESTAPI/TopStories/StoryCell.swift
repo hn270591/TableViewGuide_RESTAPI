@@ -13,6 +13,11 @@ class StoryCell: UITableViewCell {
         }
     }
     
+    func configureUI() {
+        self.headlineLabel.font = .fontOfHeadline()
+        self.publishedDateLabel.font = .fontOfSubtitle()
+    }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         headlineLabel.font = .fontOfHeadline()
@@ -20,6 +25,11 @@ class StoryCell: UITableViewCell {
         publishedDateLabel.textColor = UIColor.secondaryLabel
         
         thumbnailView.contentMode = .scaleToFill
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
     }
     
     var story: Story? {

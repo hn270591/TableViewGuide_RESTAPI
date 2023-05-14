@@ -13,7 +13,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let theme = UserDefaults.standard.getUserInterfaceStyle()
         UserInterfaceStyle.changeStyle(style: theme, animate: false)
         // Font UILabel
-        UserDefaults.standard.getFontStyle()
+//        UserDefaults.standard.getFontHeadline()
         
         guard let _ = (scene as? UIWindowScene) else { return }
     }

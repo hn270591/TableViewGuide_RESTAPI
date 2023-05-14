@@ -23,9 +23,8 @@ extension UserDefaults {
     private static let categoryKey = "category"
     static let defaultsCategory = "Home" 
     
-    static let fontStyleKey = "FontStyle"
-    private static let nameFontDefault: String = "System Font Regular"
-    private static let sizeFontDefault: CGFloat = 17
+    static let fontSizeKey = "FontSize"
+    private static let fontSizeDefault: CGFloat = 17
     
     private static let userInterfaceStyle = "UserInterfaceStyle"
     
@@ -40,23 +39,18 @@ extension UserDefaults {
     }
     
     // MARK: - Font Style
-    
-    func getFontStyle() {
-        var size = CGFloat(float(forKey: UserDefaults.fontStyleKey))
+
+    func getFontSize() -> CGFloat {
+        var size = CGFloat(float(forKey: UserDefaults.fontSizeKey))
         if !size.isNormal {
-            size = UserDefaults.sizeFontDefault
+            size = UserDefaults.fontSizeDefault
         }
-        UILabel.appearance().font = UIFont(name: UserDefaults.nameFontDefault, size: size)
+        return size
     }
     
-    func setFontStyle(name: String = UserDefaults.nameFontDefault, size: Float) {
-        // set
-        set(size, forKey: UserDefaults.fontStyleKey)
-        
-        // get
-        UILabel.appearance().font = UIFont(name: name, size: CGFloat(size))
+    func setFontSize(size: Float) {
+        set(size, forKey: UserDefaults.fontSizeKey)
     }
-    
     
     // MARK: - User prefered interface style
     
@@ -107,7 +101,7 @@ final class UserInterfaceStyle {
 // MARK: - Change Font Style
 
 final class FontStyle {
-    class func setFontStyle(index: Float) -> (Float, String) {
+    class func setFontSizeAndSliderTitle(index: Float) -> (Float, String) {
         var currentSize: Float = 17
         var currentText = "Default"
         switch index {
@@ -129,8 +123,8 @@ final class FontStyle {
     }
     
     class func setSliderIndex() -> Int {
-        var currentSize: Float = 17
-        let size = UserDefaults.standard.float(forKey: UserDefaults.fontStyleKey)
+        let currentSize: Float = 17
+        let size = UserDefaults.standard.float(forKey: UserDefaults.fontSizeKey)
         switch size {
         case 0.8 * currentSize:
             return 0

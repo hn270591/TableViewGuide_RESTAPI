@@ -59,7 +59,16 @@ class HistoryViewController: UIViewController {
         if readArticle.isEmpty {
             noHistoryLabel.isHidden = false
         }
+        
+        // Notification when changed font size
+        let notification = NotificationCenter.default
+        notification.addObserver(self, selector: #selector(updateUI), name: FontUpdateNotification, object: nil)
     }
+    
+    @objc func updateUI() {
+        tableView.reloadData()
+    }
+    
     
     func setupNavigation() {
         lazy var clearHistory = UIBarButtonItem(title: "Clear History", style: .done, target: self, action: #selector(clearAction))
@@ -130,6 +139,12 @@ extension HistoryViewController: UITableViewDataSource, UITableViewDelegate {
         if let publishDate = readArticle.publishDate {
             let publishTime = DateFormatter.dateFormatterForRowPublishTime(date: publishDate)
             cell.createdTimeLabel.text = publishTime
+        }
+        
+        // Notification when changed font size
+        let notification = NotificationCenter.default
+        notification.addObserver(forName: FontUpdateNotification, object: nil, queue: .main) { _ in
+            cell.configureUI()
         }
         return cell
     }

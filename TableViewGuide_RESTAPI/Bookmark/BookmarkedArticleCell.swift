@@ -43,6 +43,11 @@ class BookmarkedArticleCell: UITableViewCell {
         }
     }
     
+    func configureUI() {
+        self.headlineLabel.font = .fontOfHeadline()
+        self.publishedDateLabel.font = .fontOfSubtitle()
+    }
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupViews()
@@ -65,6 +70,7 @@ class BookmarkedArticleCell: UITableViewCell {
         headlineLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10).isActive = true
         headlineLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
         headlineLabel.leadingAnchor.constraint(equalTo: thumbnailView.trailingAnchor, constant: 10).isActive = true
+        headlineLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -18).isActive = true
         
         // set publishedTimeLabel
         publishedDateLabel.translatesAutoresizingMaskIntoConstraints = false

@@ -30,6 +30,14 @@ class DisplaySettingsViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         setTableDate()
+        
+        // Notification when changed font size
+        let notification = NotificationCenter.default
+        notification.addObserver(self, selector: #selector(updateUI), name: FontUpdateNotification, object: nil)
+    }
+    
+    @objc func updateUI() {
+        tableView.reloadData()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -86,19 +94,27 @@ extension DisplaySettingsViewController: UITableViewDataSource, UITableViewDeleg
                 let userInterfaceStyle = userDefaults.getUserInterfaceStyle().rawValue
                 cell.isCheckmark = headline == userInterfaceStyle ? true : false
             }
+            
+            // Notification when changed font size
+            let notification = NotificationCenter.default
+            notification.addObserver(forName: FontUpdateNotification, object: nil, queue: .main) { _ in
+                cell.configureUI()
+            }
             return cell
         case 1:
             let cell = tableView.dequeueReusableCell(withIdentifier: TextSizeCell.identifier) as! TextSizeCell
             let textSizeArray = tableData[indexPath.section].cells as! [TextSize]
             cell.textSize = textSizeArray[indexPath.row]
+            
+            // Notification when changed font size
+            let notification = NotificationCenter.default
+            notification.addObserver(forName: FontUpdateNotification, object: nil, queue: .main) { _ in
+                cell.configureUI()
+            }
             return cell
         default:
             return UITableViewCell()
         }
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return indexPath.section == 0 ? 100 : 60
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -115,7 +131,7 @@ extension DisplaySettingsViewController: UITableViewDataSource, UITableViewDeleg
             return
         }
         
-        let vcTextSize = TextSizeViewController()
+        let vcTextSize = FontSizeViewController()
         navigationController?.pushViewController(vcTextSize, animated: true)
     }
 }

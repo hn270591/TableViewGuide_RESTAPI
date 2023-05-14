@@ -10,7 +10,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TextSizeViewController" customModule="TableViewGuide_RESTAPI" customModuleProvider="target">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="FontSizeViewController" customModule="TableViewGuide_RESTAPI" customModuleProvider="target">
             <connections>
                 <outlet property="sliderLabel" destination="f22-cu-tbN" id="hf6-xR-Hy0"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
@@ -22,19 +22,19 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Make the text on screen smaller or larger." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="G0y-y7-n0v">
-                    <rect key="frame" x="20" y="220" width="353" height="20.333333333333343"/>
+                    <rect key="frame" x="20" y="184" width="353" height="20.333333333333343"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Defaults" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="f22-cu-tbN">
-                    <rect key="frame" x="164.66666666666666" y="125" width="64" height="21"/>
+                    <rect key="frame" x="164.66666666666666" y="89" width="64" height="21"/>
                     <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="17"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="5yr-AT-3b4">
-                    <rect key="frame" x="20" y="179.66666666666666" width="25" height="15.666666666666657"/>
+                    <rect key="frame" x="20" y="143.66666666666666" width="25" height="15.666666666666657"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="25" id="H0X-bg-YUm"/>
                         <constraint firstAttribute="width" constant="25" id="Suy-Xx-OIz"/>
@@ -42,7 +42,7 @@
                     <imageReference key="image" image="textformat.size.smaller" catalog="system" renderingMode="original"/>
                 </imageView>
                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="wwk-bL-7K6">
-                    <rect key="frame" x="333" y="172.33333333333331" width="40" height="30.666666666666657"/>
+                    <rect key="frame" x="333" y="136.33333333333331" width="40" height="30.666666666666657"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="40" id="EpF-vw-eqY"/>
                         <constraint firstAttribute="height" constant="40" id="shc-Mf-Z7U"/>
@@ -60,7 +60,7 @@
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="G0y-y7-n0v" secondAttribute="trailing" constant="20" id="ld9-96-jLl"/>
                 <constraint firstItem="5yr-AT-3b4" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="20" id="oot-dU-tHc"/>
                 <constraint firstItem="G0y-y7-n0v" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="20" id="v8h-tF-D9J"/>
-                <constraint firstItem="f22-cu-tbN" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" constant="66" id="wYU-tB-5eX"/>
+                <constraint firstItem="f22-cu-tbN" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" constant="30" id="wYU-tB-5eX"/>
                 <constraint firstItem="wwk-bL-7K6" firstAttribute="centerY" secondItem="5yr-AT-3b4" secondAttribute="centerY" id="ytM-r1-Td3"/>
             </constraints>
             <point key="canvasLocation" x="125.95419847328243" y="19.718309859154932"/>

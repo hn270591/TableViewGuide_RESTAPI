@@ -1,13 +1,16 @@
 import UIKit
 
 extension UIFont {
+
     // font for headline
     static func fontOfHeadline() -> UIFont {
-        return UIFont.boldSystemFont(ofSize: 17)
+        let size = UserDefaults.standard.getFontSize()
+        return UIFont.boldSystemFont(ofSize: size)
     }
     
     // Font for subTitle/date
     static func fontOfSubtitle() -> UIFont {
-        return UIFont.systemFont(ofSize: 14)
+        let size = UserDefaults.standard.getFontSize()
+        return UIFont.systemFont(ofSize: size * 0.8, weight: .regular)
     }
 }

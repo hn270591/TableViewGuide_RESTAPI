@@ -1,7 +1,9 @@
 import UIKit
 import StepSlider
 
-class TextSizeViewController: UIViewController {
+let FontUpdateNotification = Notification.Name("TextSizeViewController.fontUpdated")
+
+class FontSizeViewController: UIViewController {
     
     @IBOutlet weak var sliderLabel: UILabel!
     private let userDefaults = UserDefaults.standard
@@ -31,7 +33,7 @@ class TextSizeViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        let font = FontStyle.setFontStyle(index: Float(sliderView.index))
+        let font = FontStyle.setFontSizeAndSliderTitle(index: Float(sliderView.index))
         sliderLabel.text = font.1
     }
     
@@ -47,15 +49,18 @@ class TextSizeViewController: UIViewController {
     }
     
     @objc func sliderAction() {
-        let font = FontStyle.setFontStyle(index: Float(sliderView.index))
+        let font = FontStyle.setFontSizeAndSliderTitle(index: Float(sliderView.index))
         let currentSize = font.0, currentText = font.1
         
         // reset slider label
         sliderLabel.text = currentText
         sliderLabel.font = sliderLabel.font.withSize(CGFloat(currentSize))
-
+        
         // save in userDefaults
-        userDefaults.setFontStyle(size: currentSize)
+        userDefaults.setFontSize(size: currentSize)
+        
+        // Notification
+        NotificationCenter.default.post(name: FontUpdateNotification, object: self)
     }
 }
     

@@ -52,7 +52,15 @@ class SearchViewController: UIViewController {
         tableView.delegate = self
         tableView.register(LoadingCell.self, forCellReuseIdentifier: reuseIdentifierLoadingCell)
         searchBar.delegate = self
+        
+        // Notification when changed font size
+        let notification = NotificationCenter.default
+        notification.addObserver(self, selector: #selector(updateUI), name: FontUpdateNotification, object: nil)
     }
+    
+    @objc func updateUI() {
+        tableView.reloadData()
+    } 
 }
 
 // MARK: - TableVview DataSource and Delegate
@@ -77,6 +85,12 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
         if indexPath.section == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "SearchArticlesCell", for: indexPath) as! SearchArticlesCell
             cell.article = articles[indexPath.row]
+            
+            // Notification when changed font size
+            let notification = NotificationCenter.default
+            notification.addObserver(forName: FontUpdateNotification, object: nil, queue: .main) { _ in
+                cell.configureUI()
+            }
             return cell
         } else if indexPath.section == 1 {
             let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifierLoadingCell, for: indexPath) as! LoadingCell

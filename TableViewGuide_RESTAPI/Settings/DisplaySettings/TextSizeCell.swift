@@ -4,7 +4,7 @@ class TextSizeCell: UITableViewCell {
 
     static let identifier = "TextSizeCell"
     
-    lazy var headlineLabel: UILabel = {
+    private lazy var headlineLabel: UILabel = {
         let headline = UILabel()
         headline.font = .fontOfHeadline()
         contentView.addSubview(headline)
@@ -15,6 +15,10 @@ class TextSizeCell: UITableViewCell {
         didSet {
             headlineLabel.text = textSize.headline
         }
+    }
+    
+    func configureUI() {
+        self.headlineLabel.font = .fontOfHeadline()
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

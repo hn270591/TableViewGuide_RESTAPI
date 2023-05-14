@@ -49,6 +49,11 @@ class DisplaySettingsCell: UITableViewCell {
         }
     }
     
+    func configureUI() {
+        self.headlineLabel.font = .fontOfHeadline()
+        self.descriptionLabel.font = .fontOfSubtitle()
+    }
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .none
@@ -78,6 +83,7 @@ class DisplaySettingsCell: UITableViewCell {
         descriptionLabel.topAnchor.constraint(equalTo: headlineLabel.bottomAnchor, constant: 5).isActive = true
         descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
         descriptionLabel.leadingAnchor.constraint(equalTo: checkmarkImage.trailingAnchor, constant: 10).isActive = true
+        descriptionLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -3).isActive = true
     }
     
     @objc private func checkmarkAction() {

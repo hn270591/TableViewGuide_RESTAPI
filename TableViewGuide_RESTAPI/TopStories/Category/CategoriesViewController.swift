@@ -26,6 +26,14 @@ class CategoriesViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         initCategories()
+        
+        // Notification when changed font size
+        let notification = NotificationCenter.default
+        notification.addObserver(self, selector: #selector(updateUI), name: FontUpdateNotification, object: nil)
+    }
+    
+    @objc func updateUI() {
+        tableView.reloadData()
     }
     
     func initCategories() {
@@ -52,6 +60,12 @@ extension CategoriesViewController: UITableViewDataSource, UITableViewDelegate {
             cell.isCheckmark = true
         } else {
             cell.isCheckmark = false
+        }
+        
+        // Notification when changed font size
+        let notification = NotificationCenter.default
+        notification.addObserver(forName: FontUpdateNotification, object: nil, queue: .main) { _ in
+            cell.titleLabel.font = .fontOfHeadline()
         }
         return cell
     }
