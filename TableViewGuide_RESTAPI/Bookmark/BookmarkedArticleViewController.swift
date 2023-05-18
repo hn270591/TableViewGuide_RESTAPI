@@ -25,7 +25,7 @@ class BookmarkedArticleViewController: UIViewController {
     
     private lazy var bookmarkedResultsController: NSFetchedResultsController<BookmarkedArticle> = {
         let fetchRequest = BookmarkedArticle.fetchRequest()
-        fetchRequest.sortDescriptors = []
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "index", ascending: false)]
         let controller = NSFetchedResultsController(fetchRequest: fetchRequest,
                                                                  managedObjectContext: persistentContainer.viewContext,
                                                                  sectionNameKeyPath: nil,cacheName: nil)
@@ -70,21 +70,16 @@ class BookmarkedArticleViewController: UIViewController {
 extension BookmarkedArticleViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let count = bookmarkedResultsController.fetchedObjects?.count ?? 0
-        return count > 0 ? count : 0
+        return count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier) as! BookmarkedArticleCell
+        cell.configureUI()
         let count = bookmarkedResultsController.fetchedObjects?.count ?? 0
         if count > 0 {
             let object = bookmarkedResultsController.object(at: indexPath)
             cell.bookmarkStory = object
-        }
-        
-        // Notification when changed font size
-        let notification = NotificationCenter.default
-        notification.addObserver(forName: FontUpdateNotification, object: nil, queue: .main) { _ in
-            cell.configureUI()
         }
         return cell
     }
@@ -137,9 +132,8 @@ extension BookmarkedArticleViewController: NSFetchedResultsControllerDelegate {
         case .insert:
             let readArticle = bookmarkedResultsController.fetchedObjects ?? []
             if readArticle.count > 1 {
-                if let newIndexPath = newIndexPath {
-                    self.tableView.insertRows(at: [newIndexPath], with: .fade)
-                }
+                guard let newIndexPath = newIndexPath else { return }
+                self.tableView.insertRows(at: [newIndexPath], with: .fade)
             } else {
                 self.tableView.reloadData()
             }

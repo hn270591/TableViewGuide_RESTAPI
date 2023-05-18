@@ -13,7 +13,6 @@ class TopStoriesViewController: UIViewController {
     private var userDefaults = UserDefaults.standard
     private var currentCategory = "Home"
     
-    
     private lazy var activityIndicatorView: UIActivityIndicatorView = {
         let indicatorView = UIActivityIndicatorView()
         indicatorView.center = view.center
@@ -121,23 +120,21 @@ class TopStoriesViewController: UIViewController {
         }
         
         // Blurred headline when come back from vcDetails
-        if let index = selectedIndex {
-            let indexPath = IndexPath(row: index, section: 0)
-            stories[index].isRead = true
-            self.tableView.reloadRows(at: [indexPath], with: .none)
-            //Reset
-            selectedIndex = nil
-        }
+        guard let index = selectedIndex else { return }
+        let indexPath = IndexPath(row: index, section: 0)
+        stories[index].isRead = true
+        self.tableView.reloadRows(at: [indexPath], with: .none)
+        //Reset
+        selectedIndex = nil
     }
         
     // Handle Error
     func handleError(_ error: BaseResponseError) {
-        if error == .inConnect {
-            DispatchQueue.main.async {
-                self.alert(title: Titles.internetError, message: Message.checkNetwork)
-            }
-        } else {
-            print(error)
+        guard error == .inConnect else {
+            print(error); return
+        }
+        DispatchQueue.main.async {
+            self.alert(title: Titles.internetError, message: Message.checkNetwork)
         }
         return
     }
@@ -173,7 +170,7 @@ class TopStoriesViewController: UIViewController {
         var mutable = Array(stories)
         let readArticleURLs = readArticles.compactMap({ $0.url })
         for index in 0..<mutable.count {
-            if readArticleURLs.contains(mutable[index].url) {
+            if readArticleURLs.contains(mutable[index].webURL) {
                 mutable[index].isRead = true
             }
         }
@@ -182,14 +179,13 @@ class TopStoriesViewController: UIViewController {
     
     // Set cache Article
     func setCache(stories: [Story] ) {
-        if currentCategory == "Home" {
-            self.clearArticles()
-            for story in stories {
-                insertStory(title: story.title, imageURL: story.multimedia?[2].url ?? "", url: story.url, isRead: story.isRead ?? false, publishedDate: story.published_date)
-            }
-            try? articleResultsController.performFetch()
-            print("Number TopStoris saved: \(articleResultsController.fetchedObjects?.count ?? 0)")
+        guard currentCategory == "Home" else { return }
+        self.clearArticles()
+        for story in stories {
+            insertStory(title: story.title, imageURL: story.multimedia?[2].url ?? "", url: story.webURL, isRead: story.isRead ?? false, publishedDate: story.pubDate)
         }
+        try? articleResultsController.performFetch()
+        print("Number TopStoris saved: \(articleResultsController.fetchedObjects?.count ?? 0)")
     }
     
     // Handler refeshController in tableView
@@ -218,18 +214,13 @@ class TopStoriesViewController: UIViewController {
 extension TopStoriesViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "StoryCell") as! StoryCell
+        cell.configureUI()
         if stories.count > 0 {
             let story = stories[indexPath.row]
             cell.story = story
         } else {
             let story = articleResultsController.object(at: indexPath)
             cell.article = story
-        }
-        
-        // Notification when changed font size
-        let notification = NotificationCenter.default
-        notification.addObserver(forName: FontUpdateNotification, object: nil, queue: .main) { _ in
-            cell.configureUI()
         }
         return cell
     }
@@ -241,12 +232,11 @@ extension TopStoriesViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let vcDetails = DetailsViewController()
-        if !stories.isEmpty {
-            vcDetails.story = stories[indexPath.row]
-            vcDetails.hidesBottomBarWhenPushed = true
-            navigationController?.pushViewController(vcDetails, animated: true)
-            selectedIndex = indexPath.row
-        }
+        guard !stories.isEmpty else { return }
+        vcDetails.story = stories[indexPath.row]
+        vcDetails.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(vcDetails, animated: true)
+        selectedIndex = indexPath.row
     }
 }
 
@@ -258,7 +248,7 @@ extension TopStoriesViewController: CategoriesViewControllerDelegate {
         currentCategory = category.lowercased()
         
         // Save Category
-        userDefaults.setCategory(value: category)
+        CategoryManger.shared.currentCategory = category
         
         // Reload TopStories
         onRefesh()
@@ -294,4 +284,12 @@ extension TopStoriesViewController: NSFetchedResultsControllerDelegate {
             print(error.localizedDescription)
         }
     }
+}
+
+// MARK: - Category Manger
+
+class CategoryManger {
+    static var shared = CategoryManger()
+    private init() {}
+    var currentCategory = "Home"
 }

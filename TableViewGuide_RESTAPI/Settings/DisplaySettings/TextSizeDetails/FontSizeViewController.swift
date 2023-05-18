@@ -3,10 +3,9 @@ import StepSlider
 
 let FontUpdateNotification = Notification.Name("TextSizeViewController.fontUpdated")
 
-class FontSizeViewController: UIViewController {
+class FontSizeViewController: UIViewController, UINavigationControllerDelegate {
     
     @IBOutlet weak var sliderLabel: UILabel!
-    private let userDefaults = UserDefaults.standard
     
     private lazy var sliderView: StepSlider = {
         let slider = StepSlider(frame: CGRect(x: 0, y: 0, width: 270, height: 30))
@@ -24,8 +23,8 @@ class FontSizeViewController: UIViewController {
     }
     
     func setSliderView() {
-        let index = FontStyle.setSliderIndex()
-        sliderView.index = UInt(index)
+        let index = UserDefaults.getCurrentFontSize().index
+        sliderView.index = index
         sliderView.setTrackCircleImage(UIImage(named: "unselected_dot"), for: .normal)
         sliderView.setTrackCircleImage(UIImage(named: "selected_dot"), for: .selected)
         sliderView.addTarget(self, action: #selector(sliderAction), for: .valueChanged)
@@ -33,8 +32,9 @@ class FontSizeViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        let font = FontStyle.setFontSizeAndSliderTitle(index: Float(sliderView.index))
-        sliderLabel.text = font.1
+        let fontSize = UserDefaults.getCurrentFontSize()
+        sliderLabel.font = UIFont.systemFont(ofSize: fontSize.size)
+        sliderLabel.text = fontSize.name
     }
     
     override func viewDidLayoutSubviews() {
@@ -49,19 +49,17 @@ class FontSizeViewController: UIViewController {
     }
     
     @objc func sliderAction() {
-        let font = FontStyle.setFontSizeAndSliderTitle(index: Float(sliderView.index))
-        let currentSize = font.0, currentText = font.1
-        
+        let index = Int(sliderView.index)
+        let fontSize = FontSize.temporaryFontSize(index: index)
         // reset slider label
-        sliderLabel.text = currentText
-        sliderLabel.font = sliderLabel.font.withSize(CGFloat(currentSize))
+        sliderLabel.text = fontSize.name
+        sliderLabel.font = sliderLabel.font.withSize(CGFloat(fontSize.size))
         
         // save in userDefaults
-        userDefaults.setFontSize(size: currentSize)
+        UserDefaults.setCurrentFontSize(fontSize)
         
         // Notification
         NotificationCenter.default.post(name: FontUpdateNotification, object: self)
     }
 }
-    
-    
+

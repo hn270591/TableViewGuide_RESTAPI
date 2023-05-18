@@ -106,18 +106,25 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
         toolbarItems = [backButtonItem, fixedSpace, forwardButtonItem, flexibleSpace, refreshButtonItem]
     }
     
+    // MARK: - Save favourite Articles by bookmarked
+    
     // Insert stories when isbookmark = true
     func handleOnBookmark(storyURL: String, articleURL: String) {
+        let fetchRequest = bookmarkedResultsController.fetchRequest
+        fetchRequest.predicate = NSPredicate(value: true)
+        try? bookmarkedResultsController.performFetch()
+        let count = bookmarkedResultsController.fetchedObjects?.count ?? 0
+        
         if !storyURL.isEmpty {
             guard let story = self.story else { return }
-            insertArticle(title: story.title, webURL: story.url,
+            insertArticle(title: story.title, webURL: story.webURL,
                           imageURL: story.multimedia?[2].url ?? "",
-                          publishedDate: story.published_date)
+                          publishedDate: story.pubDate, index: count)
         } else if !articleURL.isEmpty {
             guard let article = self.article else { return }
-            insertArticle(title: article.headline.main, webURL: article.web_url,
+            insertArticle(title: article.headline.main, webURL: article.webURL,
                           imageURL: "https://static01.nyt.com/" + (article.multimedia?[19].url ?? ""),
-                          publishedDate: article.pub_date)
+                          publishedDate: article.pubDate, index: count)
         } else { return }
     }
     
@@ -138,8 +145,8 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
     // Setup Bookmark
     @objc func onBookmark() {
         isbookmark.toggle()
-        let storyURL = story?.url ?? ""
-        let articleURL = article?.web_url ?? ""
+        let storyURL = story?.webURL ?? ""
+        let articleURL = article?.webURL ?? ""
         if isbookmark {
             // insert stories
             handleOnBookmark(storyURL: storyURL, articleURL: articleURL)
@@ -172,7 +179,7 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
     // Save ReadArticle
     func saveReadArticle() {
         guard let story = story else { return }
-        saveReadArticle(title: story.title, url: story.url, imageURL: story.multimedia?[2].url ?? "" , publishDate: Date())
+        saveReadArticle(title: story.title, url: story.webURL, imageURL: story.multimedia?[2].url ?? "" , publishDate: Date())
     }
     
     func saveReadArticle(title: String, url: String, imageURL: String, publishDate: Date) {
@@ -192,13 +199,13 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
     // return UrlString
     func resultsUrlString() -> String {
         var urlString: String!
-        let storyURL = story?.url ?? ""
-        let articleURL = article?.web_url ?? ""
+        let storyURL = story?.webURL ?? ""
+        let articleURL = article?.webURL ?? ""
         if !storyURL.isEmpty {
-            urlString = story!.url
+            urlString = story!.webURL
             title = story!.title
         } else if !articleURL.isEmpty {
-            urlString = article!.web_url
+            urlString = article!.webURL
             title = article!.headline.main
         } else {
             urlString = bookmarkedArticle?.webURL
@@ -226,11 +233,7 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
         let urlString = resultsUrlString()
         filterWebURL(urlString: urlString)
         let count = bookmarkedResultsController.fetchedObjects?.count ?? 0
-        if count > 0 {
-            isbookmark = true
-        } else {
-            isbookmark = false
-        }
+        isbookmark = count > 0 ? true : false
     }
     
     func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
@@ -248,13 +251,14 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
 // MARK: - NSFetchedResultsControllerDelegate
 
 extension DetailsViewController: NSFetchedResultsControllerDelegate {
-    func insertArticle(title: String, webURL: String, imageURL: String, publishedDate: String) {
+    func insertArticle(title: String, webURL: String, imageURL: String, publishedDate: String, index: Int) {
         let context = persistentContainer.viewContext
         let newObject = BookmarkedArticle(context: context)
         newObject.title = title
         newObject.webURL = webURL
         newObject.imageURL = imageURL
         newObject.publishedDate = publishedDate
+        newObject.index = Int32(index)
         do {
             try context.save()
         } catch {

@@ -9,6 +9,7 @@
     </entity>
     <entity name="BookmarkedArticle" representedClassName="BookmarkedArticle" syncable="YES">
         <attribute name="imageURL" optional="YES" attributeType="String"/>
+        <attribute name="index" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="publishedDate" optional="YES" attributeType="String"/>
         <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="webURL" optional="YES" attributeType="String"/>

@@ -84,13 +84,8 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "SearchArticlesCell", for: indexPath) as! SearchArticlesCell
+            cell.configureUI()
             cell.article = articles[indexPath.row]
-            
-            // Notification when changed font size
-            let notification = NotificationCenter.default
-            notification.addObserver(forName: FontUpdateNotification, object: nil, queue: .main) { _ in
-                cell.configureUI()
-            }
             return cell
         } else if indexPath.section == 1 {
             let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifierLoadingCell, for: indexPath) as! LoadingCell
@@ -108,11 +103,7 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.section == 0 {
-            return heightForRowOfArticlesCell
-        } else {
-            return heightForRowOfLoadingCell
-        }
+        return indexPath.section == 0 ? heightForRowOfArticlesCell : heightForRowOfLoadingCell
     }
 }
 
@@ -130,22 +121,21 @@ extension SearchViewController: UISearchBarDelegate {
             self.tableView.reloadData()
         }
         
-        if let searchText = searchBar.text {
-            self.searchText = searchText
-            self.isLoading = true
-            NYTimeClient.shared.getSearchArticles(query: self.searchText, page: self.page, completion: { articles, error in
-                self.activityIndicatorView.stopAnimating()
-                if let error = error {
-                    self.handleError(error)
-                    return
-                }
-                self.articles = articles
-                UIView.transition(with: self.tableView,duration: self.animationDurationTableView,options: .transitionCrossDissolve)
-                { self.tableView.reloadData() }
-                // show activityIndicatorView khi load page 1
-                self.isLoading = false
-            })
-        }
+        guard let searchText = searchBar.text else { return }
+        self.searchText = searchText
+        self.isLoading = true
+        NYTimeClient.shared.getSearchArticles(query: self.searchText, page: self.page, completion: { articles, error in
+            self.activityIndicatorView.stopAnimating()
+            if let error = error {
+                self.handleError(error)
+                return
+            }
+            self.articles = articles
+            UIView.transition(with: self.tableView,duration: self.animationDurationTableView,options: .transitionCrossDissolve)
+            { self.tableView.reloadData() }
+            // show activityIndicatorView khi load page 1
+            self.isLoading = false
+        })
     }
     
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
@@ -167,21 +157,20 @@ extension SearchViewController: UISearchBarDelegate {
     }
     
     func loadMoreData() {
-        if !self.isLoading {
-            self.isLoading = true
-            let nextPage = self.page + 1
-            
-            NYTimeClient.shared.getSearchArticles(query: self.searchText, page: nextPage, completion: { articles, error in
-                if let error = error {
-                    self.handleError(error)
-                    return
-                }
-                self.articles = self.articles + articles
-                self.tableView.reloadData()
-                self.page = self.page + 1
-                self.isLoading = false
-            })
-        }
+        guard !self.isLoading else { return }
+        self.isLoading = true
+        let nextPage = self.page + 1
+        
+        NYTimeClient.shared.getSearchArticles(query: self.searchText, page: nextPage, completion: { articles, error in
+            if let error = error {
+                self.handleError(error)
+                return
+            }
+            self.articles = self.articles + articles
+            self.tableView.reloadData()
+            self.page = self.page + 1
+            self.isLoading = false
+        })
     }
     
     func handleError(_ error: BaseResponseError) {

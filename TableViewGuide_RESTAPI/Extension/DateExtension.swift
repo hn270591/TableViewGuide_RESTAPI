@@ -31,7 +31,7 @@ extension DateFormatter {
     
     // MARK: -  Top Stories and Search
     
-    class func publishedDateFormatterForArticles(dateString: String) -> String {
+    static func publishedDateFormatterForArticles(dateString: String) -> String {
         let currentDate = Date()
         let publishedDate = DateFormatter.iso8601Full.date(from: dateString) ?? Date()
         
@@ -44,11 +44,11 @@ extension DateFormatter {
     
     // MARK: - History
     
-    class func dateFormatterForSectionHeader(date: Date) -> String {
+    static func dateFormatterForSectionHeader(date: Date) -> String {
         return DateFormatter.dateFormatter.string(from: date)
     }
     
-    class func dateFormatterForRowPublishTime(date: Date) -> String {
+    static func dateFormatterForRowPublishTime(date: Date) -> String {
         return DateFormatter.timeFormatter.string(from: date)
     }
 }

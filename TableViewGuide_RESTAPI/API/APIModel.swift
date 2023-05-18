@@ -80,7 +80,6 @@ class NYTimeClient {
     }
 }
 
-
 // Model SearchArticles
 struct ArticlesData: Codable {
     var status: String
@@ -94,8 +93,15 @@ struct Response: Codable {
 struct ArticleItem: Codable {
     var headline: Headline
     var multimedia: [MultimediaArticle]?
-    var web_url: String
-    var pub_date: String
+    var webURL: String
+    var pubDate: String
+    
+    private enum CodingKeys: String, CodingKey {
+        case webURL = "web_url"
+        case pubDate = "pub_date"
+        case headline, multimedia
+    }
+
 }
 
 struct Headline: Codable {
@@ -109,18 +115,24 @@ struct MultimediaArticle: Codable {
 // Model Stories
 struct Results: Codable {
     var status: String
-    var num_results: Int
     var results: [Story]
 }
 
 struct Story: Codable {
     var title: String
-    var url: String
-    var published_date: String
+    var webURL: String
+    var pubDate: String
     var multimedia: [MultiMediaStory]?
     var isRead: Bool?
+    
+    private enum CodingKeys: String, CodingKey {
+        case title, multimedia, isRead
+        case webURL = "url"
+        case pubDate = "published_date"
+    }
 }
 
 struct MultiMediaStory: Codable {
     let url: String
 }
+

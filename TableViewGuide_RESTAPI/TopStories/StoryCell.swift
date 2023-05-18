@@ -14,39 +14,31 @@ class StoryCell: UITableViewCell {
     }
     
     func configureUI() {
-        self.headlineLabel.font = .fontOfHeadline()
-        self.publishedDateLabel.font = .fontOfSubtitle()
+        headlineLabel.font = .fontOfHeadline()
+        publishedDateLabel.font = .fontOfSubtitle()
     }
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        headlineLabel.font = .fontOfHeadline()
-        publishedDateLabel.font = .fontOfSubtitle()
+        configureUI()
         publishedDateLabel.textColor = UIColor.secondaryLabel
-        
         thumbnailView.contentMode = .scaleToFill
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
     }
     
     var story: Story? {
         didSet {
             guard let story = story else { return }
-            let publishedDate = DateFormatter.publishedDateFormatterForArticles(dateString: story.published_date)
+            let publishedDate = DateFormatter.publishedDateFormatterForArticles(dateString: story.pubDate)
             
             headlineLabel?.text = story.title
             publishedDateLabel.text = publishedDate
             isRead = story.isRead ?? false
             
             if let multimedia = story.multimedia, !multimedia.isEmpty {
-                if multimedia.count >= 3 {
-                    let thumbnailString = multimedia[2].url
-                    let urlString = URL(string: thumbnailString)
-                    thumbnailView.downloadImage(url: urlString!)
-                }
+                guard multimedia.count >= 3 else { return }
+                let thumbnailString = multimedia[2].url
+                let urlString = URL(string: thumbnailString)
+                thumbnailView.downloadImage(url: urlString!)
             } else {
                 thumbnailView.image = UIImage(systemName: "photo")
                 thumbnailView.tintColor = .lightGray

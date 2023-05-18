@@ -128,24 +128,20 @@ extension HistoryViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-        view.tintColor = UIColor(cgColor: CGColor(red: 0.754, green: 0.786, blue: 1.000, alpha: 0.2))
+        view.tintColor = UIColor(red: 0.754, green: 0.786, blue: 1.000, alpha: 0.2)
     }
         
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier) as! HistoryCell
         let readArticle = readArticleResultsController.object(at: indexPath)
         cell.readArticle = readArticle
+        cell.configureUI()
         
         if let publishDate = readArticle.publishDate {
             let publishTime = DateFormatter.dateFormatterForRowPublishTime(date: publishDate)
             cell.createdTimeLabel.text = publishTime
         }
         
-        // Notification when changed font size
-        let notification = NotificationCenter.default
-        notification.addObserver(forName: FontUpdateNotification, object: nil, queue: .main) { _ in
-            cell.configureUI()
-        }
         return cell
     }
 }
@@ -171,9 +167,8 @@ extension HistoryViewController: NSFetchedResultsControllerDelegate {
         case .insert:
             let readArticle = readArticleResultsController.fetchedObjects ?? []
             if readArticle.count > 1 {
-                if let newIndexPath = newIndexPath {
-                    self.tableView.insertRows(at: [newIndexPath], with: .fade)
-                } 
+                guard let newIndexPath = newIndexPath else { return }
+                self.tableView.insertRows(at: [newIndexPath], with: .fade)
             } else {
                 self.tableView.reloadData()
             }

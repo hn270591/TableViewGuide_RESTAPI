@@ -20,6 +20,7 @@ extension BookmarkedArticle {
     @NSManaged public var webURL: String?
     @NSManaged public var imageURL: String?
     @NSManaged public var publishedDate: String?
+    @NSManaged public var index: Int32
 
 }
 

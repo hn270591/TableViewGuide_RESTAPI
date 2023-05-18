@@ -5,7 +5,6 @@ class SettingsTableViewCell: UITableViewCell {
     lazy var headlineLabel: UILabel = {
         let headline = UILabel()
         headline.numberOfLines = 1
-        headline.font = .fontOfHeadline()
         contentView.addSubview(headline)
         return headline
     }()

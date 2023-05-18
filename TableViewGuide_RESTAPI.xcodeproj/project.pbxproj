@@ -8,16 +8,15 @@
 
 /* Begin PBXBuildFile section */
 		315225602BBC497EFF44E2B8 /* Pods_TableViewGuide_RESTAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 881139D25887475F20EA3678 /* Pods_TableViewGuide_RESTAPI.framework */; };
+		8233A0A62A1274FF00EDC382 /* APIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8233A0A52A1274FF00EDC382 /* APIModel.swift */; };
+		8233A0AB2A14C63900EDC382 /* FontSizeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8233A0AA2A14C63900EDC382 /* FontSizeModel.swift */; };
 		823D71D429FD32A900026CB9 /* DetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 823D71D229FD32A900026CB9 /* DetailsViewController.swift */; };
-		823D71D529FD32A900026CB9 /* DetailsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 823D71D329FD32A900026CB9 /* DetailsViewController.xib */; };
 		8241A6582A0CF99A008057A1 /* TextSizeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241A6572A0CF99A008057A1 /* TextSizeCell.swift */; };
 		8241A65C2A0D07F7008057A1 /* FontSizeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241A65A2A0D07F7008057A1 /* FontSizeViewController.swift */; };
 		8241A65D2A0D07F7008057A1 /* FontSizeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8241A65B2A0D07F7008057A1 /* FontSizeViewController.xib */; };
 		8241A65F2A0DE75E008057A1 /* DisplaySettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241A65E2A0DE75E008057A1 /* DisplaySettingsModel.swift */; };
 		8241A6622A0F83EA008057A1 /* UILabel Font .swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241A6612A0F83EA008057A1 /* UILabel Font .swift */; };
-		824F39D92A0A0859009D0AA0 /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 824F39D82A0A0859009D0AA0 /* UserDefaults.swift */; };
 		824F39DE2A0A1AC8009D0AA0 /* DisplaySettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 824F39DC2A0A1AC8009D0AA0 /* DisplaySettingsViewController.swift */; };
-		824F39DF2A0A1AC8009D0AA0 /* DisplaySettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 824F39DD2A0A1AC8009D0AA0 /* DisplaySettingsViewController.xib */; };
 		824F39E12A0A1AEE009D0AA0 /* DisplaySettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 824F39E02A0A1AEE009D0AA0 /* DisplaySettingsCell.swift */; };
 		827CA8BA29E3FA4A00026FFF /* UIImageViewExtension .swift in Sources */ = {isa = PBXBuildFile; fileRef = 827CA8B929E3FA4A00026FFF /* UIImageViewExtension .swift */; };
 		827FF6BD29FBDA86007D35A9 /* DateExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 827FF6BC29FBDA86007D35A9 /* DateExtension.swift */; };
@@ -27,12 +26,9 @@
 		829C3F2329EFF2E100C6DD3B /* HistoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829C3F2229EFF2E100C6DD3B /* HistoryCell.swift */; };
 		829C3F2529EFF31C00C6DD3B /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829C3F2429EFF31C00C6DD3B /* SettingsViewController.swift */; };
 		829C3F2729EFF33400C6DD3B /* HistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829C3F2629EFF33400C6DD3B /* HistoryViewController.swift */; };
-		829C3F2929EFFCC800C6DD3B /* HistoryView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 829C3F2829EFFCC800C6DD3B /* HistoryView.xib */; };
-		82A1D7A129E93237001780C6 /* APIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A1D7A029E93237001780C6 /* APIModel.swift */; };
 		82A1D7A329E9325E001780C6 /* APIRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A1D7A229E9325E001780C6 /* APIRouter.swift */; };
 		82A3E6C62A039C8B0065381C /* CategoriesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A3E6C52A039C8B0065381C /* CategoriesCell.swift */; };
 		82A3E6C92A039C9F0065381C /* CategoriesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A3E6C72A039C9F0065381C /* CategoriesViewController.swift */; };
-		82A3E6CA2A039C9F0065381C /* CategoriesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 82A3E6C82A039C9F0065381C /* CategoriesViewController.xib */; };
 		82DCBCD829DAEA3D004A70D3 /* Data Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 82DCBCD629DAEA3D004A70D3 /* Data Model.xcdatamodeld */; };
 		82DCBCE429DC1A37004A70D3 /* Article+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82DCBCE229DC1A37004A70D3 /* Article+CoreDataClass.swift */; };
 		82DCBCE529DC1A37004A70D3 /* Article+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82DCBCE329DC1A37004A70D3 /* Article+CoreDataProperties.swift */; };
@@ -54,16 +50,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8233A0A52A1274FF00EDC382 /* APIModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIModel.swift; sourceTree = "<group>"; };
+		8233A0AA2A14C63900EDC382 /* FontSizeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontSizeModel.swift; sourceTree = "<group>"; };
 		823D71D229FD32A900026CB9 /* DetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsViewController.swift; sourceTree = "<group>"; };
-		823D71D329FD32A900026CB9 /* DetailsViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DetailsViewController.xib; sourceTree = "<group>"; };
 		8241A6572A0CF99A008057A1 /* TextSizeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextSizeCell.swift; sourceTree = "<group>"; };
 		8241A65A2A0D07F7008057A1 /* FontSizeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontSizeViewController.swift; sourceTree = "<group>"; };
 		8241A65B2A0D07F7008057A1 /* FontSizeViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FontSizeViewController.xib; sourceTree = "<group>"; };
 		8241A65E2A0DE75E008057A1 /* DisplaySettingsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsModel.swift; sourceTree = "<group>"; };
 		8241A6612A0F83EA008057A1 /* UILabel Font .swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel Font .swift"; sourceTree = "<group>"; };
-		824F39D82A0A0859009D0AA0 /* UserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaults.swift; sourceTree = "<group>"; };
 		824F39DC2A0A1AC8009D0AA0 /* DisplaySettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsViewController.swift; sourceTree = "<group>"; };
-		824F39DD2A0A1AC8009D0AA0 /* DisplaySettingsViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DisplaySettingsViewController.xib; sourceTree = "<group>"; };
 		824F39E02A0A1AEE009D0AA0 /* DisplaySettingsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsCell.swift; sourceTree = "<group>"; };
 		827CA8B929E3FA4A00026FFF /* UIImageViewExtension .swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageViewExtension .swift"; sourceTree = "<group>"; };
 		827FF6BC29FBDA86007D35A9 /* DateExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateExtension.swift; sourceTree = "<group>"; };
@@ -73,12 +68,9 @@
 		829C3F2229EFF2E100C6DD3B /* HistoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryCell.swift; sourceTree = "<group>"; };
 		829C3F2429EFF31C00C6DD3B /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		829C3F2629EFF33400C6DD3B /* HistoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewController.swift; sourceTree = "<group>"; };
-		829C3F2829EFFCC800C6DD3B /* HistoryView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HistoryView.xib; sourceTree = "<group>"; };
-		82A1D7A029E93237001780C6 /* APIModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIModel.swift; sourceTree = "<group>"; };
 		82A1D7A229E9325E001780C6 /* APIRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIRouter.swift; sourceTree = "<group>"; };
 		82A3E6C52A039C8B0065381C /* CategoriesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesCell.swift; sourceTree = "<group>"; };
 		82A3E6C72A039C9F0065381C /* CategoriesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesViewController.swift; sourceTree = "<group>"; };
-		82A3E6C82A039C9F0065381C /* CategoriesViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CategoriesViewController.xib; sourceTree = "<group>"; };
 		82DCBCD729DAEA3D004A70D3 /* Data Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Data Model.xcdatamodel"; sourceTree = "<group>"; };
 		82DCBCE229DC1A37004A70D3 /* Article+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Article+CoreDataClass.swift"; sourceTree = "<group>"; };
 		82DCBCE329DC1A37004A70D3 /* Article+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Article+CoreDataProperties.swift"; sourceTree = "<group>"; };
@@ -124,11 +116,18 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		8233A0A92A14C60100EDC382 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				8233A0AA2A14C63900EDC382 /* FontSizeModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		823D71D629FD32B100026CB9 /* Details */ = {
 			isa = PBXGroup;
 			children = (
 				823D71D229FD32A900026CB9 /* DetailsViewController.swift */,
-				823D71D329FD32A900026CB9 /* DetailsViewController.xib */,
 			);
 			path = Details;
 			sourceTree = "<group>";
@@ -136,6 +135,7 @@
 		8241A6592A0D0366008057A1 /* TextSizeDetails */ = {
 			isa = PBXGroup;
 			children = (
+				8233A0A92A14C60100EDC382 /* Model */,
 				8241A65A2A0D07F7008057A1 /* FontSizeViewController.swift */,
 				8241A65B2A0D07F7008057A1 /* FontSizeViewController.xib */,
 			);
@@ -156,7 +156,6 @@
 				8241A6602A0DE76B008057A1 /* Model */,
 				8241A6592A0D0366008057A1 /* TextSizeDetails */,
 				824F39DC2A0A1AC8009D0AA0 /* DisplaySettingsViewController.swift */,
-				824F39DD2A0A1AC8009D0AA0 /* DisplaySettingsViewController.xib */,
 				824F39E02A0A1AEE009D0AA0 /* DisplaySettingsCell.swift */,
 				8241A6572A0CF99A008057A1 /* TextSizeCell.swift */,
 			);
@@ -177,7 +176,7 @@
 			isa = PBXGroup;
 			children = (
 				F0ADB4D729D6EFE200D56F8B /* Story.swift */,
-				82A1D7A029E93237001780C6 /* APIModel.swift */,
+				8233A0A52A1274FF00EDC382 /* APIModel.swift */,
 				82A1D7A229E9325E001780C6 /* APIRouter.swift */,
 			);
 			path = API;
@@ -189,7 +188,6 @@
 				827CA8B929E3FA4A00026FFF /* UIImageViewExtension .swift */,
 				8241A6612A0F83EA008057A1 /* UILabel Font .swift */,
 				827FF6BC29FBDA86007D35A9 /* DateExtension.swift */,
-				824F39D82A0A0859009D0AA0 /* UserDefaults.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -237,7 +235,6 @@
 			children = (
 				829C3F2629EFF33400C6DD3B /* HistoryViewController.swift */,
 				829C3F2229EFF2E100C6DD3B /* HistoryCell.swift */,
-				829C3F2829EFFCC800C6DD3B /* HistoryView.xib */,
 			);
 			path = History;
 			sourceTree = "<group>";
@@ -247,7 +244,6 @@
 			children = (
 				82A3E6C72A039C9F0065381C /* CategoriesViewController.swift */,
 				82A3E6C52A039C8B0065381C /* CategoriesCell.swift */,
-				82A3E6C82A039C9F0065381C /* CategoriesViewController.xib */,
 			);
 			path = Category;
 			sourceTree = "<group>";
@@ -391,10 +387,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				93509455295A6E3B0055725F /* LaunchScreen.storyboard in Resources */,
-				829C3F2929EFFCC800C6DD3B /* HistoryView.xib in Resources */,
-				824F39DF2A0A1AC8009D0AA0 /* DisplaySettingsViewController.xib in Resources */,
-				82A3E6CA2A039C9F0065381C /* CategoriesViewController.xib in Resources */,
-				823D71D529FD32A900026CB9 /* DetailsViewController.xib in Resources */,
 				93509452295A6E3B0055725F /* Assets.xcassets in Resources */,
 				93509450295A6E3A0055725F /* Main.storyboard in Resources */,
 				8241A65D2A0D07F7008057A1 /* FontSizeViewController.xib in Resources */,
@@ -450,7 +442,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				824F39D92A0A0859009D0AA0 /* UserDefaults.swift in Sources */,
 				82DCBCD829DAEA3D004A70D3 /* Data Model.xcdatamodeld in Sources */,
 				9350944D295A6E3A0055725F /* TopStoriesViewController.swift in Sources */,
 				93509449295A6E3A0055725F /* AppDelegate.swift in Sources */,
@@ -464,12 +455,13 @@
 				F0ADB4D629D53C8400D56F8B /* LoadingCell.swift in Sources */,
 				824F39DE2A0A1AC8009D0AA0 /* DisplaySettingsViewController.swift in Sources */,
 				8241A6582A0CF99A008057A1 /* TextSizeCell.swift in Sources */,
+				8233A0A62A1274FF00EDC382 /* APIModel.swift in Sources */,
 				8241A65C2A0D07F7008057A1 /* FontSizeViewController.swift in Sources */,
 				823D71D429FD32A900026CB9 /* DetailsViewController.swift in Sources */,
+				8233A0AB2A14C63900EDC382 /* FontSizeModel.swift in Sources */,
 				F0ADB4A929D3EB3900D56F8B /* SearchArticlesCell.swift in Sources */,
 				824F39E12A0A1AEE009D0AA0 /* DisplaySettingsCell.swift in Sources */,
 				9350945F295A6E9C0055725F /* StoryCell.swift in Sources */,
-				82A1D7A129E93237001780C6 /* APIModel.swift in Sources */,
 				82DCBD6629E17BEB004A70D3 /* BookmarkedArticleViewController.swift in Sources */,
 				82A3E6C92A039C9F0065381C /* CategoriesViewController.swift in Sources */,
 				829C3F2729EFF33400C6DD3B /* HistoryViewController.swift in Sources */,

@@ -8,7 +8,7 @@ class DisplaySettingsCell: UITableViewCell {
     
     static let identifier = "DisplaySettingsCell"
 
-    private lazy var headlineLabel: UILabel = {
+    public lazy var headlineLabel: UILabel = {
         let headline = UILabel()
         headline.font = .fontOfHeadline()
         contentView.addSubview(headline)
@@ -17,7 +17,7 @@ class DisplaySettingsCell: UITableViewCell {
     
     private lazy var checkmarkImage: UIImageView = {
         let checkmark = UIImageView()
-        checkmark.tintColor = .lightGray
+        checkmark.tintColor = .gray
         checkmark.isUserInteractionEnabled = true
         let tap = UITapGestureRecognizer(target: self, action: #selector(checkmarkAction))
         checkmark.addGestureRecognizer(tap)
@@ -25,7 +25,7 @@ class DisplaySettingsCell: UITableViewCell {
         return checkmark
     }()
     
-    private lazy var descriptionLabel: UILabel = {
+    public lazy var descriptionLabel: UILabel = {
         let description = UILabel()
         description.numberOfLines = 0
         description.textColor = .secondaryLabel
@@ -38,14 +38,9 @@ class DisplaySettingsCell: UITableViewCell {
     public weak var delegate: DisplaySettingsCellDelegate!
     public var isCheckmark: Bool! {
         didSet {
-            checkmarkImage.image = isCheckmark ? UIImage(systemName: "checkmark.circle.fill") : UIImage(systemName: "circle")
-        }
-    }
-    
-    public var displaySettings: DisplaySettings! {
-        didSet {
-            headlineLabel.text = displaySettings.headline
-            descriptionLabel.text = displaySettings.description
+            let named = isCheckmark ? "checkmark.circle.fill" : "circle"
+            checkmarkImage.image = imageSystem(named )
+            checkmarkImage.tintColor = isCheckmark ? .tintColor : .gray
         }
     }
     
@@ -90,4 +85,14 @@ class DisplaySettingsCell: UITableViewCell {
         isCheckmark = true
         delegate?.checkmarkImageDidTap(self)
     }
+}
+
+// MARK: - Utilities
+
+extension UIImage.Configuration {
+    static let font = UIImage.SymbolConfiguration(font: .systemFont(ofSize: 22))
+}
+
+func imageSystem(_ named: String, config: UIImage.Configuration = .font) -> UIImage? {
+    return UIImage(systemName: named, withConfiguration: config)
 }

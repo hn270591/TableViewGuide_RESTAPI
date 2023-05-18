@@ -7,13 +7,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         
-        // Category for Stories
-        UserDefaults.standard.setCategory(value: UserDefaults.defaultsCategory)
         // Display (system or dark or light) .
-        let theme = UserDefaults.standard.getUserInterfaceStyle()
-        UserInterfaceStyle.changeStyle(style: theme, animate: false)
-        // Font UILabel
-//        UserDefaults.standard.getFontHeadline()
+        let displaySetting = UserDefaults.getCurrentDisplaySetting()
+        window?.overrideUserInterfaceStyle = displaySetting.userInterface
         
         guard let _ = (scene as? UIWindowScene) else { return }
     }

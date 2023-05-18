@@ -1,27 +1,24 @@
 import UIKit
 
-struct structTableSection {
-    var header: String!
-    var cells: [Any]!
-    var showHeader: Bool!
-}
-
 class DisplaySettingsViewController: UIViewController {
+    enum Section: Int, CaseIterable {
+        case displaySettings
+        case textSizes
+    }
     
-    private var tableData: [structTableSection] = []
-    private let userDefaults = UserDefaults.standard
+    private var sections: [Section] = Section.allCases
+    private var displaySettings: [DisplaySetting] = DisplaySetting.allCases
+    private var textSettings: [TextSetting] = TextSetting.allCases
+    
     private lazy var tableView: UITableView = {
-        let tableView = UITableView()
+        let tableView = UITableView(frame: CGRect(origin: .zero, size: view.frame.size), style: .grouped)
         tableView.register(DisplaySettingsCell.self, forCellReuseIdentifier: DisplaySettingsCell.identifier)
         tableView.register(TextSizeCell.self, forCellReuseIdentifier: TextSizeCell.identifier)
         tableView.separatorStyle = .singleLine
         tableView.sectionHeaderTopPadding = 0
+        view.addSubview(tableView)
         return tableView
     }()
-    
-    override func loadView() {
-         view = tableView
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,7 +26,6 @@ class DisplaySettingsViewController: UIViewController {
         title = "Display Settings"
         tableView.dataSource = self
         tableView.delegate = self
-        setTableDate()
         
         // Notification when changed font size
         let notification = NotificationCenter.default
@@ -48,72 +44,53 @@ class DisplaySettingsViewController: UIViewController {
         super.viewWillDisappear(animated)
         title = nil
     }
-    
-    func setTableDate() {
-        let displaySettingsSection = structTableSection(header: DisplaySettings.header ,
-                                                 cells: DisplaySettings.getDisplaySettingsArray(),
-                                                 showHeader: true)
-        let textSizeSection = structTableSection(header: TextSize.header,
-                                          cells: TextSize.getTextSizeArray(),
-                                          showHeader: false)
-        tableData.append(displaySettingsSection)
-        tableData.append(textSizeSection)
-    }
 }
 
 // MARK: - TableView Datasource and Delegate
 
 extension DisplaySettingsViewController: UITableViewDataSource, UITableViewDelegate {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return tableData.count
+        return sections.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return tableData[section].cells.count
+        switch sections[section] {
+        case .displaySettings:
+            return displaySettings.count
+        case .textSizes:
+            return textSettings.count
+        }
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if !tableData[section].showHeader {
-            return " "
+        switch sections[section] {
+        case .displaySettings:
+            return "Appearance"
+        default:
+            return nil
         }
-        return tableData[section].header
     }
         
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch indexPath.section {
-        case 0:
+        switch sections[indexPath.section] {
+        case .displaySettings:
             let cell = tableView.dequeueReusableCell(withIdentifier: DisplaySettingsCell.identifier) as! DisplaySettingsCell
-            let displaySettingsArray = tableData[indexPath.section].cells as! [DisplaySettings]
             
+            let setting = displaySettings[indexPath.row]
+            let selected = UserDefaults.getCurrentDisplaySetting() == setting
             cell.index = indexPath.row
             cell.delegate = self
-            cell.displaySettings = displaySettingsArray[indexPath.row]
-            
-            if indexPath.section == 0 {
-                let headline = displaySettingsArray[indexPath.row].headline!
-                let userInterfaceStyle = userDefaults.getUserInterfaceStyle().rawValue
-                cell.isCheckmark = headline == userInterfaceStyle ? true : false
-            }
-            
-            // Notification when changed font size
-            let notification = NotificationCenter.default
-            notification.addObserver(forName: FontUpdateNotification, object: nil, queue: .main) { _ in
-                cell.configureUI()
-            }
+            cell.configureUI()
+            cell.headlineLabel.text = setting.name
+            cell.descriptionLabel.text = setting.description
+            cell.isCheckmark = selected ? true : false
             return cell
-        case 1:
+        case .textSizes:
             let cell = tableView.dequeueReusableCell(withIdentifier: TextSizeCell.identifier) as! TextSizeCell
-            let textSizeArray = tableData[indexPath.section].cells as! [TextSize]
-            cell.textSize = textSizeArray[indexPath.row]
-            
-            // Notification when changed font size
-            let notification = NotificationCenter.default
-            notification.addObserver(forName: FontUpdateNotification, object: nil, queue: .main) { _ in
-                cell.configureUI()
-            }
+            let textSize = textSettings[indexPath.row]
+            cell.headlineLabel.font = .fontOfHeadline()
+            cell.headlineLabel.text = textSize.name
             return cell
-        default:
-            return UITableViewCell()
         }
     }
     
@@ -122,17 +99,18 @@ extension DisplaySettingsViewController: UITableViewDataSource, UITableViewDeleg
     }
     
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-        view.tintColor = UIColor(cgColor: CGColor(red: 0.754, green: 0.786, blue: 1.000, alpha: 0.2))
+        view.tintColor = UIColor(red: 0.754, green: 0.786, blue: 1.000, alpha: 0.2)
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if indexPath.section == 0 {
-            return
+        switch sections[indexPath.section] {
+        case .displaySettings:
+            print("No handle")
+        case .textSizes:
+            let vcTextSize = FontSizeViewController()
+            navigationController?.pushViewController(vcTextSize, animated: true)
         }
-        
-        let vcTextSize = FontSizeViewController()
-        navigationController?.pushViewController(vcTextSize, animated: true)
     }
 }
 
@@ -140,7 +118,15 @@ extension DisplaySettingsViewController: UITableViewDataSource, UITableViewDeleg
 
 extension DisplaySettingsViewController: DisplaySettingsCellDelegate {
     func checkmarkImageDidTap(_ cell: DisplaySettingsCell) {
-        UserInterfaceStyle.changeStyle(style: .setIndex(index: cell.index!))
-        tableView.reloadData()
+        guard let index = cell.index else { return }
+        let setting = displaySettings[index]
+        let section = Section.displaySettings.rawValue
+        UserDefaults.setCurrentDisplaySetting(setting)
+        tableView.performBatchUpdates {
+            self.tableView.reloadSections(IndexSet(integer: section), with: .none)
+        }
+        UIView.animate(withDuration: 0.25) {
+            self.view.window?.overrideUserInterfaceStyle = setting.userInterface
+        }
     }
 }

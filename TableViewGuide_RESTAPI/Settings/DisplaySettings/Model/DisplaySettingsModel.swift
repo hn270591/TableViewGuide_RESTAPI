@@ -1,49 +1,58 @@
 import Foundation
+import UIKit
 
-struct Titles {
-    static let automatic = "Automatic"
-    static let dark = "Dark"
-    static let light = "Light"
-    static let textSize = "Text Size"
+enum UserDefaultsKeys {
+    static let displaySetting = "displaySetting"
 }
 
-struct Description {
-    static let automatic = "User your device setting to determine appearance. The app will change modes when your device setting is changed"
-    static let dark = "Ignore your device setting and always render is dark mode"
-    static let light = "Ignore your device setting and always render is light mode"
-}
-
-final class TextSize {
-    static let header = "Text Size"
-    var headline: String!
-    init(headline: String!) {
-        self.headline = headline
+extension UserDefaults {
+    static func getCurrentDisplaySetting() -> DisplaySetting {
+        guard let rawValue = UserDefaults.standard.value(forKey: UserDefaultsKeys.displaySetting) as? Int else { return .automatic }
+        return DisplaySetting(rawValue: rawValue) ?? .automatic
     }
     
-    class func getTextSizeArray() -> [TextSize] {
-        var textSizeArray: [TextSize] = []
-        let textSize = TextSize(headline: Titles.textSize)
-        textSizeArray = [textSize]
-        return textSizeArray
+    static func setCurrentDisplaySetting(_ displaySetting: DisplaySetting) {
+        UserDefaults.standard.set(displaySetting.rawValue, forKey: UserDefaultsKeys.displaySetting)
     }
 }
 
-final class DisplaySettings {
-    static let header = "APPEARANCE"
-    var headline: String!
-    var description: String!
+enum DisplaySetting: Int, CaseIterable {
+    case automatic, dark, light
     
-    init(headline: String!, description: String!) {
-        self.headline = headline
-        self.description = description
+    var name: String {
+        switch self {
+        case .automatic: return "Automatic"
+        case .dark: return "Dark"
+        case .light: return "Light"
+        }
     }
     
-    class func getDisplaySettingsArray() -> [DisplaySettings] {
-        var displaySettingsArray: [DisplaySettings] = []
-        let automatic = DisplaySettings(headline: Titles.automatic, description: Description.automatic)
-        let dark = DisplaySettings(headline: Titles.dark, description: Description.dark)
-        let light = DisplaySettings(headline: Titles.light, description: Description.light)
-        displaySettingsArray = [automatic, dark, light]
-        return displaySettingsArray
+    var description: String {
+        switch self {
+        case .automatic:
+            return "User your device setting to determine appearance. The app will change modes when your device setting is changed."
+        case .dark:
+            return "Ignore your device setting and always render is dark mode."
+        case .light:
+            return "Ignore your device setting and always render is light mode."
+        }
+    }
+    
+    var userInterface: UIUserInterfaceStyle {
+        switch self {
+        case .automatic: return .unspecified
+        case .dark: return .dark
+        case .light: return .light
+        }
+    }
+}
+
+enum TextSetting: CaseIterable {
+    case textSize
+    
+    var name: String {
+        switch self {
+        case .textSize: return "Text Size"
+        }
     }
 }
