@@ -9,9 +9,11 @@ extension UIImageView {
     
     func downloadImage(url: URL) {
         self.kf.indicatorType = .activity
+        let processor = DownsamplingImageProcessor(size: self.bounds.size)
         self.kf.setImage(with: url,
                               placeholder: UIImage(named: "placeholderImage"),
                               options: [
+                                .processor(processor),
                                 .scaleFactor(UIScreen.main.scale),
                                 .cacheOriginalImage,
                                 .transition(.fade(0.25))
@@ -35,4 +37,9 @@ extension UIImageView {
     }
 }
 
+// MARK: - UIColor
+
+extension UIColor {
+    static let headerColor: UIColor = UIColor(red: 0.754, green: 0.786, blue: 1.000, alpha: 0.2)
+}
 

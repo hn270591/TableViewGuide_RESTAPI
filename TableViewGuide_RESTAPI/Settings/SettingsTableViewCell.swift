@@ -9,13 +9,9 @@ class SettingsTableViewCell: UITableViewCell {
         return headline
     }()
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        self.accessoryType = .disclosureIndicator
-    }
-    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.accessoryType = .disclosureIndicator
         setupViews()
     }
     

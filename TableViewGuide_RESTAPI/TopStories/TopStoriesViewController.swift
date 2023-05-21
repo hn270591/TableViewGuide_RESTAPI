@@ -1,12 +1,37 @@
 import UIKit
 import CoreData
 
+extension UIViewController {
+    enum Alert {
+        case inConnect
+        
+        var title: String {
+            switch self {
+            case .inConnect: return "No Internet"
+            }
+        }
+        
+        var message: String {
+            switch self {
+            case .inConnect:
+                return "Checking the network cables, modem, and router."
+            }
+        }
+    }
+    
+    func alert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let ok = UIAlertAction(title: "OK", style: .default)
+        alert.addAction(ok)
+        present(alert, animated: true)
+    }
+}
+
 class TopStoriesViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     
     private let animationDuration: TimeInterval = 1
-    private let heightForRow: CGFloat = 100
     var selectedIndex: Int?
     var stories: [Story] = []
     private lazy var categoryButton: UIBarButtonItem! = nil
@@ -55,21 +80,6 @@ class TopStoriesViewController: UIViewController {
         return controller
     }()
     
-    enum Titles {
-        static let internetError = "No Internet"
-    }
-    
-    enum Message {
-        static let checkNetwork = "Checking the network cables, modem, and router."
-    }
-    
-    func alert(title: String, message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let ok = UIAlertAction(title: "OK", style: .default)
-        alert.addAction(ok)
-        present(alert, animated: true)
-    }
-    
     // MARK: - LifeCycle ViewController
     
     override func viewDidLoad() {
@@ -92,7 +102,6 @@ class TopStoriesViewController: UIViewController {
     func setupTableView() {
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.rowHeight = heightForRow
         tableView.refreshControl = UIRefreshControl()
         tableView.refreshControl?.addTarget(self, action: #selector(onRefesh), for: .valueChanged)
     }
@@ -134,7 +143,7 @@ class TopStoriesViewController: UIViewController {
             print(error); return
         }
         DispatchQueue.main.async {
-            self.alert(title: Titles.internetError, message: Message.checkNetwork)
+            self.alert(title: Alert.inConnect.title, message: Alert.inConnect.message)
         }
         return
     }
@@ -182,7 +191,7 @@ class TopStoriesViewController: UIViewController {
         guard currentCategory == "Home" else { return }
         self.clearArticles()
         for story in stories {
-            insertStory(title: story.title, imageURL: story.multimedia?[2].url ?? "", url: story.webURL, isRead: story.isRead ?? false, publishedDate: story.pubDate)
+            insertStory(title: story.title, imageURL: story.imageURLString, url: story.webURL, isRead: story.isRead ?? false, publishedDate: story.pubDate)
         }
         try? articleResultsController.performFetch()
         print("Number TopStoris saved: \(articleResultsController.fetchedObjects?.count ?? 0)")
@@ -213,7 +222,7 @@ class TopStoriesViewController: UIViewController {
     
 extension TopStoriesViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "StoryCell") as! StoryCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "StoriesCell") as! StoryCell
         cell.configureUI()
         if stories.count > 0 {
             let story = stories[indexPath.row]

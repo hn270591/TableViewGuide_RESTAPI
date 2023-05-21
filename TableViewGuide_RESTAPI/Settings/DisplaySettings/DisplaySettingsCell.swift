@@ -6,8 +6,6 @@ protocol DisplaySettingsCellDelegate: AnyObject {
 
 class DisplaySettingsCell: UITableViewCell {
     
-    static let identifier = "DisplaySettingsCell"
-
     public lazy var headlineLabel: UILabel = {
         let headline = UILabel()
         headline.font = .fontOfHeadline()

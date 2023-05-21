@@ -18,7 +18,7 @@
 		8241A6622A0F83EA008057A1 /* UILabel Font .swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241A6612A0F83EA008057A1 /* UILabel Font .swift */; };
 		824F39DE2A0A1AC8009D0AA0 /* DisplaySettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 824F39DC2A0A1AC8009D0AA0 /* DisplaySettingsViewController.swift */; };
 		824F39E12A0A1AEE009D0AA0 /* DisplaySettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 824F39E02A0A1AEE009D0AA0 /* DisplaySettingsCell.swift */; };
-		827CA8BA29E3FA4A00026FFF /* UIImageViewExtension .swift in Sources */ = {isa = PBXBuildFile; fileRef = 827CA8B929E3FA4A00026FFF /* UIImageViewExtension .swift */; };
+		827CA8BA29E3FA4A00026FFF /* UIImageView-UIColor .swift in Sources */ = {isa = PBXBuildFile; fileRef = 827CA8B929E3FA4A00026FFF /* UIImageView-UIColor .swift */; };
 		827FF6BD29FBDA86007D35A9 /* DateExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 827FF6BC29FBDA86007D35A9 /* DateExtension.swift */; };
 		829C3F1729EFE49400C6DD3B /* ReadArticle+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829C3F1529EFE49400C6DD3B /* ReadArticle+CoreDataClass.swift */; };
 		829C3F1829EFE49400C6DD3B /* ReadArticle+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829C3F1629EFE49400C6DD3B /* ReadArticle+CoreDataProperties.swift */; };
@@ -60,7 +60,7 @@
 		8241A6612A0F83EA008057A1 /* UILabel Font .swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel Font .swift"; sourceTree = "<group>"; };
 		824F39DC2A0A1AC8009D0AA0 /* DisplaySettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsViewController.swift; sourceTree = "<group>"; };
 		824F39E02A0A1AEE009D0AA0 /* DisplaySettingsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsCell.swift; sourceTree = "<group>"; };
-		827CA8B929E3FA4A00026FFF /* UIImageViewExtension .swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageViewExtension .swift"; sourceTree = "<group>"; };
+		827CA8B929E3FA4A00026FFF /* UIImageView-UIColor .swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView-UIColor .swift"; sourceTree = "<group>"; };
 		827FF6BC29FBDA86007D35A9 /* DateExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateExtension.swift; sourceTree = "<group>"; };
 		829C3F1529EFE49400C6DD3B /* ReadArticle+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "ReadArticle+CoreDataClass.swift"; path = "TableViewGuide_RESTAPI/CoreData/ReadArticles/ReadArticle+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
 		829C3F1629EFE49400C6DD3B /* ReadArticle+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "ReadArticle+CoreDataProperties.swift"; path = "TableViewGuide_RESTAPI/CoreData/ReadArticles/ReadArticle+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
@@ -185,7 +185,7 @@
 		827FF70529FCB483007D35A9 /* Extension */ = {
 			isa = PBXGroup;
 			children = (
-				827CA8B929E3FA4A00026FFF /* UIImageViewExtension .swift */,
+				827CA8B929E3FA4A00026FFF /* UIImageView-UIColor .swift */,
 				8241A6612A0F83EA008057A1 /* UILabel Font .swift */,
 				827FF6BC29FBDA86007D35A9 /* DateExtension.swift */,
 			);
@@ -474,7 +474,7 @@
 				82A1D7A329E9325E001780C6 /* APIRouter.swift in Sources */,
 				82A3E6C62A039C8B0065381C /* CategoriesCell.swift in Sources */,
 				829C3F1829EFE49400C6DD3B /* ReadArticle+CoreDataProperties.swift in Sources */,
-				827CA8BA29E3FA4A00026FFF /* UIImageViewExtension .swift in Sources */,
+				827CA8BA29E3FA4A00026FFF /* UIImageView-UIColor .swift in Sources */,
 				829C3F2529EFF31C00C6DD3B /* SettingsViewController.swift in Sources */,
 				8241A6622A0F83EA008057A1 /* UILabel Font .swift in Sources */,
 			);
@@ -629,6 +629,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UIRequiresFullScreen = NO;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
@@ -658,6 +659,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UIRequiresFullScreen = NO;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;

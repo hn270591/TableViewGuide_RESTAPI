@@ -11,7 +11,7 @@ class HistoryCell: UITableViewCell {
     }()
     
     private lazy var thumbnailView: UIImageView = {
-        let thumbnail = UIImageView()
+        let thumbnail = UIImageView(frame: CGRect(x: 0, y: 0, width: 100, height: 120))
         thumbnail.contentMode = .scaleToFill
         contentView.addSubview(thumbnail)
         return thumbnail
@@ -55,22 +55,26 @@ class HistoryCell: UITableViewCell {
     }
     
     private func setupViews() {
-        // layout thumbnailView
         thumbnailView.translatesAutoresizingMaskIntoConstraints = false
+        headlineLabel.translatesAutoresizingMaskIntoConstraints = false
+        createdTimeLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        // layout thumbnailView
         thumbnailView.heightAnchor.constraint(equalToConstant: 100).isActive = true
         thumbnailView.widthAnchor.constraint(equalToConstant: 120).isActive = true
-        thumbnailView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
         thumbnailView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10).isActive = true
+        thumbnailView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -2).isActive = true
+        let thumbnailTopAnchor = thumbnailView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 2)
+        thumbnailTopAnchor.priority = UILayoutPriority(999)
+        thumbnailTopAnchor.isActive = true
         
         // layout headline
-        headlineLabel.translatesAutoresizingMaskIntoConstraints = false
-        headlineLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0).isActive = true
+        headlineLabel.topAnchor.constraint(equalTo: contentView.topAnchor,constant: 10).isActive = true
         headlineLabel.leadingAnchor.constraint(equalTo: thumbnailView.trailingAnchor, constant: 10).isActive = true
         headlineLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
-        headlineLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -18).isActive = true
+        headlineLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20).isActive = true
 
         // layout createdTime
-        createdTimeLabel.translatesAutoresizingMaskIntoConstraints = false
         createdTimeLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -3).isActive = true
         createdTimeLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
         createdTimeLabel.leadingAnchor.constraint(equalTo: thumbnailView.trailingAnchor, constant: 10).isActive = true

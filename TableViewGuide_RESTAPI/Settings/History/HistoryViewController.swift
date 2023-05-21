@@ -6,11 +6,10 @@ class HistoryViewController: UIViewController {
     private let reuseIdentifier = "HistoryCell"
     private let message: String = "Are you want to delete ?"
     private lazy var tableView: UITableView = {
-        let tableView = UITableView()
+        let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.register(HistoryCell.self, forCellReuseIdentifier: reuseIdentifier)
         tableView.separatorStyle = .singleLine
-        tableView.sectionHeaderTopPadding = 0
-        tableView.rowHeight = 100
+        view.addSubview(tableView)
         return tableView
     }()
     
@@ -19,7 +18,6 @@ class HistoryViewController: UIViewController {
         noHistoryLabel.textAlignment = .center
         noHistoryLabel.text = "No History"
         noHistoryLabel.isHidden = true
-        noHistoryLabel.center = CGPoint(x: view.bounds.width / 2, y: view.bounds.height / 2 - 100)
         view.addSubview(noHistoryLabel)
         return noHistoryLabel
     }()
@@ -44,10 +42,6 @@ class HistoryViewController: UIViewController {
         return controller
     }()
     
-    override func loadView() {
-        view = tableView
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self
@@ -55,7 +49,7 @@ class HistoryViewController: UIViewController {
         setupNavigation()
         navigationController?.navigationBar.prefersLargeTitles = false
         let readArticle = readArticleResultsController.fetchedObjects ?? []
-        
+
         if readArticle.isEmpty {
             noHistoryLabel.isHidden = false
         }
@@ -69,10 +63,15 @@ class HistoryViewController: UIViewController {
         tableView.reloadData()
     }
     
-    
     func setupNavigation() {
-        lazy var clearHistory = UIBarButtonItem(title: "Clear History", style: .done, target: self, action: #selector(clearAction))
+        lazy var clearHistory = UIBarButtonItem(title: "Clear History", style: .plain, target: self, action: #selector(clearAction))
         navigationItem.rightBarButtonItems = [clearHistory]
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        tableView.frame = view.bounds
+        noHistoryLabel.center = CGPoint(x: view.bounds.width / 2, y: view.bounds.height / 2 - 100)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -124,11 +123,13 @@ extension HistoryViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 35
+        return 20
     }
     
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-        view.tintColor = UIColor(red: 0.754, green: 0.786, blue: 1.000, alpha: 0.2)
+        guard let header = view as? UITableViewHeaderFooterView else { return }
+        header.textLabel?.font = .boldSystemFont(ofSize: 15)
+        header.tintColor = .headerColor
     }
         
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

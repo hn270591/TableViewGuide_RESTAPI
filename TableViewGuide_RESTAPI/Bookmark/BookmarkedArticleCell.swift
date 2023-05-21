@@ -11,7 +11,7 @@ class BookmarkedArticleCell: UITableViewCell {
     }()
     
     private lazy var thumbnailView: UIImageView = {
-        let thumbnail = UIImageView()
+        let thumbnail = UIImageView(frame: CGRect(x: 0, y: 0, width: 120, height: 100))
         thumbnail.contentMode = .scaleToFill
         contentView.addSubview(thumbnail)
         return thumbnail
@@ -58,22 +58,26 @@ class BookmarkedArticleCell: UITableViewCell {
     }
     
     private func setupViews() {
-        // set thumbnailView
         thumbnailView.translatesAutoresizingMaskIntoConstraints = false
+        headlineLabel.translatesAutoresizingMaskIntoConstraints = false
+        publishedDateLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        // set thumbnailView
         thumbnailView.heightAnchor.constraint(equalToConstant: 100).isActive = true
         thumbnailView.widthAnchor.constraint(equalToConstant: 120).isActive = true
-        thumbnailView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
         thumbnailView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10).isActive = true
+        thumbnailView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -2).isActive = true
+        let thumbnailTopAnchor = thumbnailView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 2)
+        thumbnailTopAnchor.priority = UILayoutPriority(999)
+        thumbnailTopAnchor.isActive = true
         
         // set headlineLabel
-        headlineLabel.translatesAutoresizingMaskIntoConstraints = false
         headlineLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10).isActive = true
         headlineLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
         headlineLabel.leadingAnchor.constraint(equalTo: thumbnailView.trailingAnchor, constant: 10).isActive = true
-        headlineLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -18).isActive = true
+        headlineLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20).isActive = true
         
         // set publishedTimeLabel
-        publishedDateLabel.translatesAutoresizingMaskIntoConstraints = false
         publishedDateLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -3).isActive = true
         publishedDateLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
         publishedDateLabel.leadingAnchor.constraint(equalTo: thumbnailView.trailingAnchor, constant: 10).isActive = true

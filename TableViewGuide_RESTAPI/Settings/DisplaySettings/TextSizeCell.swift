@@ -1,8 +1,6 @@
 import UIKit
 
 class TextSizeCell: UITableViewCell {
-
-    static let identifier = "TextSizeCell"
     
     public lazy var headlineLabel: UILabel = {
         let headline = UILabel()

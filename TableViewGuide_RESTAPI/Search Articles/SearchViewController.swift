@@ -31,21 +31,6 @@ class SearchViewController: UIViewController {
         return indicatorView
     }()
     
-    enum Titles {
-        static let internetError = "No Internet"
-    }
-    
-    enum Messages {
-        static let checkNetwork = "Checking the network cables, modem, and router."
-    }
-    
-    func alert(title: String, message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let ok = UIAlertAction(title: "OK", style: .default)
-        alert.addAction(ok)
-        present(alert, animated: true)
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self
@@ -177,7 +162,7 @@ extension SearchViewController: UISearchBarDelegate {
         switch error {
         case .inConnect:
             DispatchQueue.main.async {
-                self.alert(title: Titles.internetError, message: Messages.checkNetwork)
+                self.alert(title: Alert.inConnect.title, message: Alert.inConnect.message)
             }
             break
         case .invalidResponse:

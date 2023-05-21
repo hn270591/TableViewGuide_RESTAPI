@@ -26,11 +26,9 @@ class SearchArticlesCell: UITableViewCell {
             headLineLabel.text = article.headline.main
             publishedDateLabel.text = publishedDate
             
-            if let multimedia = article.multimedia, !multimedia.isEmpty {
-                guard multimedia.count >= 20 else { return }
-                let stringURL = "https://static01.nyt.com/" + multimedia[19].url
-                let imageURL = URL(string: stringURL)
-                thumbnailView.downloadImage(url: imageURL!)
+            if !article.imageURLString.isEmpty {
+                guard let imageURL = URL(string: article.imageURLString) else { return }
+                thumbnailView.downloadImage(url: imageURL)
             } else {
                 thumbnailView.image = UIImage(systemName: "photo")
                 thumbnailView.tintColor = .lightGray

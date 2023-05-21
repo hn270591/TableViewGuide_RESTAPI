@@ -46,7 +46,7 @@ enum FontSize: Int {
         }
     }
     
-    static func temporaryFontSize(index: Int) -> FontSize {
+    static func size(index: Int) -> FontSize {
         switch index {
         case FontSize.small.rawValue:
             return .small

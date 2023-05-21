@@ -8,7 +8,6 @@ class BookmarkedArticleViewController: UIViewController {
         let tableView = UITableView()
         tableView.register(BookmarkedArticleCell.self, forCellReuseIdentifier: reuseIdentifier)
         tableView.separatorStyle = .singleLine
-        tableView.rowHeight = 100
         return tableView
     }()
     

@@ -136,3 +136,32 @@ struct MultiMediaStory: Codable {
     let url: String
 }
 
+// MARK: - Extension Story
+
+extension Story {
+    var imageURLString: String {
+        get {
+            guard let multimedia = self.multimedia, !multimedia.isEmpty
+            else { return "" }
+            guard multimedia.count >= 2 else { return "" }
+            let stringURL = multimedia[1].url
+            return stringURL
+        }
+    }
+}
+
+// MARK: - Extension ArticleItem
+
+extension ArticleItem {
+    var imageURLString: String {
+        get {
+            guard let multimedia = self.multimedia, !multimedia.isEmpty
+            else { return "" }
+            guard multimedia.count >= 20 else { return "" }
+            let stringURL = "https://static01.nyt.com/" + multimedia[19].url
+            return stringURL
+        }
+    }
+}
+
+

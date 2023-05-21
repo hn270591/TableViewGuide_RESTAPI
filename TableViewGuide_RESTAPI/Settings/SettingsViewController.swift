@@ -3,9 +3,9 @@ import UIKit
 class SettingsViewController: UIViewController {
 
     private let reuseIdentifier = "SettingsTableViewCell"
-    private var settings: [String] = []
+    private var settings: [String] = ["History", "Display Settings"]
     private lazy var tableView: UITableView = {
-        let tableView = UITableView(frame: CGRect(origin: .zero, size: view.bounds.size), style: .insetGrouped)
+        let tableView = UITableView(frame: .zero, style: .insetGrouped)
         tableView.rowHeight = 50
         view.addSubview(tableView)
         tableView.register(SettingsTableViewCell.self, forCellReuseIdentifier: reuseIdentifier)
@@ -18,7 +18,6 @@ class SettingsViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         navigationController?.navigationBar.prefersLargeTitles = true
-        initSettings()
         
         // Notification when changed font size
         let notification = NotificationCenter.default
@@ -29,15 +28,14 @@ class SettingsViewController: UIViewController {
         tableView.reloadData()
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        tableView.frame = view.bounds
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.prefersLargeTitles = true
-    }
-    
-    func initSettings() {
-        let settings: [String] = ["History", "Display Settings"]
-        self.settings = settings
     }
 }
 

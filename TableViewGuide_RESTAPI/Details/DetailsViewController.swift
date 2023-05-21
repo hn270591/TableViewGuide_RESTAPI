@@ -118,12 +118,12 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
         if !storyURL.isEmpty {
             guard let story = self.story else { return }
             insertArticle(title: story.title, webURL: story.webURL,
-                          imageURL: story.multimedia?[2].url ?? "",
+                          imageURL: story.imageURLString,
                           publishedDate: story.pubDate, index: count)
         } else if !articleURL.isEmpty {
             guard let article = self.article else { return }
             insertArticle(title: article.headline.main, webURL: article.webURL,
-                          imageURL: "https://static01.nyt.com/" + (article.multimedia?[19].url ?? ""),
+                          imageURL: article.imageURLString,
                           publishedDate: article.pubDate, index: count)
         } else { return }
     }
@@ -179,7 +179,7 @@ class DetailsViewController: UIViewController, WKNavigationDelegate {
     // Save ReadArticle
     func saveReadArticle() {
         guard let story = story else { return }
-        saveReadArticle(title: story.title, url: story.webURL, imageURL: story.multimedia?[2].url ?? "" , publishDate: Date())
+        saveReadArticle(title: story.title, url: story.webURL, imageURL: story.imageURLString , publishDate: Date())
     }
     
     func saveReadArticle(title: String, url: String, imageURL: String, publishDate: Date) {

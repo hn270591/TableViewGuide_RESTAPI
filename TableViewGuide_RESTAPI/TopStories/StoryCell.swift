@@ -34,11 +34,9 @@ class StoryCell: UITableViewCell {
             publishedDateLabel.text = publishedDate
             isRead = story.isRead ?? false
             
-            if let multimedia = story.multimedia, !multimedia.isEmpty {
-                guard multimedia.count >= 3 else { return }
-                let thumbnailString = multimedia[2].url
-                let urlString = URL(string: thumbnailString)
-                thumbnailView.downloadImage(url: urlString!)
+            if !story.imageURLString.isEmpty {
+                guard let imageURL = URL(string: story.imageURLString) else { return }
+                thumbnailView.downloadImage(url: imageURL)
             } else {
                 thumbnailView.image = UIImage(systemName: "photo")
                 thumbnailView.tintColor = .lightGray

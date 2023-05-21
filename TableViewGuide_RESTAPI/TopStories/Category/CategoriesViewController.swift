@@ -7,11 +7,11 @@ protocol CategoriesViewControllerDelegate: AnyObject {
 class CategoriesViewController: UIViewController {
 
     private let reuseIdentifiter = "CategoriesCell"
-    private var categories: [String] = []
+    private var categories: [String] = ["Arts", "Automobiles", "Books", "Business", "Fashion", "Food", "Health", "Home", "Insider", "Magazine", "Movies", "Nyregion", "Obituaries", "Opinion", "Politics", "Realestate", "Science", "Sports", "Sundayreview", "Technology", "Theater", "T-magazine", "Travel", "Upshot", "Us", "World"]
     public weak var delegate: CategoriesViewControllerDelegate!
     
     private lazy var tableView: UITableView = {
-        let tableView = UITableView(frame: CGRect(origin: .zero, size: view.frame.size), style: .insetGrouped)
+        let tableView = UITableView(frame: .zero, style: .insetGrouped)
         view.addSubview(tableView)
         tableView.register(CategoriesCell.self, forCellReuseIdentifier: reuseIdentifiter)
         return tableView
@@ -24,7 +24,6 @@ class CategoriesViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         tableView.dataSource = self
         tableView.delegate = self
-        initCategories()
         
         // Notification when changed font size
         let notification = NotificationCenter.default
@@ -35,11 +34,9 @@ class CategoriesViewController: UIViewController {
         tableView.reloadData()
     }
     
-    func initCategories() {
-        let categories = [
-            "Arts", "Automobiles", "Books", "Business", "Fashion", "Food", "Health", "Home", "Insider", "Magazine", "Movies", "Nyregion", "Obituaries", "Opinion", "Politics", "Realestate", "Science", "Sports", "Sundayreview", "Technology", "Theater", "T-magazine", "Travel", "Upshot", "Us", "World"
-        ]
-        self.categories = categories
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        tableView.frame = view.bounds
     }
 }
 

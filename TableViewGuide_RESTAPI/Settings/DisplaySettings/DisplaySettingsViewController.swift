@@ -1,6 +1,11 @@
 import UIKit
 
 class DisplaySettingsViewController: UIViewController {
+    enum ReuseIdentifier {
+        static let displaySettingsCell = "DisplaySettingsCell"
+        static let textSizeCell = "TextSizeCell"
+    }
+    
     enum Section: Int, CaseIterable {
         case displaySettings
         case textSizes
@@ -11,9 +16,9 @@ class DisplaySettingsViewController: UIViewController {
     private var textSettings: [TextSetting] = TextSetting.allCases
     
     private lazy var tableView: UITableView = {
-        let tableView = UITableView(frame: CGRect(origin: .zero, size: view.frame.size), style: .grouped)
-        tableView.register(DisplaySettingsCell.self, forCellReuseIdentifier: DisplaySettingsCell.identifier)
-        tableView.register(TextSizeCell.self, forCellReuseIdentifier: TextSizeCell.identifier)
+        let tableView = UITableView(frame:.zero, style: .grouped)
+        tableView.register(DisplaySettingsCell.self, forCellReuseIdentifier: ReuseIdentifier.displaySettingsCell)
+        tableView.register(TextSizeCell.self, forCellReuseIdentifier: ReuseIdentifier.textSizeCell)
         tableView.separatorStyle = .singleLine
         tableView.sectionHeaderTopPadding = 0
         view.addSubview(tableView)
@@ -22,10 +27,11 @@ class DisplaySettingsViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationController?.navigationBar.prefersLargeTitles = false
         title = "Display Settings"
         tableView.dataSource = self
         tableView.delegate = self
+        navigationController?.navigationBar.prefersLargeTitles = false
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: nil, action: nil)
         
         // Notification when changed font size
         let notification = NotificationCenter.default
@@ -36,13 +42,9 @@ class DisplaySettingsViewController: UIViewController {
         tableView.reloadData()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        title = "Display Settings"
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        title = nil
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        tableView.frame = view.bounds
     }
 }
 
@@ -74,7 +76,7 @@ extension DisplaySettingsViewController: UITableViewDataSource, UITableViewDeleg
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch sections[indexPath.section] {
         case .displaySettings:
-            let cell = tableView.dequeueReusableCell(withIdentifier: DisplaySettingsCell.identifier) as! DisplaySettingsCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: ReuseIdentifier.displaySettingsCell) as! DisplaySettingsCell
             
             let setting = displaySettings[indexPath.row]
             let selected = UserDefaults.getCurrentDisplaySetting() == setting
@@ -86,7 +88,7 @@ extension DisplaySettingsViewController: UITableViewDataSource, UITableViewDeleg
             cell.isCheckmark = selected ? true : false
             return cell
         case .textSizes:
-            let cell = tableView.dequeueReusableCell(withIdentifier: TextSizeCell.identifier) as! TextSizeCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: ReuseIdentifier.textSizeCell) as! TextSizeCell
             let textSize = textSettings[indexPath.row]
             cell.headlineLabel.font = .fontOfHeadline()
             cell.headlineLabel.text = textSize.name
@@ -99,7 +101,7 @@ extension DisplaySettingsViewController: UITableViewDataSource, UITableViewDeleg
     }
     
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-        view.tintColor = UIColor(red: 0.754, green: 0.786, blue: 1.000, alpha: 0.2)
+        view.tintColor = .headerColor
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

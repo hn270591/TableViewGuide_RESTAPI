@@ -6,14 +6,7 @@ let FontUpdateNotification = Notification.Name("TextSizeViewController.fontUpdat
 class FontSizeViewController: UIViewController, UINavigationControllerDelegate {
     
     @IBOutlet weak var sliderLabel: UILabel!
-    
-    private lazy var sliderView: StepSlider = {
-        let slider = StepSlider(frame: CGRect(x: 0, y: 0, width: 270, height: 30))
-        slider.maxCount = 4
-        slider.sliderCircleColor = .blue
-        view.addSubview(slider)
-        return slider
-    }()
+    @IBOutlet weak var sliderView: StepSlider!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,29 +30,17 @@ class FontSizeViewController: UIViewController, UINavigationControllerDelegate {
         sliderLabel.text = fontSize.name
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        layoutSliderView()
-    }
-    
-    func layoutSliderView() {
-        sliderView.translatesAutoresizingMaskIntoConstraints = false
-        sliderView.topAnchor.constraint(equalTo: sliderLabel.topAnchor, constant: 50).isActive = true
-        sliderView.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: -5).isActive = true
-    }
-    
     @objc func sliderAction() {
         let index = Int(sliderView.index)
-        let fontSize = FontSize.temporaryFontSize(index: index)
+        let fontSize = FontSize.size(index: index)
         // reset slider label
         sliderLabel.text = fontSize.name
         sliderLabel.font = sliderLabel.font.withSize(CGFloat(fontSize.size))
-        
+
         // save in userDefaults
         UserDefaults.setCurrentFontSize(fontSize)
-        
+
         // Notification
         NotificationCenter.default.post(name: FontUpdateNotification, object: self)
     }
 }
-
