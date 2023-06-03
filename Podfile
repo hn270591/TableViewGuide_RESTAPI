@@ -6,6 +6,10 @@ target 'TableViewGuide_RESTAPI' do
   use_frameworks!
 
   # Pods for TableViewGuide_RESTAPI
+    pod 'Alamofire'
+    pod 'AlamofireImage'
     pod 'Kingfisher'
+    
+    pod 'StepSlider'
 
 end

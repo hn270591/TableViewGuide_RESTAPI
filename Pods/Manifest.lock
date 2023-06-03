@@ -1,16 +1,29 @@
 PODS:
+  - Alamofire (5.7.1)
+  - AlamofireImage (4.2.0):
+    - Alamofire (~> 5.4)
   - Kingfisher (7.6.2)
+  - StepSlider (1.8.0)
 
 DEPENDENCIES:
+  - Alamofire
+  - AlamofireImage
   - Kingfisher
+  - StepSlider
 
 SPEC REPOS:
   trunk:
+    - Alamofire
+    - AlamofireImage
     - Kingfisher
+    - StepSlider
 
 SPEC CHECKSUMS:
+  Alamofire: 0123a34370cb170936ae79a8df46cc62b2edeb88
+  AlamofireImage: 34a2d90b0e5fe6a5605f85ae4b7b01e784c60192
   Kingfisher: 6c5449c6450c5239166510ba04afe374a98afc4f
+  StepSlider: 890db727e779fa99cb32afffc5887c1109e151f4
 
-PODFILE CHECKSUM: 8213ac4eb1c7eb2de19f1a20c25ebae47bbb5608
+PODFILE CHECKSUM: 48dfaa6280e61360ef72f1ecb902b424a8f4cd57
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.12.0

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21678"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="FontSizeViewController" customModule="TableViewGuide_RESTAPI" customModuleProvider="target">
+            <connections>
+                <outlet property="sliderLabel" destination="f22-cu-tbN" id="hf6-xR-Hy0"/>
+                <outlet property="sliderView" destination="1tD-nn-1eZ" id="Tj1-3k-O75"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Make the text on screen smaller or larger." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="G0y-y7-n0v">
+                    <rect key="frame" x="20" y="184.33333333333334" width="353" height="20.333333333333343"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Defaults" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="f22-cu-tbN" userLabel="SlideStatus">
+                    <rect key="frame" x="164.66666666666666" y="74" width="64" height="21"/>
+                    <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="A" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jyw-6o-ksQ" userLabel="A small">
+                    <rect key="frame" x="20" y="139" width="9.6666666666666643" height="15.666666666666657"/>
+                    <fontDescription key="fontDescription" type="boldSystem" pointSize="13"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="A" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dWF-o2-dOn" userLabel="A large">
+                    <rect key="frame" x="351.66666666666669" y="129" width="21.333333333333314" height="36"/>
+                    <fontDescription key="fontDescription" type="boldSystem" pointSize="30"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <view clipsSubviews="YES" contentMode="bottom" translatesAutoresizingMaskIntoConstraints="NO" id="1tD-nn-1eZ" customClass="StepSlider">
+                    <rect key="frame" x="49.666666666666657" y="134.33333333333334" width="282" height="45"/>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="maxCount">
+                            <integer key="value" value="4"/>
+                        </userDefinedRuntimeAttribute>
+                        <userDefinedRuntimeAttribute type="color" keyPath="sliderCircleColor">
+                            <color key="value" name="Color"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                </view>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <constraints>
+                <constraint firstItem="dWF-o2-dOn" firstAttribute="leading" secondItem="1tD-nn-1eZ" secondAttribute="trailing" constant="20" id="1ft-EG-8Tp"/>
+                <constraint firstItem="1tD-nn-1eZ" firstAttribute="leading" secondItem="Jyw-6o-ksQ" secondAttribute="trailing" constant="20" id="Fp4-XM-X55"/>
+                <constraint firstItem="f22-cu-tbN" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="hPx-9F-S9a"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="dWF-o2-dOn" secondAttribute="trailing" constant="20" id="jWf-KF-aL1"/>
+                <constraint firstItem="Jyw-6o-ksQ" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" constant="80" id="jgd-9w-Qxv"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="G0y-y7-n0v" secondAttribute="trailing" constant="20" id="ld9-96-jLl"/>
+                <constraint firstItem="1tD-nn-1eZ" firstAttribute="centerY" secondItem="Jyw-6o-ksQ" secondAttribute="centerY" constant="10" id="mHS-cF-Are"/>
+                <constraint firstItem="G0y-y7-n0v" firstAttribute="bottom" secondItem="Jyw-6o-ksQ" secondAttribute="bottom" constant="50" id="rXU-lc-qhw"/>
+                <constraint firstItem="G0y-y7-n0v" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="20" id="v8h-tF-D9J"/>
+                <constraint firstItem="f22-cu-tbN" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" constant="15" id="wYU-tB-5eX"/>
+                <constraint firstItem="Jyw-6o-ksQ" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="20" id="wZ0-03-eD9"/>
+                <constraint firstItem="dWF-o2-dOn" firstAttribute="centerY" secondItem="Jyw-6o-ksQ" secondAttribute="centerY" id="xZd-jZ-98e"/>
+            </constraints>
+            <point key="canvasLocation" x="125.95419847328243" y="19.718309859154932"/>
+        </view>
+    </objects>
+    <designables>
+        <designable name="1tD-nn-1eZ">
+            <size key="intrinsicContentSize" width="282" height="45"/>
+        </designable>
+    </designables>
+    <resources>
+        <namedColor name="Color">
+            <color red="0.10899999737739563" green="0.29699999094009399" blue="1" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+        </namedColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
