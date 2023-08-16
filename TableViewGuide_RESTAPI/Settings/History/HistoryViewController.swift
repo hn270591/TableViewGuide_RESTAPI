@@ -17,8 +17,8 @@ class HistoryViewController: UIViewController {
         let noHistoryLabel = UILabel()
         noHistoryLabel.textAlignment = .center
         noHistoryLabel.text = "No History"
-        noHistoryLabel.isHidden = true
-        view.addSubview(noHistoryLabel)
+        noHistoryLabel.font = .systemFont(ofSize: 17, weight: .medium)
+        noHistoryLabel.textColor = .secondaryLabel
         return noHistoryLabel
     }()
     
@@ -47,12 +47,6 @@ class HistoryViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         setupNavigation()
-        navigationController?.navigationBar.prefersLargeTitles = false
-        let readArticle = readArticleResultsController.fetchedObjects ?? []
-
-        if readArticle.isEmpty {
-            noHistoryLabel.isHidden = false
-        }
         
         // Notification when changed font size
         let notification = NotificationCenter.default
@@ -78,10 +72,7 @@ class HistoryViewController: UIViewController {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.prefersLargeTitles = false
         let readArticle = readArticleResultsController.fetchedObjects ?? []
-        
-        if !readArticle.isEmpty {
-            noHistoryLabel.isHidden = true
-        }
+        tableView.backgroundView = readArticle.isEmpty ? self.noHistoryLabel : nil
     }
     
     // Alert
@@ -99,7 +90,7 @@ class HistoryViewController: UIViewController {
     @objc func clearAction() {
         alert(title: nil, message: message, handler: {
             self.clearReadArticles()
-            self.noHistoryLabel.isHidden = false
+            self.tableView.backgroundView = self.noHistoryLabel
             self.tableView.reloadData()
         })
     }
