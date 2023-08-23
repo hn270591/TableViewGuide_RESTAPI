@@ -4,7 +4,6 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21678"/>
-        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -13,7 +12,7 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="FontSizeViewController" customModule="TableViewGuide_RESTAPI" customModuleProvider="target">
             <connections>
                 <outlet property="sliderLabel" destination="f22-cu-tbN" id="hf6-xR-Hy0"/>
-                <outlet property="sliderView" destination="1tD-nn-1eZ" id="Tj1-3k-O75"/>
+                <outlet property="sliderView" destination="pJi-yI-4e5" id="nHb-3H-NJr"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -35,39 +34,33 @@
                     <nil key="highlightedColor"/>
                 </label>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="A" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jyw-6o-ksQ" userLabel="A small">
-                    <rect key="frame" x="20" y="139" width="9.6666666666666643" height="15.666666666666657"/>
+                    <rect key="frame" x="20" y="139" width="10" height="15.666666666666657"/>
                     <fontDescription key="fontDescription" type="boldSystem" pointSize="13"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="A" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dWF-o2-dOn" userLabel="A large">
-                    <rect key="frame" x="351.66666666666669" y="129" width="21.333333333333314" height="36"/>
+                    <rect key="frame" x="352" y="129" width="21" height="36"/>
                     <fontDescription key="fontDescription" type="boldSystem" pointSize="30"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <view clipsSubviews="YES" contentMode="bottom" translatesAutoresizingMaskIntoConstraints="NO" id="1tD-nn-1eZ" customClass="StepSlider">
-                    <rect key="frame" x="49.666666666666657" y="134.33333333333334" width="282" height="45"/>
-                    <userDefinedRuntimeAttributes>
-                        <userDefinedRuntimeAttribute type="number" keyPath="maxCount">
-                            <integer key="value" value="4"/>
-                        </userDefinedRuntimeAttribute>
-                        <userDefinedRuntimeAttribute type="color" keyPath="sliderCircleColor">
-                            <color key="value" name="Color"/>
-                        </userDefinedRuntimeAttribute>
-                    </userDefinedRuntimeAttributes>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pJi-yI-4e5" customClass="StepSlider">
+                    <rect key="frame" x="50" y="129" width="282" height="56"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                 </view>
             </subviews>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
-                <constraint firstItem="dWF-o2-dOn" firstAttribute="leading" secondItem="1tD-nn-1eZ" secondAttribute="trailing" constant="20" id="1ft-EG-8Tp"/>
-                <constraint firstItem="1tD-nn-1eZ" firstAttribute="leading" secondItem="Jyw-6o-ksQ" secondAttribute="trailing" constant="20" id="Fp4-XM-X55"/>
+                <constraint firstItem="pJi-yI-4e5" firstAttribute="centerY" secondItem="Jyw-6o-ksQ" secondAttribute="centerY" constant="10" id="Qk1-7r-0qS"/>
+                <constraint firstItem="pJi-yI-4e5" firstAttribute="top" secondItem="dWF-o2-dOn" secondAttribute="top" id="cVR-mO-d1D"/>
+                <constraint firstItem="pJi-yI-4e5" firstAttribute="leading" secondItem="Jyw-6o-ksQ" secondAttribute="trailing" constant="20" id="fca-rS-x2f"/>
                 <constraint firstItem="f22-cu-tbN" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="hPx-9F-S9a"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="dWF-o2-dOn" secondAttribute="trailing" constant="20" id="jWf-KF-aL1"/>
                 <constraint firstItem="Jyw-6o-ksQ" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" constant="80" id="jgd-9w-Qxv"/>
+                <constraint firstItem="dWF-o2-dOn" firstAttribute="leading" secondItem="pJi-yI-4e5" secondAttribute="trailing" constant="20" id="kUa-Mg-tMt"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="G0y-y7-n0v" secondAttribute="trailing" constant="20" id="ld9-96-jLl"/>
-                <constraint firstItem="1tD-nn-1eZ" firstAttribute="centerY" secondItem="Jyw-6o-ksQ" secondAttribute="centerY" constant="10" id="mHS-cF-Are"/>
                 <constraint firstItem="G0y-y7-n0v" firstAttribute="bottom" secondItem="Jyw-6o-ksQ" secondAttribute="bottom" constant="50" id="rXU-lc-qhw"/>
                 <constraint firstItem="G0y-y7-n0v" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="20" id="v8h-tF-D9J"/>
                 <constraint firstItem="f22-cu-tbN" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" constant="15" id="wYU-tB-5eX"/>
@@ -77,15 +70,7 @@
             <point key="canvasLocation" x="125.95419847328243" y="19.718309859154932"/>
         </view>
     </objects>
-    <designables>
-        <designable name="1tD-nn-1eZ">
-            <size key="intrinsicContentSize" width="282" height="45"/>
-        </designable>
-    </designables>
     <resources>
-        <namedColor name="Color">
-            <color red="0.10899999737739563" green="0.29699999094009399" blue="1" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-        </namedColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

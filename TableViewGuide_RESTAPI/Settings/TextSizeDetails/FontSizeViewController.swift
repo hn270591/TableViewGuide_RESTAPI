@@ -18,6 +18,7 @@ class FontSizeViewController: UIViewController, UINavigationControllerDelegate {
     func setSliderView() {
         let index = UserDefaults.getCurrentFontSize().index
         sliderView.index = index
+        sliderView.sliderCircleColor = .systemBlue
         sliderView.setTrackCircleImage(UIImage(named: "unselected_dot"), for: .normal)
         sliderView.setTrackCircleImage(UIImage(named: "selected_dot"), for: .selected)
         sliderView.addTarget(self, action: #selector(sliderAction), for: .valueChanged)
